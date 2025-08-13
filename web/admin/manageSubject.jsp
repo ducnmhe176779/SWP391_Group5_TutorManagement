@@ -12,9 +12,9 @@
         <meta name="keywords" content="" />
         <meta name="author" content="" />
         <meta name="robots" content="" />
-        <meta name="description" content="G4 SmartTutor : Smart tutor, effective learning." />
-        <meta property="og:title" content="G4 SmartTutor : Smart tutor, effective learning." />
-        <meta property="og:description" content="G4 SmartTutor : Smart tutor, effective learning." />
+        <meta name="description" content="G5 SmartTutor : Smart tutor, effective learning." />
+        <meta property="og:title" content="G5 SmartTutor : Smart tutor, effective learning." />
+        <meta property="og:description" content="G5 SmartTutor : Smart tutor, effective learning." />
         <meta property="og:image" content="" />
         <meta name="format-detection" content="telephone=no">
 
@@ -23,7 +23,7 @@
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets/images/favicon.png" />
 
         <!-- PAGE TITLE -->
-        <title>G4 SmartTutor</title>
+        <title>G5 SmartTutor</title>
 
         <!-- MOBILE SPECIFIC -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -240,8 +240,7 @@
                                                 <td class="action-links">
                                                     <a href="${pageContext.request.contextPath}/admin/manageSubject?service=updateSubject&subjectID=${subject.subjectID}" class="btn"><fmt:message key="update"/></a>
                                                     <c:if test="${subject.status == 'Active'}">
-                                                        <a href="${pageContext.request.contextPath}/admin/manageSubject?service=deleteSubject&subjectID=${subject.subjectID}" 
-                                                           class="btn" onclick="return confirm('<fmt:message key="confirm_deactivate_subject"/> ${subject.subjectID}?')"><fmt:message key="deactivate"/></a>
+                                                        <a href="${pageContext.request.contextPath}/admin/manageSubject?service=deleteSubject&subjectID=${subject.subjectID}" class="btn" onclick="return confirm('<fmt:message key="confirm_deactivate_subject"/> ${subject.subjectID}?')"><fmt:message key="deactivate"/></a>
                                                     </c:if>
                                                 </td>
                                             </tr>
