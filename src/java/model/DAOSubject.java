@@ -11,8 +11,27 @@ import java.util.List;
 
 /**
  *
- * @author DAT ANH
+
+ * @author Admin
  */
+public class DAOSubject extends DBConnect{
+        public List<Subject> getAllSubjects() {
+        List<Subject> subjects = new ArrayList<>();
+        // Sửa đổi: Thêm cột Status vào câu lệnh SELECT
+        String sql = "SELECT SubjectID, SubjectName, Description, Status FROM Subject";
+        try (Statement st = conn.createStatement(); ResultSet rs = st.executeQuery(sql)) {
+            while (rs.next()) {
+                // Sửa đổi: Sử dụng constructor mới có status
+                subjects.add(new Subject(
+                        rs.getInt("SubjectID"),
+                        rs.getString("SubjectName"),
+                        rs.getString("Description"),
+                        rs.getString("Status")
+                ));
+            }
+        } catch (SQLException e) {
+
+
 public class DAOSubject extends DBConnect{
     
     public int addSubject(Subject subject) throws SQLException{
@@ -59,6 +78,7 @@ public class DAOSubject extends DBConnect{
                 ));             
             }
         }catch(SQLException e){
+
             e.printStackTrace();
         }
         return subjects;
