@@ -66,4 +66,35 @@ public class DAOSubject extends DBConnect{
         }
         return subjects;
     }
+    public List<Subject> getTopSubjectsByBooking(int limit) {
+        List<Subject> subjects = new ArrayList<>();
+        // Sửa đổi: Thêm cột Status vào câu lệnh SELECT và lọc chỉ lấy Subject có Status = 'Active'
+        String sql = """
+                     SELECT TOP (?) s.SubjectID, s.SubjectName, s.Description, s.Status, COUNT(b.SubjectID) AS BookingCount
+                     FROM Subject s
+                     JOIN Booking b ON s.SubjectID = b.SubjectID
+                     WHERE b.Status IN ('Confirmed', 'Completed', 'Pending') AND s.Status = 'Active'
+                     GROUP BY s.SubjectID, s.SubjectName, s.Description, s.Status
+                     ORDER BY BookingCount DESC
+                     """;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, limit);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                // Sửa đổi: Sử dụng constructor mới có status
+                Subject subject = new Subject(
+                        rs.getInt("SubjectID"),
+                        rs.getString("SubjectName"),
+                        rs.getString("Description"),
+                        rs.getString("Status")
+                );
+                subject.setBookingCount(rs.getInt("BookingCount"));
+                subjects.add(subject);
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi lấy các Subject.");
+            e.printStackTrace();
+        }
+        return subjects;
+    }
 }
