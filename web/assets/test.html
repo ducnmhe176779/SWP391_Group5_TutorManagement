@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Assets Test</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <h1>Assets Test Page</h1>
+    <p>Thư mục assets đã được tạo và cấu hình!</p>
+    <p>CSS: <span class="test-css">Style loaded</span></p>
+    <p>JS: <span id="test-js">JavaScript loaded</span></p>
+    <p>Images: <img src="images/logo.png" alt="Logo" width="100"></p>
+    
+    <script src="js/jquery.min.js"></script>
+    <script src="js/functions.js"></script>
+    <script>
+        document.getElementById('test-js').innerHTML = 'JavaScript working!';
+    </script>
+</body>
+</html>

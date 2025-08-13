@@ -1,1 +1,26 @@
-/build/
+# Git ignore file
+# Include assets folder
+!web/assets/
+!web/assets/css/
+!web/assets/js/
+!web/assets/images/
+!web/assets/vendors/
+!web/assets/index.html
+
+# Exclude build files
+build/
+dist/
+*.class
+*.jar
+*.war
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# OS files
+.DS_Store
+Thumbs.db
