@@ -11,16 +11,16 @@
         <meta name="keywords" content="" />
         <meta name="author" content="" />
         <meta name="robots" content="" />
-        <meta name="description" content="G4 SmartTutor : Smart tutor, effective learning." />
-        <meta property="og:title" content="G4 SmartTutor : Smart tutor, effective learning." />
-        <meta property="og:description" content="G4 SmartTutor : Smart tutor, effective learning." />
+        <meta name="description" content="G5 SmartTutor : Smart tutor, effective learning." />
+        <meta property="og:title" content="G5 SmartTutor : Smart tutor, effective learning." />
+        <meta property="og:description" content="G5 SmartTutor : Smart tutor, effective learning." />
         <meta property="og:image" content="" />
         <meta name="format-detection" content="telephone=no">
 
         <link rel="icon" href="${pageContext.request.contextPath}/assets/images/favicon.ico" type="image/x-icon" />
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets/images/favicon.png" />
 
-        <title>G4 SmartTutor</title>
+        <title>G5 SmartTutor</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/assets.css">
@@ -61,8 +61,8 @@
                                         </select>
                                     </li>
                                     <% if (user == null) { %>
-                                    <li><a href="login"><fmt:message key="login"/></a></li>
-                                    <li><a href="User?service=registerUser"><fmt:message key="register"/></a></li>
+                                    <li><a href="login.jsp"><fmt:message key="login"/></a></li>
+                                    <li><a href="register.jsp"><fmt:message key="register"/></a></li>
                                         <% } else {%>
                                     <li>
                                         <div class="ttr-header-submenu">
@@ -77,10 +77,10 @@
                                                         </span>
                                                     </a>
                                                 </li>
-                                                <li><a href="profile"><fmt:message key="my_profile"/></a></li>
-                                                <li><a href="StudentPaymentHistory"><fmt:message key="history_payment"/></a></li>
-                                                <li><a href="cv"><fmt:message key="become_a_tutor"/></a></li>
-                                                <li><a href="logout"><fmt:message key="logout"/></a></li>
+                                                <li><a href="profile.jsp"><fmt:message key="my_profile"/></a></li>
+                                                <li><a href="StudentPaymentHistory.jsp"><fmt:message key="history_payment"/></a></li>
+                                                <li><a href="cv.jsp"><fmt:message key="become_a_tutor"/></a></li>
+                                                <li><a href="logout.jsp"><fmt:message key="logout"/></a></li>
                                             </ul>
                                         </div>
                                     </li>
@@ -154,7 +154,7 @@
                                         <fmt:message key="better_education"/>
                                     </div>
                                     <div class="tp-caption Newspaper-Subtitle tp-resizeme" id="slide-100-layer-4" data-x="['center','center','center','center']" data-hoffset="['0','0','0','0']" data-y="['top','top','top','top']" data-voffset="['320','320','320','290']" data-width="['800','800','700','420']" data-height="['100','100','100','120']" data-whitespace="unset" data-type="text" data-responsive_offset="on" data-frames='[{"from":"y:[-100%];z:0;rX:0deg;rY:0;rZ:0;sX:1;sY:1;skX:0;skY:0;","mask":"x:0px;y:0px;s:inherit;e:inherit;","speed":1500,"to":"o:1;","delay":1000,"ease":"Power3.easeInOut"},{"delay":"wait","speed":1000,"to":"auto:auto;","mask":"x:0;y:0;s:inherit;e:inherit;","ease":"Power3.easeInOut"}]' data-textAlign="['center','center','center','center']" data-paddingtop="[0,0,0,0]" data-paddingright="[0,0,0,0]" data-paddingbottom="[0,0,0,0]" data-paddingleft="[0,0,0,0]" style="z-index: 7; text-transform:capitalize; white-space: unset; color:#fff; font-family:rubik; font-size:18px; line-height:28px; font-weight:400;">
-                                        <fmt:message key="g4_description"/>
+                                        <fmt:message key="g5_description"/>
                                     </div>
                                 </li>
                             </ul>

@@ -66,6 +66,59 @@ public class DAOSubject extends DBConnect{
         }
         return subjects;
     }
+    
+    public Subject getSubjectById(int subjectId) throws SQLException {
+        String sql = "SELECT SubjectID, SubjectName, Description, Status FROM Subject WHERE SubjectID = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, subjectId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new Subject(
+                    rs.getInt("SubjectID"),
+                    rs.getString("SubjectName"),
+                    rs.getString("Description"),
+                    rs.getString("Status")
+                );
+            }
+        }
+        return null;
+    }
+    
+    public List<Subject> getAllTutorSubjects() throws SQLException {
+        List<Subject> subjects = new ArrayList<>();
+        String sql = """
+            SELECT DISTINCT s.SubjectID, s.SubjectName, s.Description, s.Status
+            FROM Subject s
+            JOIN CV c ON s.SubjectID = c.SubjectId
+            JOIN Tutor t ON c.CVID = t.CVID
+            WHERE s.Status = 'Active'
+            ORDER BY s.SubjectName
+            """;
+        try (Statement st = conn.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+            while (rs.next()) {
+                subjects.add(new Subject(
+                    rs.getInt("SubjectID"),
+                    rs.getString("SubjectName"),
+                    rs.getString("Description"),
+                    rs.getString("Status")
+                ));
+            }
+        }
+        return subjects;
+    }
+    
+    public ResultSet getData(String sql) {
+        ResultSet rs = null;
+        try {
+            Statement st = conn.createStatement();
+            rs = st.executeQuery(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rs;
+    }
+    
     public List<Subject> getTopSubjectsByBooking(int limit) {
         List<Subject> subjects = new ArrayList<>();
         // Sửa đổi: Thêm cột Status vào câu lệnh SELECT và lọc chỉ lấy Subject có Status = 'Active'
