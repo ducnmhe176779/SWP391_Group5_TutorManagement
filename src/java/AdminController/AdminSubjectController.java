@@ -117,7 +117,49 @@ public class AdminSubjectController extends HttpServlet {
             if (subjectList == null) {
                 subjectList = new ArrayList<>();
             }
-            request.setAttribute("subjectList", subjectList);
+            
+            // Phân trang
+            int page = 1;
+            int recordsPerPage = 5;
+            
+            try {
+                String pageStr = request.getParameter("page");
+                if (pageStr != null && !pageStr.isEmpty()) {
+                    page = Integer.parseInt(pageStr);
+                }
+            } catch (NumberFormatException e) {
+                page = 1;
+            }
+            
+            // Tính toán phân trang
+            int totalRecords = subjectList.size();
+            int totalPages = (int) Math.ceil((double) totalRecords / recordsPerPage);
+            
+            // Đảm bảo page không vượt quá giới hạn
+            if (page > totalPages) {
+                page = totalPages;
+            }
+            if (page < 1) {
+                page = 1;
+            }
+            
+            // Lấy danh sách cho trang hiện tại
+            int startIndex = (page - 1) * recordsPerPage;
+            int endIndex = Math.min(startIndex + recordsPerPage, totalRecords);
+            
+            List<Subject> paginatedSubjectList = new ArrayList<>();
+            if (startIndex < totalRecords) {
+                paginatedSubjectList = subjectList.subList(startIndex, endIndex);
+            }
+            
+            // Set attributes cho phân trang
+            request.setAttribute("subjectList", paginatedSubjectList);
+            request.setAttribute("currentPage", page);
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("totalRecords", totalRecords);
+            request.setAttribute("recordsPerPage", recordsPerPage);
+            request.setAttribute("startIndex", startIndex + 1);
+            request.setAttribute("endIndex", endIndex);
 
             // Lấy danh sách Tutor-Subject
             List<Subject> tutorSubjectList = dao.getAllTutorSubjects();
@@ -134,6 +176,12 @@ public class AdminSubjectController extends HttpServlet {
             // Nếu có lỗi, vẫn hiển thị trang với danh sách rỗng
             request.setAttribute("subjectList", new ArrayList<>());
             request.setAttribute("tutorSubjectList", new ArrayList<>());
+            request.setAttribute("currentPage", 1);
+            request.setAttribute("totalPages", 0);
+            request.setAttribute("totalRecords", 0);
+            request.setAttribute("recordsPerPage", 5);
+            request.setAttribute("startIndex", 0);
+            request.setAttribute("endIndex", 0);
             request.getRequestDispatcher("/admin/manageSubject.jsp").forward(request, response);
         }
     }

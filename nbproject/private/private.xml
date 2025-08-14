@@ -3,18 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/web/assets/images/logo.png</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/src/java/model/DBConnect.java</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/web/uploads/default_avatar.jpg</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/src/java/UserController/LoginServlet.java</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/web/assets/images/logo-white.png</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/web/assets/images/logo_1.png</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/src/java/UserController/TutorController.java</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/web/assets/images/logo-white-2.png</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/web/assets/images/logo-white-2.png.png</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/web/index.html</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/web/assets/images/logo-mobile.png</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/src/java/controller/Customer/HomePageServlet.java</file>
+            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/src/java/controller/Staff/StaffController.java</file>
+            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/web/staff/index_staff.jsp</file>
+            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/src/java/util/MD5Util.java</file>
+            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/web/admin/manageSubject.jsp</file>
+            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/src/java/AdminController/AdminSubjectController.java</file>
+            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/web/admin/index.jsp</file>
         </group>
     </open-files>
 </project-private>

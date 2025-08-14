@@ -49,6 +49,53 @@
                 margin-bottom: 10px;
                 font-weight: bold;
             }
+            
+            /* Style cho phân trang */
+            .pagination-info {
+                margin-top: 20px;
+                text-align: center;
+            }
+            
+            .pagination-stats {
+                margin-bottom: 15px;
+                color: #666;
+                font-size: 14px;
+            }
+            
+            .pagination-controls {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+            
+            .pagination-controls .btn {
+                padding: 8px 12px;
+                border: 1px solid #ddd;
+                background: #fff;
+                color: #333;
+                text-decoration: none;
+                border-radius: 4px;
+                transition: all 0.3s ease;
+            }
+            
+            .pagination-controls .btn:hover {
+                background: #f8f9fa;
+                border-color: #007bff;
+                color: #007bff;
+            }
+            
+            .pagination-controls .btn-primary {
+                background: #007bff;
+                border-color: #007bff;
+                color: #fff;
+            }
+            
+            .pagination-controls .btn-primary:hover {
+                background: #0056b3;
+                border-color: #0056b3;
+            }
         </style>
     </head>
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
@@ -249,6 +296,46 @@
                                 </table>
                                 <c:if test="${empty subjectList}">
                                     <p class="error"><fmt:message key="no_subjects_found"/></p>
+                                </c:if>
+                                
+                                <!-- Phân trang -->
+                                <c:if test="${totalRecords > 0}">
+                                    <div class="pagination-info" style="margin-top: 20px; text-align: center;">
+                                        <div class="pagination-stats" style="margin-bottom: 15px; color: #666;">
+                                            <fmt:message key="showing"/> ${startIndex} - ${endIndex} <fmt:message key="of"/> ${totalRecords} <fmt:message key="subjects"/>
+                                        </div>
+                                        
+                                        <div class="pagination-controls">
+                                            <c:if test="${currentPage > 1}">
+                                                <a href="${pageContext.request.contextPath}/admin/AdminSubjectController?service=listSubject&page=1" class="btn btn-sm" style="margin-right: 5px;">
+                                                    <i class="fa fa-angle-double-left"></i> <fmt:message key="first"/>
+                                                </a>
+                                                <a href="${pageContext.request.contextPath}/admin/AdminSubjectController?service=listSubject&page=${currentPage - 1}" class="btn btn-sm" style="margin-right: 5px;">
+                                                    <i class="fa fa-angle-left"></i> <fmt:message key="previous"/>
+                                                </a>
+                                            </c:if>
+                                            
+                                            <c:forEach var="i" begin="1" end="${totalPages}">
+                                                <c:choose>
+                                                    <c:when test="${i == currentPage}">
+                                                        <span class="btn btn-sm btn-primary" style="margin: 0 2px;">${i}</span>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <a href="${pageContext.request.contextPath}/admin/AdminSubjectController?service=listSubject&page=${i}" class="btn btn-sm" style="margin: 0 2px;">${i}</a>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </c:forEach>
+                                            
+                                            <c:if test="${currentPage < totalPages}">
+                                                <a href="${pageContext.request.contextPath}/admin/AdminSubjectController?service=listSubject&page=${currentPage + 1}" class="btn btn-sm" style="margin-left: 5px;">
+                                                    <fmt:message key="next"/> <i class="fa fa-angle-right"></i>
+                                                </a>
+                                                <a href="${pageContext.request.contextPath}/admin/AdminSubjectController?service=listSubject&page=${totalPages}" class="btn btn-sm" style="margin-left: 5px;">
+                                                    <fmt:message key="last"/> <i class="fa fa-angle-double-right"></i>
+                                                </a>
+                                            </c:if>
+                                        </div>
+                                    </div>
                                 </c:if>
                             </div>
                         </div>
