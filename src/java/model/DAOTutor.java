@@ -88,4 +88,38 @@ public class DAOTutor extends DBConnect{
         }
         return tutors;
     }
+    
+    public List<Tutor> getAllTutorsBySubject(int subjectID) {
+        List<Tutor> tutors = new ArrayList<>();
+        String sql = """
+        SELECT t.tutorID, t.CVID, t.rating, u.FullName, u.Email
+        FROM Tutor t
+        JOIN TutorSubject ts ON t.TutorID = ts.TutorID
+        JOIN CV c ON t.CVID = c.CVID
+        JOIN Users u ON c.UserID = u.UserID
+        WHERE ts.SubjectID = ?
+    """;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, subjectID);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                User user = new User();
+                user.setFullName(rs.getString("FullName"));
+                user.setEmail(rs.getString("Email"));
+
+                Cv cv = new Cv();
+                cv.setUser(user);
+
+                Tutor tutor = new Tutor();
+                tutor.setTutorID(rs.getInt("tutorID"));
+                tutor.setCVID(rs.getInt("CVID"));
+                tutor.setRating(rs.getFloat("rating"));
+                tutor.setCv(cv);
+                tutors.add(tutor);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return tutors;
+    }
 }
