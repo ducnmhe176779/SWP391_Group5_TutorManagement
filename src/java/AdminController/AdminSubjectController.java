@@ -242,7 +242,7 @@ public class AdminSubjectController extends HttpServlet {
             } else {
                 // Lỗi → lưu vào session rồi redirect
                 session.setAttribute("error", "Cập nhật subject thất bại!");
-                response.sendRedirect(request.getContextPath() + "/admin/updateSubject.jsp?service=updateSubject&subjectID=" + subjectID);
+                response.sendRedirect(request.getContextPath() + "/admin/AdminSubjectController?service=updateSubject&subjectID=" + subjectID);
             }
 
         } catch (SQLException ex) {
