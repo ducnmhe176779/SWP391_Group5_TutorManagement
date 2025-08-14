@@ -3,18 +3,16 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/web/assets/images/logo.png</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/src/java/model/DBConnect.java</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/web/uploads/default_avatar.jpg</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/src/java/UserController/LoginServlet.java</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/web/assets/images/logo-white.png</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/web/assets/images/logo_1.png</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/src/java/UserController/TutorController.java</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/web/assets/images/logo-white-2.png</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/web/assets/images/logo-white-2.png.png</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/web/index.html</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/web/assets/images/logo-mobile.png</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/src/java/controller/Customer/HomePageServlet.java</file>
+            <file>file:/D:/SWP/SWP391_Group5_TutorManagement/src/java/model/DAOTutor.java</file>
+            <file>file:/D:/SWP/SWP391_Group5_TutorManagement/web/home.jsp</file>
+            <file>file:/D:/SWP/SWP391_Group5_TutorManagement/src/java/model/DAOTutor1.java</file>
+            <file>file:/D:/SWP/SWP391_Group5_TutorManagement/src/java/UserController/TutorController.java</file>
+            <file>file:/D:/SWP/SWP391_Group5_TutorManagement/src/java/messages.properties</file>
+            <file>file:/D:/SWP/SWP391_Group5_TutorManagement/src/java/model/DAOTutorRating.java</file>
+            <file>file:/D:/SWP/SWP391_Group5_TutorManagement/web/tutor.jsp</file>
+            <file>file:/D:/SWP/SWP391_Group5_TutorManagement/src/java/model/DAOSubject.java</file>
+            <file>file:/D:/SWP/SWP391_Group5_TutorManagement/web/WEB-INF/web.xml</file>
+            <file>file:/D:/SWP/SWP391_Group5_TutorManagement/web/META-INF/context.xml</file>
         </group>
     </open-files>
 </project-private>
