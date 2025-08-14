@@ -1,0 +1,147 @@
+/* Custom Blue Color Override */
+/* Override any remaining purple colors with blue */
+
+/* Table header colors - HIGH PRIORITY */
+table thead th,
+table thead td,
+.table thead th,
+.table thead td,
+.table-header,
+.table-header th,
+.table-header td,
+.widget-box table thead th,
+.widget-box table thead td {
+    background-color: #1e40af !important;
+    color: white !important;
+    border-color: #1e40af !important;
+}
+
+/* Any remaining purple elements */
+[style*="#4c1864"],
+[style*="#4d0a91"],
+[style*="#6f42c1"],
+[style*="#8e44ad"] {
+    background-color: #1e40af !important;
+}
+
+/* Specific table styling */
+.subject-table thead th,
+.subject-table thead td,
+.manage-subject-table thead th,
+.manage-subject-table thead td,
+.widget-inner table thead th,
+.widget-inner table thead td {
+    background-color: #1e40af !important;
+    color: white !important;
+}
+
+/* Override any inline styles */
+[style*="background-color: #4c1864"],
+[style*="background-color: #4d0a91"],
+[style*="background-color: #6f42c1"],
+[style*="background-color: #8e44ad"] {
+    background-color: #1e40af !important;
+}
+
+/* Ensure all primary elements are blue */
+.bg-primary,
+.btn-primary,
+.primary-bg,
+.primary-color {
+    background-color: #1e40af !important;
+}
+
+/* Text colors */
+.text-primary,
+.primary-text,
+.primary-color {
+    color: #1e40af !important;
+}
+
+/* Hover states */
+.btn:hover,
+.btn:focus,
+.btn:active {
+    background-color: #3b82f6 !important;
+}
+
+/* Links */
+a:hover,
+a:focus {
+    color: #3b82f6 !important;
+}
+
+/* Override yellow buttons with blue */
+.btn,
+.btn:not(.btn-outline):not(.btn-link),
+button:not(.btn-outline):not(.btn-link),
+input[type="submit"],
+input[type="button"] {
+    background-color: #1e40af !important;
+    color: white !important;
+}
+
+.btn:hover,
+.btn:focus,
+.btn:active,
+button:hover,
+button:focus,
+button:active,
+input[type="submit"]:hover,
+input[type="submit"]:focus,
+input[type="submit"]:active,
+input[type="button"]:hover,
+input[type="button"]:focus,
+input[type="button"]:active {
+    background-color: #3b82f6 !important;
+    color: white !important;
+}
+
+/* Override specific button classes */
+.btn.purple,
+.btn.gradient.purple,
+.btn.outline.purple,
+.btn-link.purple,
+.btn.box-shadow.purple {
+    background-color: #1e40af !important;
+    color: white !important;
+}
+
+.btn.purple:hover,
+.btn.gradient.purple:hover,
+.btn.outline.purple:hover,
+.btn-link.purple:hover,
+.btn.box-shadow.purple:hover {
+    background-color: #3b82f6 !important;
+    color: white !important;
+}
+
+/* Force all table headers to be blue */
+th,
+thead th,
+thead td {
+    background-color: #1e40af !important;
+    color: white !important;
+}
+
+/* Override any remaining colors */
+*[style*="background-color: #4c1864"],
+*[style*="background-color: #4d0a91"],
+*[style*="background-color: #6f42c1"],
+*[style*="background-color: #8e44ad"],
+*[style*="background-color: #f7b205"] {
+    background-color: #1e40af !important;
+}
+
+/* Ensure buttons in action columns are blue */
+.action-links .btn,
+.action-links button {
+    background-color: #1e40af !important;
+    color: white !important;
+}
+
+.action-links .btn:hover,
+.action-links button:hover {
+    background-color: #3b82f6 !important;
+    color: white !important;
+}
