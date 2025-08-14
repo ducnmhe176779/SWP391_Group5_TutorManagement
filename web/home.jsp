@@ -173,8 +173,8 @@
                                                 <div class="feature-box-sm radius bg-white">
                                                     <i class="fa fa-bank text-primary"></i>
                                                 </div>
-                                                <h4><a href="user"><fmt:message key="all_tutors"/></a></h4>
-                                                <a href="user" class="btn radius-xl"><fmt:message key="view_more"/></a>
+                                                <h4><a href="Tutor"><fmt:message key="all_tutors"/></a></h4>
+                                                <a href="Tutor" class="btn radius-xl"><fmt:message key="view_more"/></a>
                                             </div>
                                         </div>
                                     </div>
@@ -187,8 +187,8 @@
                                                 <div class="feature-box-sm radius bg-white">
                                                     <i class="fa fa-book text-primary"></i>
                                                 </div>
-                                                <h4><a href="user"><fmt:message key="all_subjects"/></a></h4>
-                                                <a href="user" class="btn radius-xl"><fmt:message key="view_more"/></a>
+                                                <h4><a href="Tutor"><fmt:message key="all_subjects"/></a></h4>
+                                                <a href="Tutor" class="btn radius-xl"><fmt:message key="view_more"/></a>
                                             </div>
                                         </div>
                                     </div>

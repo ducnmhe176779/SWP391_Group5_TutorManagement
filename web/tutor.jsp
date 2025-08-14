@@ -18,8 +18,8 @@
         <meta name="format-detection" content="telephone=no">
 
         <!-- FAVICONS ICON -->
-        <link rel="icon" href="../assets/images/favicon.ico" type="image/x-icon" />
-        <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon.png" />
+        <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon" />
+        <link rel="shortcut icon" type="image/x-icon" href="assets/images/favicon.png" />
 
         <!-- PAGE TITLE HERE -->
         <title>G5 SmartTutor</title>
@@ -28,11 +28,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <!-- All PLUGINS CSS -->
-        <link rel="stylesheet" type="text/css" href="../assets/css/assets.css">
-        <link rel="stylesheet" type="text/css" href="../assets/css/typography.css">
-        <link rel="stylesheet" type="text/css" href="../assets/css/shortcodes/shortcodes.css">
-        <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
-        <link class="skin" rel="stylesheet" type="text/css" href="../assets/css/color/color-1.css">
+        <link rel="stylesheet" type="text/css" href="assets/css/assets.css">
+        <link rel="stylesheet" type="text/css" href="assets/css/typography.css">
+        <link rel="stylesheet" type="text/css" href="assets/css/shortcodes/shortcodes.css">
+        <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+        <link class="skin" rel="stylesheet" type="text/css" href="assets/css/color/color-1.css">
     </head>
     <body id="bg">
         <%
@@ -41,7 +41,7 @@
             User user = (User) session.getAttribute("user");
             DAOTutorRating dao = new DAOTutorRating();
         %>
-        <!-- Thi?t l?p Locale vï¿½ Resource Bundle -->
+        <!-- Thi?t l?p Locale và Resource Bundle -->
         <fmt:setLocale value="${sessionScope.locale != null ? sessionScope.locale : 'en'}"/>
         <fmt:setBundle basename="messages"/>
 
@@ -100,7 +100,7 @@
                     <div class="menu-bar clearfix">
                         <div class="container clearfix">
                             <div class="menu-logo">
-                                <a href="home"><img src="../assets/images/logo-white.png" alt=""></a>
+                                <a href="home"><img src="assets/images/logo-white.png" alt=""></a>
                             </div>
                             <div class="nav-search-bar">
                                 <form action="#">
@@ -110,9 +110,9 @@
                                 <span id="search-remove"><i class="ti-close"></i></span>
                             </div>
                             <div class="menu-links navbar-collapse collapse justify-content-start" id="menuDropdown">
-                                                            <div class="menu-logo">
-                                <a href="home"><img src="../assets/images/logo.png" alt=""></a>
-                            </div>
+                                <div class="menu-logo">
+                                    <a href="home"><img src="assets/images/logo.png" alt=""></a>
+                                </div>
                                 <ul class="nav navbar-nav">	
                                     <li><a href="home"><fmt:message key="home"/></a></li>
                                     <li class="active"><a href="Tutor"><fmt:message key="our_tutor"/></a></li>
@@ -130,7 +130,7 @@
             </header>
             <!-- Content -->
             <div class="page-content bg-white">
-                <div class="page-banner ovbl-dark" style="background-image:url(../assets/images/banner/banner3.jpg);">
+                <div class="page-banner ovbl-dark" style="background-image:url(assets/images/banner/banner3.jpg);">
                     <div class="container">
                         <div class="page-banner-entry">
                             <h1 class="text-white"><fmt:message key="our_tutor"/></h1>
@@ -237,7 +237,7 @@
                         <div class="container">
                             <div class="d-flex align-items-stretch">
                                 <div class="pt-logo mr-auto">
-                                    <a href="home"><img src="../assets/images/logo-white.png" alt=""/></a>
+                                    <a href="home"><img src="assets/images/logo-white.png" alt=""/></a>
                                 </div>
                             </div>
                         </div>
@@ -246,20 +246,20 @@
             </footer>
         </div>
         <!-- External JavaScripts -->
-        <script src="../assets/js/jquery.min.js"></script>
-        <script src="../assets/vendors/bootstrap/js/popper.min.js"></script>
-        <script src="../assets/vendors/bootstrap/js/bootstrap.min.js"></script>
-        <script src="../assets/vendors/bootstrap-select/bootstrap-select.min.js"></script>
-        <script src="../assets/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
-        <script src="../assets/vendors/magnific-popup/magnific-popup.js"></script>
-        <script src="../assets/vendors/counter/waypoints-min.js"></script>
-        <script src="../assets/vendors/counter/counterup.min.js"></script>
-        <script src="../assets/vendors/imagesloaded/imagesloaded.js"></script>
-        <script src="../assets/vendors/masonry/masonry.js"></script>
-        <script src="../assets/vendors/masonry/filter.js"></script>
-        <script src="../assets/vendors/owl-carousel/owl.carousel.js"></script>
-        <script src="../assets/js/functions.js"></script>
-        <script src="../assets/js/contact.js"></script>
-        <script src='../assets/vendors/switcher/switcher.js'></script>
+        <script src="assets/js/jquery.min.js"></script>
+        <script src="assets/vendors/bootstrap/js/popper.min.js"></script>
+        <script src="assets/vendors/bootstrap/js/bootstrap.min.js"></script>
+        <script src="assets/vendors/bootstrap-select/bootstrap-select.min.js"></script>
+        <script src="assets/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
+        <script src="assets/vendors/magnific-popup/magnific-popup.js"></script>
+        <script src="assets/vendors/counter/waypoints-min.js"></script>
+        <script src="assets/vendors/counter/counterup.min.js"></script>
+        <script src="assets/vendors/imagesloaded/imagesloaded.js"></script>
+        <script src="assets/vendors/masonry/masonry.js"></script>
+        <script src="assets/vendors/masonry/filter.js"></script>
+        <script src="assets/vendors/owl-carousel/owl.carousel.js"></script>
+        <script src="assets/js/functions.js"></script>
+        <script src="assets/js/contact.js"></script>
+        <script src='assets/vendors/switcher/switcher.js'></script>
     </body>
 </html>
