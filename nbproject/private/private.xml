@@ -2,13 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/src/java/controller/Staff/StaffController.java</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/web/staff/index_staff.jsp</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/src/java/util/MD5Util.java</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/web/admin/manageSubject.jsp</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/src/java/AdminController/AdminSubjectController.java</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/web/admin/index.jsp</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>
