@@ -122,7 +122,7 @@
                                 </div>
                                 <ul class="nav navbar-nav">    
                                     <li class="active"><a href="home"><fmt:message key="home"/></a></li>
-                                    <li><a href="Tutor"><fmt:message key="our_tutor"/></a></li>
+                                    <li><a href="user"><fmt:message key="our_tutor"/></a></li>
                                     <li><a href="ViewBlog"><fmt:message key="blog"/></a></li>
                                         <c:if test="${sessionScope.user != null && sessionScope.user.roleID == 3}">
                                         <li><a href="CreateSchedule"><fmt:message key="view_schedule"/></a></li>
@@ -173,8 +173,8 @@
                                                 <div class="feature-box-sm radius bg-white">
                                                     <i class="fa fa-bank text-primary"></i>
                                                 </div>
-                                                <h4><a href="Tutor"><fmt:message key="all_tutors"/></a></h4>
-                                                <a href="Tutor" class="btn radius-xl"><fmt:message key="view_more"/></a>
+                                                <h4><a href="user"><fmt:message key="all_tutors"/></a></h4>
+                                                <a href="user" class="btn radius-xl"><fmt:message key="view_more"/></a>
                                             </div>
                                         </div>
                                     </div>
@@ -187,8 +187,8 @@
                                                 <div class="feature-box-sm radius bg-white">
                                                     <i class="fa fa-book text-primary"></i>
                                                 </div>
-                                                <h4><a href="Tutor"><fmt:message key="all_subjects"/></a></h4>
-                                                <a href="Tutor" class="btn radius-xl"><fmt:message key="view_more"/></a>
+                                                <h4><a href="user"><fmt:message key="all_subjects"/></a></h4>
+                                                <a href="user" class="btn radius-xl"><fmt:message key="view_more"/></a>
                                             </div>
                                         </div>
                                     </div>
@@ -224,7 +224,7 @@
                                                 <div class="cours-bx">
                                                     <div class="action-box">
                                                         <img src="${tutor.cv.user.avatar}" alt="Avatar">
-                                                        <a href="Tutor" class="btn"><fmt:message key="view_more"/></a>
+                                                        <a href="user" class="btn"><fmt:message key="view_more"/></a>
                                                     </div>
                                                     <div class="info-bx text-center">
                                                         <h5><a href="#">${tutor.cv.user.fullName}</a></h5>
