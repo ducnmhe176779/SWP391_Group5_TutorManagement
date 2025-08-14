@@ -2,6 +2,18 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/D:/New%20folder/SWP391_G5_TutorManagement/SWP391_Group5_TutorManagement/src/java/UserController/resetService.java</file>
+            <file>file:/D:/New%20folder/SWP391_G5_TutorManagement/SWP391_Group5_TutorManagement/web/home.jsp</file>
+            <file>file:/D:/New%20folder/SWP391_G5_TutorManagement/SWP391_Group5_TutorManagement/src/java/UserController/ActivateServlet.java</file>
+            <file>file:/D:/New%20folder/SWP391_G5_TutorManagement/SWP391_Group5_TutorManagement/src/java/messages_vi.properties</file>
+            <file>file:/D:/New%20folder/SWP391_G5_TutorManagement/SWP391_Group5_TutorManagement/src/java/UserController/requestPassword.java</file>
+            <file>file:/D:/New%20folder/SWP391_G5_TutorManagement/SWP391_Group5_TutorManagement/src/java/messages.properties</file>
+            <file>file:/D:/New%20folder/SWP391_G5_TutorManagement/SWP391_Group5_TutorManagement/src/java/util/Encryption.java</file>
+            <file>file:/D:/New%20folder/SWP391_G5_TutorManagement/SWP391_Group5_TutorManagement/web/requestPassword.jsp</file>
+            <file>file:/D:/New%20folder/SWP391_G5_TutorManagement/SWP391_Group5_TutorManagement/src/java/UserController/ResetPassword.java</file>
+            <file>file:/D:/New%20folder/SWP391_G5_TutorManagement/SWP391_Group5_TutorManagement/src/java/model/DAOToken.java</file>
+            <file>file:/D:/New%20folder/SWP391_G5_TutorManagement/SWP391_Group5_TutorManagement/web/login.jsp</file>
+        </group>
     </open-files>
 </project-private>

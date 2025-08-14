@@ -1,0 +1,84 @@
+/* FORCE BLUE - HIGHEST PRIORITY */
+/* This file will override ALL other colors with blue */
+
+/* Force ALL table headers to be blue */
+th,
+thead th,
+thead td,
+table thead th,
+table thead td,
+.widget-box table thead th,
+.widget-box table thead td,
+.widget-inner table thead th,
+.widget-inner table thead td {
+    background-color: #1e40af !important;
+    color: white !important;
+    border-color: #1e40af !important;
+}
+
+/* Force ALL buttons to be blue */
+.btn,
+button,
+input[type="submit"],
+input[type="button"],
+.submit-btn {
+    background-color: #1e40af !important;
+    color: white !important;
+    border-color: #1e40af !important;
+}
+
+.btn:hover,
+button:hover,
+input[type="submit"]:hover,
+input[type="button"]:hover,
+.submit-btn:hover {
+    background-color: #3b82f6 !important;
+    color: white !important;
+}
+
+/* Force ALL purple elements to be blue */
+*[style*="#4c1864"],
+*[style*="#4d0a91"],
+*[style*="#6f42c1"],
+*[style*="#8e44ad"],
+*[style*="#8862B9"] {
+    background-color: #1e40af !important;
+}
+
+/* Force ALL yellow elements to be blue */
+*[style*="#f7b205"],
+*[style*="#ffb822"] {
+    background-color: #1e40af !important;
+}
+
+/* Override any remaining colors */
+.bg-primary,
+.primary-bg,
+.primary-color {
+    background-color: #1e40af !important;
+}
+
+.text-primary,
+.primary-text {
+    color: #1e40af !important;
+}
+
+/* Force specific elements */
+.action-links .btn,
+.action-links button,
+.wc-title .btn {
+    background-color: #1e40af !important;
+    color: white !important;
+}
+
+/* Override any CSS variables */
+:root {
+    --primary: #1e40af !important;
+    --sc-primary: #3b82f6 !important;
+}
+
+/* Force all gradients to be blue */
+*[style*="gradient"] {
+    background: #1e40af !important;
+    background: linear-gradient(45deg, #1e40af 0%, #3b82f6 100%) !important;
+}
