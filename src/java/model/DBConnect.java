@@ -38,7 +38,7 @@ public class DBConnect {
 
 
     public DBConnect() {
-        this("jdbc:sqlserver://localhost:1433;databaseName=G5", "sa", "123");
+        this("jdbc:sqlserver://localhost:1433;databaseName=G5", "sa", "123456");
     }
 
     public ResultSet getData(String sql) {
