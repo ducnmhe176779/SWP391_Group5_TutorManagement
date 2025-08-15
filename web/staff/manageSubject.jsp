@@ -50,6 +50,102 @@
                 font-weight: bold;
             }
             
+            /* Style cho bảng - thay đổi màu từ tím sang xanh */
+            .table {
+                background-color: #fff;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            }
+            
+            .table thead th {
+                background-color: #007bff !important; /* Màu xanh thay vì tím */
+                color: white !important;
+                border: none !important;
+                padding: 15px 12px !important;
+                font-weight: 600 !important;
+                text-transform: uppercase !important;
+                font-size: 14px !important;
+                letter-spacing: 0.5px !important;
+            }
+            
+            .table tbody tr {
+                transition: all 0.3s ease;
+            }
+            
+            .table tbody tr:hover {
+                background-color: #f8f9ff !important; /* Màu xanh nhạt khi hover */
+                transform: translateY(-1px);
+                box-shadow: 0 4px 8px rgba(0,123,255,0.1);
+            }
+            
+            .table tbody td {
+                padding: 15px 12px !important;
+                border-bottom: 1px solid #e9ecef !important;
+                vertical-align: middle !important;
+            }
+            
+            /* Style cho nút trong bảng */
+            .btn-update {
+                background-color: #007bff !important;
+                border-color: #007bff !important;
+                color: white !important;
+                padding: 8px 16px !important;
+                border-radius: 4px !important;
+                text-decoration: none !important;
+                display: inline-block !important;
+                margin-right: 8px !important;
+                transition: all 0.3s ease !important;
+            }
+            
+            .btn-update:hover {
+                background-color: #0056b3 !important;
+                border-color: #0056b3 !important;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 8px rgba(0,123,255,0.3);
+            }
+            
+            .btn-deactivate {
+                background-color: #6c757d !important;
+                border-color: #6c757d !important;
+                color: white !important;
+                padding: 8px 16px !important;
+                border-radius: 4px !important;
+                text-decoration: none !important;
+                display: inline-block !important;
+                transition: all 0.3s ease !important;
+            }
+            
+            .btn-deactivate:hover {
+                background-color: #545b62 !important;
+                border-color: #545b62 !important;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 8px rgba(108,117,125,0.3);
+            }
+            
+            /* Style cho nút Add Subject */
+            .btn-add-subject {
+                background-color: #007bff !important;
+                border-color: #007bff !important;
+                color: white !important;
+                padding: 12px 24px !important;
+                border-radius: 6px !important;
+                text-decoration: none !important;
+                display: inline-block !important;
+                font-weight: 600 !important;
+                transition: all 0.3s ease !important;
+                margin-bottom: 20px !important;
+            }
+            
+            .btn-add-subject:hover {
+                background-color: #0056b3 !important;
+                border-color: #0056b3 !important;
+                transform: translateY(-2px);
+                box-shadow: 0 6px 15px rgba(0,123,255,0.3);
+                color: white !important;
+                text-decoration: none !important;
+            }
+            
             /* Style cho phân trang */
             .pagination-info {
                 margin-top: 20px;
@@ -229,7 +325,7 @@
                         <div class="widget-box">
                             <div class="wc-title">
                                 <h4><fmt:message key="subject_list"/></h4>
-                                <a href="${pageContext.request.contextPath}/staff/SubjectController?service=addSubject" class="btn" style="margin-top: 6px;"><fmt:message key="add_subject"/></a>
+                                <a href="${pageContext.request.contextPath}/staff/SubjectController?service=addSubject" class="btn btn-add-subject"><fmt:message key="add_subject"/></a>
                             </div>
                             <!-- Hiển thị thông báo -->
                             <c:if test="${not empty sessionScope.message}">
@@ -241,7 +337,7 @@
                                 <c:remove var="error" scope="session" />
                             </c:if>
                             <div class="table-responsive">
-                                <table>
+                                <table class="table">
                                     <thead>
                                         <tr>
                                             <th><fmt:message key="id"/></th>
@@ -259,9 +355,9 @@
                                                 <td>${subject.description}</td>
                                                 <td><fmt:message key="${subject.status == 'Active' ? 'active' : 'inactive'}"/></td>
                                                 <td class="action-links">
-                                                    <a href="${pageContext.request.contextPath}/staff/SubjectController?service=updateSubject&subjectID=${subject.subjectID}" class="btn"><fmt:message key="update"/></a>
+                                                    <a href="${pageContext.request.contextPath}/staff/SubjectController?service=updateSubject&subjectID=${subject.subjectID}" class="btn btn-update"><fmt:message key="update"/></a>
                                                     <c:if test="${subject.status == 'Active'}">
-                                                        <a href="${pageContext.request.contextPath}/staff/SubjectController?service=deleteSubject&subjectID=${subject.subjectID}" class="btn" onclick="return confirm('<fmt:message key="confirm_deactivate_subject"/> ${subject.subjectID}?')"><fmt:message key="deactivate"/></a>
+                                                        <a href="${pageContext.request.contextPath}/staff/SubjectController?service=deleteSubject&subjectID=${subject.subjectID}" class="btn btn-deactivate" onclick="return confirm('<fmt:message key="confirm_deactivate_subject"/> ${subject.subjectID}?')"><fmt:message key="deactivate"/></a>
                                                     </c:if>
                                                 </td>
                                             </tr>
@@ -281,7 +377,7 @@
                                 <h4><fmt:message key="tutor_subject_list"/></h4>
                             </div>
                             <div class="widget-inner">
-                                <table>
+                                <table class="table">
                                     <thead>
                                         <tr>
                                             <th><fmt:message key="tutor_id"/></th>
