@@ -2,11 +2,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!DOCTYPE html>
 <html lang="${sessionScope.locale != null ? sessionScope.locale : 'en'}">
     <head>
-        <!-- META -->
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="keywords" content="" />
@@ -17,62 +17,79 @@
         <meta property="og:description" content="G5 SmartTutor : Smart tutor, effective learning." />
         <meta property="og:image" content="" />
         <meta name="format-detection" content="telephone=no">
-
-        <!-- FAVICONS ICON -->
-        <link rel="icon" href="${pageContext.request.contextPath}/error-404.jsp" type="image/x-icon" />
-        <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets/images/favicon.png" />
-
-        <!-- PAGE TITLE -->
-        <title>G5 SmartTutor</title>
-
-        <!-- MOBILE SPECIFIC -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>G5 SmartTutor</title>
 
         <!-- CSS -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/assets.css">
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/vendors/calendar/fullcalendar.css">
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/typography.css">
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/shortcodes/shortcodes.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/style.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/color/color-1.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/custom-blue.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/force-blue.css">
 
-        <!-- Thêm style cho thông báo -->
         <style>
-            .message {
-                color: green;
-                margin-bottom: 10px;
-                font-weight: bold;
-            }
-            .error {
-                color: red;
-                margin-bottom: 10px;
-                font-weight: bold;
+            .message { color: green; margin-bottom: 10px; font-weight: bold; }
+            .error { color: red; margin-bottom: 10px; font-weight: bold; }
+            
+            .search-container {
+                background: #f8f9fa;
+                padding: 20px;
+                border-radius: 8px;
+                border: 1px solid #e9ecef;
+                margin-bottom: 20px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 15px;
             }
             
-            /* Style cho phân trang */
-            .pagination-info {
+            .search-box {
+                flex: 1;
+                min-width: 250px;
+            }
+            
+            .search-box input {
+                width: 100%;
+                padding: 8px 12px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                font-size: 14px;
+            }
+            
+            .search-box input:focus {
+                border-color: #1e40af;
+                outline: 0;
+                box-shadow: 0 0 0 0.2rem rgba(30, 64, 175, 0.25);
+            }
+            
+            .search-results-info {
                 margin-top: 20px;
                 text-align: center;
+                padding: 15px;
+                background: #e3f2fd;
+                border: 1px solid #2196f3;
+                border-radius: 8px;
+                color: #1976d2;
+                font-size: 16px;
+                font-weight: 500;
             }
             
-            .pagination-stats {
-                margin-bottom: 15px;
-                color: #666;
-                font-size: 14px;
+            .pagination-container {
+                margin-top: 20px;
+                text-align: center;
             }
             
             .pagination-controls {
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                gap: 8px;
                 flex-wrap: wrap;
-                gap: 5px;
             }
             
-            .pagination-controls .btn {
+            .pagination-btn {
                 padding: 8px 12px;
                 border: 1px solid #ddd;
                 background: #fff;
@@ -80,23 +97,61 @@
                 text-decoration: none;
                 border-radius: 4px;
                 transition: all 0.3s ease;
+                font-size: 14px;
             }
             
-            .pagination-controls .btn:hover {
-                background: #f8f9fa;
-                border-color: #007bff;
-                color: #007bff;
-            }
-            
-            .pagination-controls .btn-primary {
-                background: #007bff;
-                border-color: #007bff;
+            .pagination-btn:hover {
+                background: #1e40af;
                 color: #fff;
+                border-color: #1e40af;
             }
             
-            .pagination-controls .btn-primary:hover {
-                background: #0056b3;
-                border-color: #0056b3;
+            .pagination-current {
+                padding: 8px 12px;
+                background: #1e40af;
+                color: #fff;
+                border: 1px solid #1e40af;
+                border-radius: 4px;
+                font-size: 14px;
+                font-weight: bold;
+            }
+            
+            .pagination-arrow {
+                padding: 8px 12px;
+                border: 1px solid #ddd;
+                background: #fff;
+                color: #333;
+                text-decoration: none;
+                border-radius: 4px;
+                transition: all 0.3s ease;
+                font-size: 14px;
+                min-width: 40px;
+                text-align: center;
+            }
+            
+            .pagination-arrow:hover {
+                background: #1e40af;
+                color: #fff;
+                border-color: #1e40af;
+            }
+            
+            .pagination-ellipsis {
+                padding: 8px 12px;
+                color: #666;
+                font-size: 14px;
+                font-weight: bold;
+            }
+            
+            @media (max-width: 768px) {
+                .search-container {
+                    flex-direction: column;
+                    align-items: stretch;
+                }
+                
+                .search-box {
+                    min-width: auto;
+                    margin-bottom: 15px;
+                }
             }
         </style>
     </head>
@@ -259,6 +314,7 @@
                                 <h4><fmt:message key="subject_list"/></h4>
                                 <a href="${pageContext.request.contextPath}/admin/addSubject.jsp" class="btn" style="margin-top: 6px;"><fmt:message key="add_subject"/></a>
                             </div>
+                            
                             <!-- Hiển thị thông báo -->
                             <c:if test="${not empty sessionScope.message}">
                                 <div class="message">${sessionScope.message}</div>
@@ -268,8 +324,22 @@
                                 <div class="error">${sessionScope.error}</div>
                                 <c:remove var="error" scope="session" />
                             </c:if>
+                            
+                            <!-- Thanh tìm kiếm -->
+                            <form method="GET" action="${pageContext.request.contextPath}/admin/AdminSubjectController" style="margin-bottom: 20px;">
+                                <input type="hidden" name="service" value="listSubject">
+                                <input type="hidden" name="size" value="5">
+                                <div class="search-container">
+                                    <div class="search-box">
+                                        <input type="text" id="subjectSearch" name="search" placeholder="Tìm kiếm môn học... (Tự động)"  
+                                               value="${searchTerm != null ? searchTerm : ''}">
+                                    </div>
+                                    <button type="submit" class="btn" style="margin: 0; padding: 10px 20px; font-weight: 500;">Tìm kiếm</button>
+                                </div>
+                            </form>
+                            
                             <div class="table-responsive">
-                                <table>
+                                <table id="subjectTable">
                                     <thead>
                                         <tr>
                                             <th><fmt:message key="id"/></th>
@@ -286,12 +356,12 @@
                                                 <td>${subject.subjectName}</td>
                                                 <td>${subject.description}</td>
                                                 <td><fmt:message key="${subject.status == 'Active' ? 'active' : 'inactive'}"/></td>
-                                                                                                 <td class="action-links">
-                                                     <a href="${pageContext.request.contextPath}/admin/AdminSubjectController?service=updateSubject&subjectID=${subject.subjectID}" class="btn"><fmt:message key="update"/></a>
-                                                     <c:if test="${subject.status == 'Active'}">
-                                                         <a href="${pageContext.request.contextPath}/admin/AdminSubjectController?service=deleteSubject&subjectID=${subject.subjectID}" class="btn" onclick="return confirm('<fmt:message key="confirm_deactivate_subject"/> ${subject.subjectID}?')"><fmt:message key="deactivate"/></a>
-                                                     </c:if>
-                                                 </td>
+                                                <td class="action-links">
+                                                    <a href="${pageContext.request.contextPath}/admin/AdminSubjectController?service=updateSubject&subjectID=${subject.subjectID}" class="btn"><fmt:message key="update"/></a>
+                                                    <c:if test="${subject.status == 'Active'}">
+                                                        <a href="${pageContext.request.contextPath}/admin/AdminSubjectController?service=deleteSubject&subjectID=${subject.subjectID}" class="btn" onclick="return confirm('Are you sure you want to deactivate subject ${subject.subjectID}?')"><fmt:message key="deactivate"/></a>
+                                                    </c:if>
+                                                </td>
                                             </tr>
                                         </c:forEach>
                                     </tbody>
@@ -300,56 +370,111 @@
                                     <p class="error"><fmt:message key="no_subjects_found"/></p>
                                 </c:if>
                                 
-                                <!-- Phân trang -->
-                                <c:if test="${totalRecords > 0}">
-                                    <div class="pagination-info" style="margin-top: 20px; text-align: center;">
-                                        <div class="pagination-stats" style="margin-bottom: 15px; color: #666;">
-                                            <fmt:message key="showing"/> ${startIndex} - ${endIndex} <fmt:message key="of"/> ${totalRecords} <fmt:message key="subjects"/>
+                                <!-- Phân trang cho Subject List -->
+                                <c:choose>
+                                    <c:when test="${not empty searchTerm}">
+                                        <div class="search-results-info">
+                                            <span>Kết quả tìm kiếm: ${fn:length(subjectList)} môn học phù hợp với "${searchTerm}"</span>
                                         </div>
-                                        
-                                        <div class="pagination-controls">
-                                            <c:if test="${currentPage > 1}">
-                                                <a href="${pageContext.request.contextPath}/admin/AdminSubjectController?service=listSubject&page=1" class="btn btn-sm" style="margin-right: 5px;">
-                                                    <i class="fa fa-angle-double-left"></i> <fmt:message key="first"/>
-                                                </a>
-                                                <a href="${pageContext.request.contextPath}/admin/AdminSubjectController?service=listSubject&page=${currentPage - 1}" class="btn btn-sm" style="margin-right: 5px;">
-                                                    <i class="fa fa-angle-left"></i> <fmt:message key="previous"/>
-                                                </a>
-                                            </c:if>
-                                            
-                                            <c:forEach var="i" begin="1" end="${totalPages}">
-                                                <c:choose>
-                                                    <c:when test="${i == currentPage}">
-                                                        <span class="btn btn-sm btn-primary" style="margin: 0 2px;">${i}</span>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <a href="${pageContext.request.contextPath}/admin/AdminSubjectController?service=listSubject&page=${i}" class="btn btn-sm" style="margin: 0 2px;">${i}</a>
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </c:forEach>
-                                            
-                                            <c:if test="${currentPage < totalPages}">
-                                                <a href="${pageContext.request.contextPath}/admin/AdminSubjectController?service=listSubject&page=${currentPage + 1}" class="btn btn-sm" style="margin-left: 5px;">
-                                                    <fmt:message key="next"/> <i class="fa fa-angle-right"></i>
-                                                </a>
-                                                <a href="${pageContext.request.contextPath}/admin/AdminSubjectController?service=listSubject&page=${totalPages}" class="btn btn-sm" style="margin-left: 5px;">
-                                                    <fmt:message key="last"/> <i class="fa fa-angle-double-right"></i>
-                                                </a>
-                                            </c:if>
-                                        </div>
-                                    </div>
-                                </c:if>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <c:if test="${totalPages > 1}">
+                                            <div class="pagination-container">
+                                                <div class="pagination-controls">
+                                                    <!-- Nút Previous -->
+                                                    <c:if test="${currentPage > 1}">
+                                                        <a href="?page=${currentPage - 1}&size=${pageSize}&search=${param.search}" class="pagination-btn pagination-arrow">
+                                                            <i class="fa fa-chevron-left"></i>
+                                                        </a>
+                                                    </c:if>
+                                                    
+                                                    <!-- Các số trang -->
+                                                    <c:choose>
+                                                        <c:when test="${totalPages <= 7}">
+                                                            <c:forEach var="i" begin="1" end="${totalPages}">
+                                                                <c:choose>
+                                                                    <c:when test="${i == currentPage}">
+                                                                        <span class="pagination-current">${i}</span>
+                                                                    </c:when>
+                                                                    <c:otherwise>
+                                                                        <a href="?page=${i}&size=${pageSize}&search=${param.search}" class="pagination-btn">${i}</a>
+                                                                    </c:otherwise>
+                                                                </c:choose>
+                                                            </c:forEach>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <!-- Luôn hiển thị trang 1 -->
+                                                            <c:choose>
+                                                                <c:when test="${currentPage == 1}">
+                                                                    <span class="pagination-current">1</span>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <a href="?page=1&size=${pageSize}&search=${param.search}" class="pagination-btn">1</a>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                            
+                                                            <!-- Hiển thị dấu ... nếu cần -->
+                                                            <c:if test="${currentPage > 3}">
+                                                                <span class="pagination-ellipsis">...</span>
+                                                            </c:if>
+                                                            
+                                                            <!-- Hiển thị các trang xung quanh currentPage -->
+                                                            <c:forEach var="i" begin="${currentPage - 1}" end="${currentPage + 1}">
+                                                                <c:if test="${i > 1 && i < totalPages}">
+                                                                    <c:choose>
+                                                                        <c:when test="${i == currentPage}">
+                                                                            <span class="pagination-current">${i}</span>
+                                                                        </c:when>
+                                                                        <c:otherwise>
+                                                                            <a href="?page=${i}&size=${pageSize}&search=${param.search}" class="pagination-btn">${i}</a>
+                                                                        </c:otherwise>
+                                                                    </c:choose>
+                                                                </c:if>
+                                                            </c:forEach>
+                                                            
+                                                            <!-- Hiển thị dấu ... nếu cần -->
+                                                            <c:if test="${currentPage < totalPages - 2}">
+                                                                <span class="pagination-ellipsis">...</span>
+                                                            </c:if>
+                                                            
+                                                            <!-- Luôn hiển thị trang cuối -->
+                                                            <c:if test="${totalPages > 1}">
+                                                                <c:choose>
+                                                                    <c:when test="${currentPage == totalPages}">
+                                                                        <span class="pagination-current">${totalPages}</span>
+                                                                    </c:when>
+                                                                    <c:otherwise>
+                                                                        <a href="?page=${totalPages}&size=${pageSize}&search=${param.search}" class="pagination-btn">${totalPages}</a>
+                                                                    </c:otherwise>
+                                                                </c:choose>
+                                                            </c:if>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                    
+                                                    <!-- Nút Next -->
+                                                    <c:if test="${currentPage < totalPages}">
+                                                        <a href="?page=${currentPage + 1}&size=${pageSize}&search=${param.search}" class="pagination-btn pagination-arrow">
+                                                            <i class="fa fa-chevron-right"></i>
+                                                        </a>
+                                                    </c:if>
+                                                </div>
+                                            </div>
+                                        </c:if>
+                                    </c:otherwise>
+                                </c:choose>
                             </div>
                         </div>
                     </div>
-                    <!-- Bảng 2: Danh sách Tutor-Subject với UserName -->
+                    
+                    <!-- Bảng 2: Danh sách Tutor-Subject -->
                     <div class="col-lg-12 m-b30">
                         <div class="widget-box">
                             <div class="wc-title">
                                 <h4><fmt:message key="tutor_subject_list"/></h4>
                             </div>
+                            
                             <div class="widget-inner">
-                                <table>
+                                <table id="tutorSubjectTable">
                                     <thead>
                                         <tr>
                                             <th><fmt:message key="tutor_id"/></th>
@@ -372,6 +497,39 @@
                                 <c:if test="${empty tutorSubjectList}">
                                     <p class="error"><fmt:message key="no_tutor_subjects_found"/></p>
                                 </c:if>
+                                
+                                <!-- Phân trang cho Tutor-Subject List -->
+                                <c:if test="${totalTutorSubjectPages > 1}">
+                                    <div class="pagination-container">
+                                        <div class="pagination-controls">
+                                            <!-- Nút Previous -->
+                                            <c:if test="${currentTutorSubjectPage > 1}">
+                                                <a href="?tutorPage=${currentTutorSubjectPage - 1}&tutorSize=${tutorSubjectPageSize}" class="pagination-btn pagination-arrow">
+                                                    <i class="fa fa-chevron-left"></i>
+                                                </a>
+                                            </c:if>
+                                            
+                                            <!-- Các số trang -->
+                                            <c:forEach var="i" begin="1" end="${totalTutorSubjectPages}">
+                                                <c:choose>
+                                                    <c:when test="${i == currentTutorSubjectPage}">
+                                                        <span class="pagination-current">${i}</span>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <a href="?tutorPage=${i}&tutorSize=${tutorSubjectPageSize}" class="pagination-btn">${i}</a>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </c:forEach>
+                                            
+                                            <!-- Nút Next -->
+                                            <c:if test="${currentTutorSubjectPage < totalTutorSubjectPages}">
+                                                <a href="?tutorPage=${currentTutorSubjectPage + 1}&tutorSize=${tutorSubjectPageSize}" class="pagination-btn pagination-arrow">
+                                                    <i class="fa fa-chevron-right"></i>
+                                                </a>
+                                            </c:if>
+                                        </div>
+                                    </div>
+                                </c:if>
                             </div>
                         </div>
                     </div>
@@ -383,23 +541,35 @@
 
         <!-- External JavaScripts -->
         <script src="${pageContext.request.contextPath}/assets/js/jquery.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/vendors/bootstrap/js/popper.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/vendors/bootstrap/js/bootstrap.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/vendors/bootstrap-select/bootstrap-select.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/vendors/magnific-popup/magnific-popup.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/vendors/counter/waypoints-min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/vendors/counter/counterup.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/vendors/imagesloaded/imagesloaded.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/vendors/masonry/masonry.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/vendors/masonry/filter.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/vendors/owl-carousel/owl.carousel.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/vendors/scroll/scrollbar.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/bootstrap.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets/js/functions.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/vendors/chart/chart.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/js/admin.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/vendors/calendar/moment.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/vendors/calendar/fullcalendar.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/vendors/switcher/switcher.js"></script>
+        
+        <!-- Script xử lý tìm kiếm -->
+        <script>
+            $(document).ready(function() {
+                // Tìm kiếm cho Subject List - Xử lý real-time search với delay
+                let searchTimeout;
+                
+                $('#subjectSearch').on('input', function() {
+                    const searchTerm = $(this).val().toLowerCase();
+                    
+                    // Clear timeout cũ
+                    clearTimeout(searchTimeout);
+                    
+                    // Nếu có search term, đợi 500ms rồi submit form
+                    if (searchTerm.trim() !== '') {
+                        searchTimeout = setTimeout(function() {
+                            // Submit form để tìm kiếm trong toàn bộ database
+                            $('#subjectSearch').closest('form').submit();
+                        }, 500);
+                    } else {
+                        // Nếu xóa hết search term, reload trang để hiển thị lại pagination
+                        if (window.location.search.includes('search=')) {
+                            window.location.href = window.location.pathname;
+                        }
+                    }
+                });
+            });
+        </script>
     </body>
 </html>

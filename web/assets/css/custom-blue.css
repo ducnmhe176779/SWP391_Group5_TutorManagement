@@ -124,6 +124,28 @@ thead td {
     color: white !important;
 }
 
+/* Staff specific table styling - HIGHEST PRIORITY */
+.staff-table thead th,
+.staff-table thead td,
+.staff .widget-box table thead th,
+.staff .widget-box table thead td,
+.staff .widget-inner table thead th,
+.staff .widget-inner table thead td,
+.staff table thead th,
+.staff table thead td {
+    background-color: #1e40af !important;
+    color: white !important;
+    border-color: #1e40af !important;
+}
+
+/* Override any staff page specific colors */
+.staff *[style*="background-color: #4c1864"],
+.staff *[style*="background-color: #4d0a91"],
+.staff *[style*="background-color: #6f42c1"],
+.staff *[style*="background-color: #8e44ad"] {
+    background-color: #1e40af !important;
+}
+
 /* Override any remaining colors */
 *[style*="background-color: #4c1864"],
 *[style*="background-color: #4d0a91"],
@@ -131,6 +153,25 @@ thead td {
 *[style*="background-color: #8e44ad"],
 *[style*="background-color: #f7b205"] {
     background-color: #1e40af !important;
+}
+
+/* Force ALL purple elements to be blue - ULTIMATE OVERRIDE */
+*[style*="#4c1864"],
+*[style*="#4d0a91"],
+*[style*="#6f42c1"],
+*[style*="#8e44ad"],
+*[style*="#8862B9"],
+*[style*="#9c27b0"],
+*[style*="#673ab7"],
+*[style*="#3f51b5"] {
+    background-color: #1e40af !important;
+}
+
+/* Override any CSS variables or custom properties */
+:root {
+    --primary-color: #1e40af !important;
+    --secondary-color: #3b82f6 !important;
+    --accent-color: #1e40af !important;
 }
 
 /* Ensure buttons in action columns are blue */
@@ -144,4 +185,30 @@ thead td {
 .action-links button:hover {
     background-color: #3b82f6 !important;
     color: white !important;
+}
+
+/* Staff subject list specific overrides */
+.staff .widget-box .wc-title .btn,
+.staff .widget-box .wc-title button,
+.staff .widget-inner .btn,
+.staff .widget-inner button {
+    background-color: #1e40af !important;
+    color: white !important;
+    border-color: #1e40af !important;
+}
+
+.staff .widget-box .wc-title .btn:hover,
+.staff .widget-box .wc-title button:hover,
+.staff .widget-inner .btn:hover,
+.staff .widget-inner button:hover {
+    background-color: #3b82f6 !important;
+    color: white !important;
+    border-color: #3b82f6 !important;
+}
+
+/* Override any remaining purple in staff pages */
+.staff *[style*="purple"],
+.staff *[style*="violet"],
+.staff *[style*="indigo"] {
+    background-color: #1e40af !important;
 }

@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DFD - Tutor Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .diagram-container {
+            padding: 40px;
+            position: relative;
+            min-height: 600px;
+        }
+        
+        .system-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.1em;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+        
+        .entity {
+            position: absolute;
+            width: 120px;
+            height: 80px;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .entity:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .entity.user { top: 50px; left: 50px; }
+        .entity.tutor { top: 50px; right: 50px; }
+        .entity.guest { top: 150px; right: 50px; }
+        .entity.admin { top: 250px; right: 50px; }
+        .entity.staff { top: 350px; right: 50px; }
+        .entity.parent { top: 450px; right: 50px; }
+        
+        .arrow {
+            position: absolute;
+            height: 2px;
+            background: #333;
+            transform-origin: left center;
+        }
+        
+        .arrow::after {
+            content: '';
+            position: absolute;
+            right: -10px;
+            top: -4px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid #333;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+        }
+        
+        .arrow-label {
+            position: absolute;
+            background: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            color: #333;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            white-space: nowrap;
+        }
+        
+        /* User arrows */
+        .arrow.user-login {
+            width: 120px;
+            top: 90px;
+            left: 170px;
+            transform: rotate(45deg);
+        }
+        .arrow.user-login .arrow-label {
+            top: -25px;
+            left: 20px;
+        }
+        
+        .arrow.user-search {
+            width: 100px;
+            top: 110px;
+            left: 200px;
+            transform: rotate(30deg);
+        }
+        .arrow.user-search .arrow-label {
+            top: -25px;
+            left: 10px;
+        }
+        
+        .arrow.user-booking {
+            width: 80px;
+            top: 130px;
+            left: 230px;
+            transform: rotate(15deg);
+        }
+        .arrow.user-booking .arrow-label {
+            top: -25px;
+            left: 0px;
+        }
+        
+        .arrow.user-payment {
+            width: 60px;
+            top: 150px;
+            left: 260px;
+            transform: rotate(5deg);
+        }
+        .arrow.user-payment .arrow-label {
+            top: -25px;
+            left: -10px;
+        }
+        
+        /* System to User arrows */
+        .arrow.system-tutor-list {
+            width: 120px;
+            top: 90px;
+            left: 170px;
+            transform: rotate(45deg);
+            background: #28a745;
+        }
+        .arrow.system-tutor-list::after {
+            border-left-color: #28a745;
+        }
+        .arrow.system-tutor-list .arrow-label {
+            top: -25px;
+            left: 20px;
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .arrow.system-booking-confirm {
+            width: 100px;
+            top: 110px;
+            left: 200px;
+            transform: rotate(30deg);
+            background: #28a745;
+        }
+        .arrow.system-booking-confirm::after {
+            border-left-color: #28a745;
+        }
+        .arrow.system-booking-confirm .arrow-label {
+            top: -25px;
+            left: 10px;
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .arrow.system-payment-receipt {
+            width: 80px;
+            top: 130px;
+            left: 230px;
+            transform: rotate(15deg);
+            background: #28a745;
+        }
+        .arrow.system-payment-receipt::after {
+            border-left-color: #28a745;
+        }
+        .arrow.system-payment-receipt .arrow-label {
+            top: -25px;
+            left: 0px;
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        /* Tutor arrows */
+        .arrow.tutor-booking {
+            width: 120px;
+            top: 90px;
+            right: 170px;
+            transform: rotate(-45deg);
+        }
+        .arrow.tutor-booking .arrow-label {
+            top: -25px;
+            right: 20px;
+        }
+        
+        .arrow.tutor-cv {
+            width: 100px;
+            top: 110px;
+            right: 200px;
+            transform: rotate(-30deg);
+        }
+        .arrow.tutor-cv .arrow-label {
+            top: -25px;
+            right: 10px;
+        }
+        
+        .arrow.tutor-schedule {
+            width: 80px;
+            top: 130px;
+            right: 230px;
+            transform: rotate(-15deg);
+        }
+        .arrow.tutor-schedule .arrow-label {
+            top: -25px;
+            right: 0px;
+        }
+        
+        .arrow.tutor-withdrawal {
+            width: 60px;
+            top: 150px;
+            right: 260px;
+            transform: rotate(-5deg);
+        }
+        .arrow.tutor-withdrawal .arrow-label {
+            top: -25px;
+            right: -10px;
+        }
+        
+        /* Guest arrows */
+        .arrow.guest-view {
+            width: 100px;
+            top: 190px;
+            right: 150px;
+            transform: rotate(-15deg);
+        }
+        .arrow.guest-view .arrow-label {
+            top: -25px;
+            right: 10px;
+        }
+        
+        .arrow.system-subject-list {
+            width: 100px;
+            top: 190px;
+            right: 150px;
+            transform: rotate(-15deg);
+            background: #28a745;
+        }
+        .arrow.system-subject-list::after {
+            border-left-color: #28a745;
+        }
+        .arrow.system-subject-list .arrow-label {
+            top: -25px;
+            right: 10px;
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        /* Admin arrows */
+        .arrow.admin-staff-manage {
+            width: 100px;
+            top: 290px;
+            right: 150px;
+            transform: rotate(-15deg);
+        }
+        .arrow.admin-staff-manage .arrow-label {
+            top: -25px;
+            right: 10px;
+        }
+        
+        .arrow.admin-blog-manage {
+            width: 80px;
+            top: 310px;
+            right: 180px;
+            transform: rotate(-10deg);
+        }
+        .arrow.admin-blog-manage .arrow-label {
+            top: -25px;
+            right: 0px;
+        }
+        
+        .arrow.system-staff-profile {
+            width: 100px;
+            top: 290px;
+            right: 150px;
+            transform: rotate(-15deg);
+            background: #28a745;
+        }
+        .arrow.system-staff-profile::after {
+            border-left-color: #28a745;
+        }
+        .arrow.system-staff-profile .arrow-label {
+            top: -25px;
+            right: 10px;
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .arrow.system-transaction-report {
+            width: 80px;
+            top: 310px;
+            right: 180px;
+            transform: rotate(-10deg);
+            background: #28a745;
+        }
+        .arrow.system-transaction-report::after {
+            border-left-color: #28a745;
+        }
+        .arrow.system-transaction-report .arrow-label {
+            top: -25px;
+            right: 0px;
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        /* Staff arrows */
+        .arrow.staff-blog {
+            width: 80px;
+            top: 390px;
+            right: 180px;
+            transform: rotate(-10deg);
+        }
+        .arrow.staff-blog .arrow-label {
+            top: -25px;
+            right: 0px;
+        }
+        
+        .arrow.staff-cv-approval {
+            width: 100px;
+            top: 410px;
+            right: 150px;
+            transform: rotate(-15deg);
+        }
+        .arrow.staff-cv-approval .arrow-label {
+            top: -25px;
+            right: 10px;
+        }
+        
+        /* Parent arrows */
+        .arrow.parent-progress {
+            width: 80px;
+            top: 490px;
+            right: 180px;
+            transform: rotate(-10deg);
+        }
+        .arrow.parent-progress .arrow-label {
+            top: -25px;
+            right: 0px;
+        }
+        
+        .arrow.parent-evaluation {
+            width: 100px;
+            top: 510px;
+            right: 150px;
+            transform: rotate(-15deg);
+        }
+        .arrow.parent-evaluation .arrow-label {
+            top: -25px;
+            right: 10px;
+        }
+        
+        .legend {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .legend h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .legend-color.input { background: #ff9a9e; }
+        .legend-color.output { background: #28a745; }
+        
+        .download-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            margin: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        .controls {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        @media print {
+            body { background: white; }
+            .container { box-shadow: none; }
+            .download-btn, .controls { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Data Flow Diagram</h1>
+            <p>Tutor Management System - Phiên bản gọn gàng</p>
+        </div>
+        
+        <div class="controls">
+            <button onclick="window.print()" class="download-btn">🖨️ In/PDF</button>
+            <button onclick="downloadAsImage()" class="download-btn">📷 Tải ảnh</button>
+        </div>
+        
+        <div class="diagram-container">
+            <!-- Central System -->
+            <div class="system-center">
+                Tutor Management<br>System
+            </div>
+            
+            <!-- External Entities -->
+            <div class="entity user">User</div>
+            <div class="entity tutor">Tutor</div>
+            <div class="entity guest">Guest</div>
+            <div class="entity admin">Admin</div>
+            <div class="entity staff">Staff</div>
+            <div class="entity parent">Parent</div>
+            
+            <!-- Data Flow Arrows -->
+            <!-- User to System -->
+            <div class="arrow user-login">
+                <div class="arrow-label">Login Info</div>
+            </div>
+            <div class="arrow user-search">
+                <div class="arrow-label">Search Request</div>
+            </div>
+            <div class="arrow user-booking">
+                <div class="arrow-label">Booking Request</div>
+            </div>
+            <div class="arrow user-payment">
+                <div class="arrow-label">Payment Info</div>
+            </div>
+            
+            <!-- System to User -->
+            <div class="arrow system-tutor-list">
+                <div class="arrow-label">Tutor List</div>
+            </div>
+            <div class="arrow system-booking-confirm">
+                <div class="arrow-label">Booking Confirmation</div>
+            </div>
+            <div class="arrow system-payment-receipt">
+                <div class="arrow-label">Payment Receipt</div>
+            </div>
+            
+            <!-- Tutor to System -->
+            <div class="arrow tutor-booking">
+                <div class="arrow-label">Booking Info</div>
+            </div>
+            <div class="arrow tutor-cv">
+                <div class="arrow-label">CV</div>
+            </div>
+            <div class="arrow tutor-schedule">
+                <div class="arrow-label">Schedule Info</div>
+            </div>
+            <div class="arrow tutor-withdrawal">
+                <div class="arrow-label">Withdrawal Request</div>
+            </div>
+            
+            <!-- Guest to System -->
+            <div class="arrow guest-view">
+                <div class="arrow-label">View Request</div>
+            </div>
+            
+            <!-- System to Guest -->
+            <div class="arrow system-subject-list">
+                <div class="arrow-label">Subject List</div>
+            </div>
+            
+            <!-- Admin to System -->
+            <div class="arrow admin-staff-manage">
+                <div class="arrow-label">Staff/Tutor Management</div>
+            </div>
+            <div class="arrow admin-blog-manage">
+                <div class="arrow-label">Blog Management</div>
+            </div>
+            
+            <!-- System to Admin -->
+            <div class="arrow system-staff-profile">
+                <div class="arrow-label">Staff & Tutor Profile</div>
+            </div>
+            <div class="arrow system-transaction-report">
+                <div class="arrow-label">Transaction Report</div>
+            </div>
+            
+            <!-- Staff to System -->
+            <div class="arrow staff-blog">
+                <div class="arrow-label">Blog Request</div>
+            </div>
+            <div class="arrow staff-cv-approval">
+                <div class="arrow-label">CV Approval Request</div>
+            </div>
+            
+            <!-- Parent to System -->
+            <div class="arrow parent-progress">
+                <div class="arrow-label">View Learning Progress</div>
+            </div>
+            <div class="arrow parent-evaluation">
+                <div class="arrow-label">Teaching Evaluation</div>
+            </div>
+        </div>
+        
+        <div class="legend">
+            <h3>Chú thích:</h3>
+            <div class="legend-item">
+                <div class="legend-color input"></div>
+                <span>Mũi tên đen: Dữ liệu đầu vào từ User/Tutor/Guest/Admin/Staff/Parent</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color output"></div>
+                <span>Mũi tên xanh: Dữ liệu đầu ra từ System</span>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function downloadAsImage() {
+            // Sử dụng html2canvas để chụp màn hình
+            if (typeof html2canvas !== 'undefined') {
+                html2canvas(document.querySelector('.container')).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = 'tutor-management-system-dfd.png';
+                    link.href = canvas.toDataURL();
+                    link.click();
+                });
+            } else {
+                // Nếu không có html2canvas, hướng dẫn người dùng
+                alert('Để tải ảnh, hãy:\n1. Nhấn F12 để mở Developer Tools\n2. Nhấn Ctrl+Shift+P\n3. Gõ "Screenshot" và chọn "Capture full size screenshot"\n4. Ảnh sẽ được tải xuống tự động');
+            }
+        }
+        
+        // Thêm hiệu ứng hover cho các entity
+        document.querySelectorAll('.entity').forEach(entity => {
+            entity.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.1)';
+            });
+            
+            entity.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+    
+    <!-- Thêm html2canvas để hỗ trợ tải ảnh -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</body>
+</html>
+

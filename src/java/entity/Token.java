@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 /**
  *
- * @author Heizxje
+ * @author DatAnh
  */
 public class Token {
     private int id;

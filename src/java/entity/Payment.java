@@ -6,7 +6,7 @@ package entity;
 
 /**
  *
- * @author minht
+ * @author DatAnh
  */
 import java.util.Date;
 
