@@ -6,7 +6,7 @@ package entity;
 
 /**
  *
- * @author Heizxje
+ * @author DatAnh
  */
 public class GoogleAccount {
     private String  id, email, name, first_name, given_name, family_name, picture;

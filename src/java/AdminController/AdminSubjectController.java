@@ -108,59 +108,127 @@ public class AdminSubjectController extends HttpServlet {
         }
     }
 
-    // Xử lý hiển thị danh sách subject
+    // Xử lý hiển thị danh sách subject với pagination và search
     private void handleListSubject(HttpServletRequest request, HttpServletResponse response, DAOSubject dao)
             throws ServletException, IOException {
         try {
-            // Lấy danh sách từ bảng Subject
-            List<Subject> subjectList = dao.getAllSubjects();
-            if (subjectList == null) {
-                subjectList = new ArrayList<>();
-            }
+            // Lấy tham số pagination và search
+            String pageStr = request.getParameter("page");
+            String sizeStr = request.getParameter("size");
+            String searchTerm = request.getParameter("search");
+            String sortField = request.getParameter("sortField");
+            String sortOrder = request.getParameter("sortOrder");
             
-            // Phân trang
-            int page = 1;
-            int recordsPerPage = 5;
+            int currentPage = 1;
+            int pageSize = 5; // Mỗi trang hiển thị 5 môn học
             
-            try {
-                String pageStr = request.getParameter("page");
-                if (pageStr != null && !pageStr.isEmpty()) {
-                    page = Integer.parseInt(pageStr);
+            if (pageStr != null && !pageStr.isEmpty()) {
+                try {
+                    currentPage = Integer.parseInt(pageStr);
+                    if (currentPage < 1) currentPage = 1;
+                } catch (NumberFormatException e) {
+                    currentPage = 1;
                 }
-            } catch (NumberFormatException e) {
-                page = 1;
             }
             
-            // Tính toán phân trang
-            int totalRecords = subjectList.size();
-            int totalPages = (int) Math.ceil((double) totalRecords / recordsPerPage);
-            
-            // Đảm bảo page không vượt quá giới hạn
-            if (page > totalPages) {
-                page = totalPages;
-            }
-            if (page < 1) {
-                page = 1;
+            if (sizeStr != null && !sizeStr.isEmpty()) {
+                try {
+                    pageSize = Integer.parseInt(sizeStr);
+                    if (pageSize < 1) pageSize = 5;
+                } catch (NumberFormatException e) {
+                    pageSize = 5;
+                }
             }
             
-            // Lấy danh sách cho trang hiện tại
-            int startIndex = (page - 1) * recordsPerPage;
-            int endIndex = Math.min(startIndex + recordsPerPage, totalRecords);
-            
-            List<Subject> paginatedSubjectList = new ArrayList<>();
-            if (startIndex < totalRecords) {
-                paginatedSubjectList = subjectList.subList(startIndex, endIndex);
+            // Kiểm tra xem có đang search không
+            boolean isSearchMode = false;
+            if (searchTerm != null && !searchTerm.trim().isEmpty()) {
+                isSearchMode = true;
+                // Khi search, reset về trang 1 để hiển thị kết quả
+                currentPage = 1;
+                System.out.println("DEBUG: Search mode activated with term: " + searchTerm + ", reset to page 1");
             }
             
-            // Set attributes cho phân trang
-            request.setAttribute("subjectList", paginatedSubjectList);
-            request.setAttribute("currentPage", page);
+            // Kiểm tra kết nối database
+            if (!dao.testConnection()) {
+                System.out.println("DEBUG: Database connection failed");
+                request.setAttribute("error", "Không thể kết nối đến cơ sở dữ liệu");
+                request.getRequestDispatcher("/error.jsp").forward(request, response);
+                return;
+            }
+            
+            // Kiểm tra bảng Subject
+            if (!dao.checkSubjectTable()) {
+                System.out.println("DEBUG: Subject table check failed");
+                request.setAttribute("error", "Bảng Subject không tồn tại hoặc không có dữ liệu");
+                request.getRequestDispatcher("/error.jsp").forward(request, response);
+                return;
+            }
+            
+            List<Subject> subjectList;
+            int totalSubjects;
+            int totalPages;
+            
+            if (isSearchMode) {
+                // Chế độ search: Lấy tất cả subjects và filter theo search term
+                List<Subject> allSubjects = dao.getAllSubjects();
+                if (allSubjects == null) {
+                    allSubjects = new ArrayList<>();
+                }
+                
+                // Filter theo search term (tìm theo tên môn học và mô tả)
+                List<Subject> filteredSubjects = new ArrayList<>();
+                String searchLower = searchTerm.toLowerCase();
+                for (Subject subject : allSubjects) {
+                    if (subject.getSubjectName().toLowerCase().contains(searchLower) ||
+                        subject.getDescription().toLowerCase().contains(searchLower)) {
+                        filteredSubjects.add(subject);
+                    }
+                }
+                
+                subjectList = filteredSubjects;
+                totalSubjects = filteredSubjects.size();
+                totalPages = 1; // Không phân trang khi search
+                
+                System.out.println("DEBUG: Search mode - Found " + totalSubjects + " subjects matching '" + searchTerm + "'");
+            } else {
+                // Chế độ bình thường: Sử dụng pagination
+                totalSubjects = dao.getTotalSubjects();
+                if (totalSubjects == 0) {
+                    totalSubjects = 0;
+                    totalPages = 0;
+                    subjectList = new ArrayList<>();
+                } else {
+                    totalPages = (int) Math.ceil((double) totalSubjects / pageSize);
+                    if (currentPage > totalPages) {
+                        currentPage = totalPages;
+                    }
+                    
+                    subjectList = dao.getSubjectsByPage(currentPage, pageSize);
+                    if (subjectList == null || subjectList.isEmpty()) {
+                        // Fallback: nếu getSubjectsByPage không hoạt động, lấy tất cả
+                        System.out.println("DEBUG: getSubjectsByPage returned null/empty, falling back to getAllSubjects");
+                        subjectList = dao.getAllSubjects();
+                        if (subjectList == null) {
+                            subjectList = new ArrayList<>();
+                        }
+                    }
+                }
+                
+                System.out.println("DEBUG: Normal mode - Total: " + totalSubjects + ", Pages: " + totalPages + ", Current: " + currentPage);
+            }
+            
+            // Set attributes cho JSP
+            request.setAttribute("subjectList", subjectList);
+            request.setAttribute("currentPage", currentPage);
             request.setAttribute("totalPages", totalPages);
-            request.setAttribute("totalRecords", totalRecords);
-            request.setAttribute("recordsPerPage", recordsPerPage);
-            request.setAttribute("startIndex", startIndex + 1);
-            request.setAttribute("endIndex", endIndex);
-
+            request.setAttribute("totalSubjects", totalSubjects);
+            request.setAttribute("pageSize", pageSize);
+            request.setAttribute("isSearchMode", isSearchMode);
+            request.setAttribute("searchTerm", searchTerm);
+            request.setAttribute("sortField", sortField);
+            request.setAttribute("sortOrder", sortOrder);
+            
             // Lấy danh sách Tutor-Subject
             List<Subject> tutorSubjectList = dao.getAllTutorSubjects();
             if (tutorSubjectList == null) {
@@ -178,10 +246,12 @@ public class AdminSubjectController extends HttpServlet {
             request.setAttribute("tutorSubjectList", new ArrayList<>());
             request.setAttribute("currentPage", 1);
             request.setAttribute("totalPages", 0);
-            request.setAttribute("totalRecords", 0);
-            request.setAttribute("recordsPerPage", 5);
-            request.setAttribute("startIndex", 0);
-            request.setAttribute("endIndex", 0);
+            request.setAttribute("totalSubjects", 0);
+            request.setAttribute("pageSize", 5);
+            request.setAttribute("isSearchMode", false);
+            request.setAttribute("searchTerm", "");
+            request.setAttribute("sortField", "subjectID");
+            request.setAttribute("sortOrder", "asc");
             request.getRequestDispatcher("/admin/manageSubject.jsp").forward(request, response);
         }
     }

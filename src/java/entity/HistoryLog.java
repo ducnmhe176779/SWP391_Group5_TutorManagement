@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 
 /**
  *
- * @author Heizxje
+ * @author DatAnh
  */
 public class HistoryLog {
 

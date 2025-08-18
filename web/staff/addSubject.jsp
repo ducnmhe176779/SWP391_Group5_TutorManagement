@@ -35,8 +35,11 @@
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/style.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/color/color-1.css">
+        
+        <!-- Custom Blue Color Override -->
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/custom-blue.css">
     </head>
-    <body class="ttr-opened-sidebar ttr-pinned-sidebar">
+    <body class="ttr-opened-sidebar ttr-pinned-sidebar staff">
         <%
             User user = (User) session.getAttribute("user");
             if (user == null) {

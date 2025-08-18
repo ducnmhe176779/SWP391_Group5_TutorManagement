@@ -15,12 +15,13 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  *
- * @author minht
+ * @author DatAnh
  */
 @WebServlet(name = "SubjectController", urlPatterns = {"/staff/SubjectController"})
 public class SubjectController extends HttpServlet {
@@ -44,6 +45,24 @@ public class SubjectController extends HttpServlet {
         }
 
         DAOSubject dao = new DAOSubject();
+        
+        // Test database connection
+        if (!dao.testConnection()) {
+            System.out.println("ERROR: Database connection failed!");
+            HttpSession session = request.getSession();
+            session.setAttribute("error", "Không thể kết nối database. Vui lòng kiểm tra kết nối.");
+            response.sendRedirect("error-404.jsp");
+            return;
+        }
+        
+        // Check Subject table
+        if (!dao.checkSubjectTable()) {
+            System.out.println("ERROR: Subject table check failed!");
+            HttpSession session = request.getSession();
+            session.setAttribute("error", "Bảng Subject không tồn tại hoặc không thể truy cập.");
+            response.sendRedirect("error-404.jsp");
+            return;
+        }
 
         switch (service) {
             case "addSubject":
@@ -100,13 +119,128 @@ public class SubjectController extends HttpServlet {
         }
     }
 
-    // Xử lý hiển thị danh sách subject
+    // Xử lý hiển thị danh sách subject với pagination và search
     private void handleListSubject(HttpServletRequest request, HttpServletResponse response, DAOSubject dao)
             throws ServletException, IOException {
         try {
-            // Lấy danh sách từ bảng Subject
-            List<Subject> subjectList = dao.getAllSubjects();
+            // Lấy tham số pagination và search
+            String pageStr = request.getParameter("page");
+            String sizeStr = request.getParameter("size");
+            String searchTerm = request.getParameter("search");
+            String sortField = request.getParameter("sortField");
+            String sortOrder = request.getParameter("sortOrder");
+            
+            int currentPage = 1;
+            int pageSize = 5; // Mỗi trang hiển thị 5 môn học
+            boolean isSearchMode = false; // Flag để biết có đang search không
+            
+            if (pageStr != null && !pageStr.isEmpty()) {
+                try {
+                    currentPage = Integer.parseInt(pageStr);
+                    if (currentPage < 1) currentPage = 1;
+                } catch (NumberFormatException e) {
+                    currentPage = 1;
+                }
+            }
+            
+            if (sizeStr != null && !sizeStr.isEmpty()) {
+                try {
+                    pageSize = Integer.parseInt(sizeStr);
+                    if (pageSize < 1) pageSize = 5;
+                } catch (NumberFormatException e) {
+                    pageSize = 5;
+                }
+            }
+            
+            // Kiểm tra xem có đang search không
+            if (searchTerm != null && !searchTerm.trim().isEmpty()) {
+                isSearchMode = true;
+                // Khi search, reset về trang 1 để hiển thị kết quả
+                currentPage = 1;
+                System.out.println("DEBUG: Search mode activated with term: " + searchTerm + ", reset to page 1");
+            }
+            
+            List<Subject> subjectList;
+            int totalSubjects;
+            int totalPages;
+            
+            if (isSearchMode) {
+                // CHẾ ĐỘ SEARCH: Lấy tất cả subjects và filter theo search term
+                System.out.println("DEBUG: Search mode - getting all subjects for filtering");
+                subjectList = dao.getAllSubjects();
+                
+                if (subjectList != null && !subjectList.isEmpty()) {
+                    // Filter theo search term (tìm theo tên môn học và mô tả)
+                    List<Subject> filteredList = new ArrayList<>();
+                    String searchLower = searchTerm.toLowerCase().trim();
+                    
+                    for (Subject subject : subjectList) {
+                        if (subject.getSubjectName() != null && 
+                            subject.getSubjectName().toLowerCase().contains(searchLower)) {
+                            filteredList.add(subject);
+                        } else if (subject.getDescription() != null && 
+                                   subject.getDescription().toLowerCase().contains(searchLower)) {
+                            filteredList.add(subject);
+                        }
+                    }
+                    
+                    subjectList = filteredList;
+                    System.out.println("DEBUG: Search results: " + subjectList.size() + " subjects found");
+                }
+                
+                // Trong chế độ search, không phân trang
+                totalSubjects = subjectList != null ? subjectList.size() : 0;
+                totalPages = 1;
+                currentPage = 1;
+                
+            } else {
+                // CHẾ ĐỘ BÌNH THƯỜNG: Sử dụng pagination
+                System.out.println("DEBUG: Normal mode - using pagination");
+                
+                // Lấy tổng số môn học
+                totalSubjects = dao.getTotalSubjects();
+                totalPages = (int) Math.ceil((double) totalSubjects / pageSize);
+                
+                // Đảm bảo currentPage không vượt quá totalPages
+                if (currentPage > totalPages && totalPages > 0) {
+                    currentPage = totalPages;
+                }
+                
+                // Lấy danh sách môn học theo trang
+                subjectList = dao.getSubjectsByPage(currentPage, pageSize);
+                
+                // Nếu pagination không hoạt động, lấy tất cả subjects
+                if (subjectList == null || subjectList.isEmpty()) {
+                    System.out.println("DEBUG: Pagination failed, trying to get all subjects");
+                    subjectList = dao.getAllSubjects();
+                    
+                    // Nếu vẫn không có dữ liệu, set default values
+                    if (subjectList == null || subjectList.isEmpty()) {
+                        totalSubjects = 0;
+                        totalPages = 0;
+                        currentPage = 1;
+                    } else {
+                        totalSubjects = subjectList.size();
+                        totalPages = 1;
+                        currentPage = 1;
+                    }
+                }
+            }
+            
+            System.out.println("DEBUG: Final result - totalSubjects=" + totalSubjects + 
+                             ", totalPages=" + totalPages + ", currentPage=" + currentPage + 
+                             ", subjectList size=" + (subjectList != null ? subjectList.size() : "null"));
+            
+            // Truyền tất cả parameters để JSP có thể giữ nguyên search và sort
             request.setAttribute("subjectList", subjectList);
+            request.setAttribute("currentPage", currentPage);
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("totalSubjects", totalSubjects);
+            request.setAttribute("pageSize", pageSize);
+            request.setAttribute("searchTerm", searchTerm);
+            request.setAttribute("sortField", sortField);
+            request.setAttribute("sortOrder", sortOrder);
+            request.setAttribute("isSearchMode", isSearchMode); // Flag để JSP biết có đang search không
 
             // Lấy danh sách Tutor-Subject
             List<Subject> tutorSubjectList = dao.getAllTutorSubjects();
