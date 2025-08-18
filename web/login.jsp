@@ -98,12 +98,12 @@
                                 <div class="col-lg-12 m-b30">
                                     <button name="submit" type="submit" value="Submit" class="btn button-md"><fmt:message key="login"/></button>
                                 </div>
-                                <div class="col-lg-12">
-                                    <h6><fmt:message key="login_with_social_media"/></h6>
+<!--                                <div class="col-lg-12">
+                                    <h6><fmtmessage key="login_with_social_media"/></h6>
                                     <div class="d-flex">
-                                        <a class="btn flex-fill m-l5 google" href="https://accounts.google.com/o/oauth2/auth?scope=email profile openid&redirect_uri=http://localhost:9999/SWP391_Group5_TutorManagement/login&response_type=code&client_id=918167236066-r8da2g0h2eh06buen60d3km6fqaecn1f.apps.googleusercontent.com&approval_prompt=force"><i class="fa fa-google"></i> Google</a>
+                                        <a class="btn flex-fill m-l5 google" href="https://accounts.google.com/o/oauth2/auth?scope=email profile openid&redirect_uri=http://localhost:8080/SWP391_Group5_TutorManagement/login&response_type=code&client_id=918167236066-r8da2g0h2eh06buen60d3km6fqaecn1f.apps.googleusercontent.com&approval_prompt=force"><i class="fa fa-google"></i> Google</a>
                                     </div>
-                                </div>
+                                </div>-->
                             </div>
                         </form>
                     </div>
