@@ -112,12 +112,32 @@ public class AdminSubjectController extends HttpServlet {
     private void handleListSubject(HttpServletRequest request, HttpServletResponse response, DAOSubject dao)
             throws ServletException, IOException {
         try {
+<<<<<<< HEAD
             // Lấy tham số pagination và search
             String pageStr = request.getParameter("page");
             String sizeStr = request.getParameter("size");
             String searchTerm = request.getParameter("search");
             String sortField = request.getParameter("sortField");
             String sortOrder = request.getParameter("sortOrder");
+=======
+            // Lấy tham số tìm kiếm
+            String searchTerm = request.getParameter("search");
+            List<Subject> subjectList;
+            
+            // Nếu có từ khóa tìm kiếm, thực hiện tìm kiếm
+            if (searchTerm != null && !searchTerm.trim().isEmpty()) {
+                subjectList = dao.searchSubjects(searchTerm.trim());
+                if (subjectList == null) {
+                    subjectList = new ArrayList<>();
+                }
+            } else {
+                // Lấy tất cả subjects nếu không có tìm kiếm
+                subjectList = dao.getAllSubjects();
+                if (subjectList == null) {
+                    subjectList = new ArrayList<>();
+                }
+            }
+>>>>>>> DatPA
             
             int currentPage = 1;
             int pageSize = 5; // Mỗi trang hiển thị 5 môn học
@@ -222,6 +242,7 @@ public class AdminSubjectController extends HttpServlet {
             request.setAttribute("subjectList", subjectList);
             request.setAttribute("currentPage", currentPage);
             request.setAttribute("totalPages", totalPages);
+<<<<<<< HEAD
             request.setAttribute("totalSubjects", totalSubjects);
             request.setAttribute("pageSize", pageSize);
             request.setAttribute("isSearchMode", isSearchMode);
@@ -233,7 +254,32 @@ public class AdminSubjectController extends HttpServlet {
             List<Subject> tutorSubjectList = dao.getAllTutorSubjects();
             if (tutorSubjectList == null) {
                 tutorSubjectList = new ArrayList<>();
+=======
+            request.setAttribute("totalRecords", totalRecords);
+            request.setAttribute("recordsPerPage", recordsPerPage);
+            request.setAttribute("startIndex", startIndex + 1);
+            request.setAttribute("endIndex", endIndex);
+
+            // Lấy tham số tìm kiếm tutor
+            String tutorSearchTerm = request.getParameter("tutorSearch");
+            List<Subject> tutorSubjectList;
+            
+            // Nếu có từ khóa tìm kiếm tutor, thực hiện tìm kiếm
+            if (tutorSearchTerm != null && !tutorSearchTerm.trim().isEmpty()) {
+                tutorSubjectList = dao.searchTutorSubjects(tutorSearchTerm.trim());
+                if (tutorSubjectList == null) {
+                    tutorSubjectList = new ArrayList<>();
+                }
+            } else {
+                // Lấy tất cả tutor subjects nếu không có tìm kiếm
+                tutorSubjectList = dao.getAllTutorSubjects();
+                if (tutorSubjectList == null) {
+                    tutorSubjectList = new ArrayList<>();
+                }
+>>>>>>> DatPA
             }
+            
+            // Set attributes cho tutor subjects (không có phân trang)
             request.setAttribute("tutorSubjectList", tutorSubjectList);
 
             request.getRequestDispatcher("/admin/manageSubject.jsp").forward(request, response);
@@ -241,6 +287,7 @@ public class AdminSubjectController extends HttpServlet {
             Logger.getLogger(AdminSubjectController.class.getName()).log(Level.SEVERE, "Database error", ex);
             HttpSession session = request.getSession();
             session.setAttribute("error", "Lỗi cơ sở dữ liệu: " + ex.getMessage());
+<<<<<<< HEAD
             // Nếu có lỗi, vẫn hiển thị trang với danh sách rỗng
             request.setAttribute("subjectList", new ArrayList<>());
             request.setAttribute("tutorSubjectList", new ArrayList<>());
@@ -252,6 +299,17 @@ public class AdminSubjectController extends HttpServlet {
             request.setAttribute("searchTerm", "");
             request.setAttribute("sortField", "subjectID");
             request.setAttribute("sortOrder", "asc");
+=======
+                         // Nếu có lỗi, vẫn hiển thị trang với danh sách rỗng
+             request.setAttribute("subjectList", new ArrayList<>());
+             request.setAttribute("tutorSubjectList", new ArrayList<>());
+             request.setAttribute("currentPage", 1);
+             request.setAttribute("totalPages", 0);
+             request.setAttribute("totalRecords", 0);
+             request.setAttribute("recordsPerPage", 5);
+             request.setAttribute("startIndex", 0);
+             request.setAttribute("endIndex", 0);
+>>>>>>> DatPA
             request.getRequestDispatcher("/admin/manageSubject.jsp").forward(request, response);
         }
     }

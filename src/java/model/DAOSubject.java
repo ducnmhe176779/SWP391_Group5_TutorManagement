@@ -223,6 +223,30 @@ public class DAOSubject extends DBConnect{
         return null;
     }
     
+    public List<Subject> searchSubjects(String searchTerm) throws SQLException {
+        List<Subject> subjects = new ArrayList<>();
+        String sql = "SELECT SubjectID, SubjectName, Description, Status FROM Subject " +
+                     "WHERE SubjectName LIKE ? OR Description LIKE ? " +
+                     "ORDER BY SubjectName";
+        
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            String searchPattern = "%" + searchTerm + "%";
+            ps.setString(1, searchPattern);
+            ps.setString(2, searchPattern);
+            
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                subjects.add(new Subject(
+                    rs.getInt("SubjectID"),
+                    rs.getString("SubjectName"),
+                    rs.getString("Description"),
+                    rs.getString("Status")
+                ));
+            }
+        }
+        return subjects;
+    }
+    
     public List<Subject> getAllTutorSubjects() throws SQLException {
         List<Subject> subjects = new ArrayList<>();
         String sql = """
@@ -235,6 +259,41 @@ public class DAOSubject extends DBConnect{
             """;
         try (Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
+            while (rs.next()) {
+                subjects.add(new Subject(
+                    rs.getInt("SubjectID"),
+                    rs.getString("SubjectName"),
+                    rs.getString("Description"),
+                    rs.getString("Status")
+                ));
+            }
+        }
+        return subjects;
+    }
+    
+    public List<Subject> searchTutorSubjects(String searchTerm) throws SQLException {
+        List<Subject> subjects = new ArrayList<>();
+        String sql = """
+            SELECT DISTINCT s.SubjectID, s.SubjectName, s.Description, s.Status
+            FROM Subject s
+            JOIN CV c ON s.SubjectID = c.SubjectId
+            JOIN Tutor t ON c.CVID = t.CVID
+            JOIN User u ON t.UserID = u.UserID
+            WHERE s.Status = 'Active' 
+            AND (s.SubjectID LIKE ? OR s.SubjectName LIKE ? OR s.Description LIKE ? 
+                 OR t.TutorID LIKE ? OR u.UserName LIKE ?)
+            ORDER BY s.SubjectName
+            """;
+        
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            String searchPattern = "%" + searchTerm + "%";
+            ps.setString(1, searchPattern);
+            ps.setString(2, searchPattern);
+            ps.setString(3, searchPattern);
+            ps.setString(4, searchPattern);
+            ps.setString(5, searchPattern);
+            
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 subjects.add(new Subject(
                     rs.getInt("SubjectID"),
