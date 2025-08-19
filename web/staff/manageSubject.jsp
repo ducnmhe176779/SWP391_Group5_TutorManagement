@@ -20,7 +20,7 @@
         <meta name="format-detection" content="telephone=no">
 
         <!-- FAVICONS ICON -->
-        <link rel="icon" href="${pageContext.request.contextPath}/error-404.jsp" type="image/x-icon" />
+        <link rel="icon" href="${pageContext.request.contextPath}/assets/images/favicon.ico" type="image/x-icon" />
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets/images/favicon.png" />
 
         <!-- PAGE TITLE -->
@@ -355,33 +355,18 @@
                                 <c:remove var="error" scope="session" />
                             </c:if>
                             
-                            <!-- Thanh tìm kiếm và sắp xếp -->
+                            <!-- Thanh tìm kiếm -->
                             <form method="GET" action="${pageContext.request.contextPath}/staff/SubjectController" style="margin-bottom: 20px;">
                                 <input type="hidden" name="service" value="listSubject">
                                 <input type="hidden" name="size" value="5">
                                 <div class="search-sort-container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
-                                    <!-- Tìm kiếm -->
                                     <div class="search-box" style="flex: 1; min-width: 250px;">
-                                        <input type="text" id="subjectSearch" name="search" placeholder="Tìm kiếm môn học..." 
+                                        <input type="text" id="subjectSearch" name="search" placeholder="Tìm kiếm môn học... (Tự động)"  
                                                value="${searchTerm != null ? searchTerm : ''}"
                                                style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
                                     </div>
-                                    
-                                    <!-- Sắp xếp -->
-                                    <div class="sort-controls" style="display: flex; gap: 15px; align-items: center; flex-wrap: nowrap;">
-                                        <label for="sortField" style="margin: 0; font-weight: normal; color: #333; font-family: Arial, sans-serif; font-size: 14px; line-height: 1.2; white-space: nowrap; display: inline-block; padding: 5px 0; margin-right: 10px;">Sắp xếp theo:</label>
-                                        <select id="sortField" name="sortField" style="padding: 10px 15px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; letter-spacing: 0.5px; min-width: 130px; text-rendering: optimizeLegibility;">
-                                            <option value="subjectID" ${sortField == 'subjectID' ? 'selected' : ''}>ID</option>
-                                            <option value="subjectName" ${sortField == 'subjectName' ? 'selected' : ''}>Tên môn học</option>
-                                            <option value="status" ${sortField == 'status' ? 'selected' : ''}>Trạng thái</option>
-                                        </select>
-                                        <select id="sortOrder" name="sortOrder" style="padding: 10px 15px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; letter-spacing: 0.5px; min-width: 100px; text-rendering: optimizeLegibility;">
-                                            <option value="asc" ${sortOrder == 'asc' ? 'selected' : ''}>Tăng dần</option>
-                                            <option value="desc" ${sortOrder == 'desc' ? 'selected' : ''}>Giảm dần</option>
-                                        </select>
-                                        <button type="submit" class="btn" style="margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 14px; line-height: 1.6; letter-spacing: 0.5px; text-rendering: optimizeLegibility; padding: 10px 20px; font-weight: 500;">Tìm kiếm</button>
-                                        <button type="button" id="resetBtn" class="btn" style="margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 14px; line-height: 1.6; letter-spacing: 0.5px; text-rendering: optimizeLegibility; padding: 10px 20px; font-weight: 500;">Reset</button>
-                                    </div>
+                                    <button type="submit" class="btn" style="margin: 0; padding: 10px 20px; font-weight: 500;">Tìm kiếm</button>
+                                    <button type="button" id="resetBtn" class="btn" style="margin: 0; padding: 10px 20px; font-weight: 500;">Reset</button>
                                 </div>
                             </form>
                             
@@ -397,6 +382,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        <c:set var="deactivateMsg"><fmt:message key="confirm_deactivate_subject"/></c:set>
                                         <c:forEach var="subject" items="${subjectList}">
                                             <tr>
                                                 <td>${subject.subjectID}</td>
@@ -406,7 +392,7 @@
                                                 <td class="action-links">
                                                     <a href="${pageContext.request.contextPath}/staff/SubjectController?service=updateSubject&subjectID=${subject.subjectID}" class="btn"><fmt:message key="update"/></a>
                                                     <c:if test="${subject.status == 'Active'}">
-                                                        <a href="${pageContext.request.contextPath}/staff/SubjectController?service=deleteSubject&subjectID=${subject.subjectID}" class="btn" onclick="return confirm('<fmt:message key="confirm_deactivate_subject"/> ${subject.subjectID}?')"><fmt:message key="deactivate"/></a>
+                                                        <a href="${pageContext.request.contextPath}/staff/SubjectController?service=deleteSubject&subjectID=${subject.subjectID}" class="btn" onclick="return confirm('${deactivateMsg} ${subject.subjectID}?')"><fmt:message key="deactivate"/></a>
                                                     </c:if>
                                                 </td>
                                             </tr>
@@ -419,7 +405,7 @@
                                  
                                  <!-- Phân trang cho Subject List -->
                                  <c:choose>
-                                     <c:when test="${isSearchMode}">
+                                     <c:when test="${not empty searchTerm}">
                                          <!-- Chế độ search: Hiển thị tất cả kết quả tìm kiếm -->
                                          <div class="search-results-info">
                                              <span>Kết quả tìm kiếm: ${fn:length(subjectList)} môn học phù hợp với "${searchTerm}"</span>
@@ -433,7 +419,7 @@
                                                   <div class="pagination-controls">
                                                       <!-- Nút Previous -->
                                                       <c:if test="${currentPage > 1}">
-                                                          <a href="?page=${currentPage - 1}&size=${pageSize}&search=${param.search}&sortField=${param.sortField}&sortOrder=${param.sortOrder}" class="pagination-btn pagination-arrow">
+                                                          <a href="?page=${currentPage - 1}&size=${pageSize}&search=${param.search}" class="pagination-btn pagination-arrow">
                                                               <i class="fa fa-chevron-left"></i>
                                                           </a>
                                                       </c:if>
@@ -461,7 +447,7 @@
                                                                       <span class="pagination-current">1</span>
                                                                   </c:when>
                                                                   <c:otherwise>
-                                                                      <a href="?page=1&size=${pageSize}&search=${param.search}&sortField=${param.sortField}&sortOrder=${param.sortOrder}" class="pagination-btn">1</a>
+                                                                      <a href="?page=1&size=${pageSize}&search=${param.search}" class="pagination-btn">1</a>
                                                                   </c:otherwise>
                                                               </c:choose>
                                                               
@@ -478,7 +464,7 @@
                                                                               <span class="pagination-current">${i}</span>
                                                                           </c:when>
                                                                           <c:otherwise>
-                                                                              <a href="?page=${i}&size=${pageSize}&search=${param.search}&sortField=${param.sortField}&sortOrder=${param.sortOrder}" class="pagination-btn">${i}</a>
+                                                                              <a href="?page=${i}&size=${pageSize}&search=${param.search}" class="pagination-btn">${i}</a>
                                                                           </c:otherwise>
                                                                       </c:choose>
                                                                   </c:if>
@@ -496,7 +482,7 @@
                                                                           <span class="pagination-current">${totalPages}</span>
                                                                       </c:when>
                                                                       <c:otherwise>
-                                                                          <a href="?page=${totalPages}&size=${pageSize}&search=${param.search}&sortField=${param.sortField}&sortOrder=${param.sortOrder}" class="pagination-btn">${totalPages}</a>
+                                                                          <a href="?page=${totalPages}&size=${pageSize}&search=${param.search}" class="pagination-btn">${totalPages}</a>
                                                                       </c:otherwise>
                                                                   </c:choose>
                                                               </c:if>
@@ -505,7 +491,7 @@
                                                       
                                                       <!-- Nút Next -->
                                                       <c:if test="${currentPage < totalPages}">
-                                                          <a href="?page=${currentPage + 1}&size=${pageSize}&search=${param.search}&sortField=${param.sortField}&sortOrder=${param.sortOrder}" class="pagination-btn pagination-arrow">
+                                                          <a href="?page=${currentPage + 1}&size=${pageSize}&search=${param.search}" class="pagination-btn pagination-arrow">
                                                               <i class="fa fa-chevron-right"></i>
                                                           </a>
                                                       </c:if>
@@ -524,27 +510,11 @@
                                 <h4><fmt:message key="tutor_subject_list"/></h4>
                             </div>
                             
-                            <!-- Thanh tìm kiếm và sắp xếp cho Tutor-Subject -->
+                            <!-- Thanh tìm kiếm cho Tutor-Subject (client-side) -->
                             <div class="search-sort-container" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
-                                <!-- Tìm kiếm -->
                                 <div class="search-box" style="flex: 1; min-width: 250px;">
                                     <input type="text" id="tutorSubjectSearch" placeholder="Tìm kiếm tutor-subject..." 
                                            style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
-                                </div>
-                                
-                                <!-- Sắp xếp -->
-                                <div class="sort-controls" style="display: flex; gap: 15px; align-items: center; flex-wrap: nowrap;">
-                                    <label for="tutorSortField" style="margin: 0; font-weight: normal; color: #333; font-family: Arial, sans-serif; font-size: 14px; line-height: 1.2; white-space: nowrap; display: inline-block; padding: 5px 0; margin-right: 10px;">Sắp xếp theo:</label>
-                                    <select id="tutorSortField" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.5; letter-spacing: 0.3px; min-width: 120px; text-rendering: optimizeLegibility;">
-                                        <option value="tutorID">Tutor ID</option>
-                                        <option value="userName">Username</option>
-                                        <option value="subjectID">Subject ID</option>
-                                    </select>
-                                    <select id="tutorSortOrder" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.5; letter-spacing: 0.3px; min-width: 100px; text-rendering: optimizeLegibility;">
-                                        <option value="asc">Tăng dần</option>
-                                        <option value="desc">Giảm dần</option>
-                                    </select>
-                                    <button id="tutorSortBtn" class="btn" style="margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; line-height: 1.5; letter-spacing: 0.3px; text-rendering: optimizeLegibility;">Sắp xếp</button>
                                 </div>
                             </div>
                             
@@ -772,43 +742,13 @@
                 $('#resetBtn').on('click', function() {
                     // Reset form và submit
                     $('#subjectSearch').val('');
-                    $('#sortField').val('subjectID');
-                    $('#sortOrder').val('asc');
                     
                     // Submit form để reset về trang 1
                     $(this).closest('form').submit();
                 });
                 
                 // Thêm chức năng reset cho tutor-subject
-                function addResetButtons() {
-                    $('.search-sort-container').each(function() {
-                        const container = $(this);
-                        if (container.find('.reset-btn').length === 0) {
-                            const resetBtn = $('<button class="btn reset-btn" style="margin-left: 10px;">Reset</button>');
-                            container.find('.sort-controls').append(resetBtn);
-                            
-                            resetBtn.on('click', function() {
-                                const searchInput = container.find('input[type="text"]');
-                                const sortField = container.find('select:first');
-                                const sortOrder = container.find('select:last');
-                                
-                                searchInput.val('');
-                                sortField.val(sortField.find('option:first').val());
-                                sortOrder.val('asc');
-                                
-                                // Reset bảng
-                                if (container.closest('.widget-box').find('#subjectTable').length > 0) {
-                                    filterTable('#subjectTable tbody tr', '', [1, 2]);
-                                } else {
-                                    filterTable('#tutorSubjectTable tbody tr', '', [0, 1, 2, 3]);
-                                }
-                            });
-                        }
-                    });
-                }
-                
-                // Thêm nút reset sau khi trang load
-                setTimeout(addResetButtons, 100);
+                // Bỏ bổ sung nút reset động, vì đã có nút Reset ở form chính
             });
         </script>
     </body>

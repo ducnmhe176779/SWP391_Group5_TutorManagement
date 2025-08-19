@@ -250,22 +250,26 @@ public class DAOSubject extends DBConnect{
     public List<Subject> getAllTutorSubjects() throws SQLException {
         List<Subject> subjects = new ArrayList<>();
         String sql = """
-            SELECT DISTINCT s.SubjectID, s.SubjectName, s.Description, s.Status
-            FROM Subject s
-            JOIN CV c ON s.SubjectID = c.SubjectId
-            JOIN Tutor t ON c.CVID = t.CVID
-            WHERE s.Status = 'Active'
+            SELECT 
+                t.TutorID,
+                u.UserName,
+                s.SubjectID,
+                c.Desciption AS Description
+            FROM Tutor t
+            JOIN CV c ON t.CVID = c.CVID
+            JOIN Users u ON c.UserID = u.UserID
+            JOIN Subject s ON s.SubjectID = c.SubjectId
+            WHERE c.Status = 'Approved'
             ORDER BY s.SubjectName
             """;
         try (Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
             while (rs.next()) {
-                subjects.add(new Subject(
-                    rs.getInt("SubjectID"),
-                    rs.getString("SubjectName"),
-                    rs.getString("Description"),
-                    rs.getString("Status")
-                ));
+                int tutorID = rs.getInt("TutorID");
+                String userName = rs.getString("UserName");
+                int subjectID = rs.getInt("SubjectID");
+                String description = rs.getString("Description");
+                subjects.add(new Subject(subjectID, description, tutorID, userName));
             }
         }
         return subjects;
@@ -274,14 +278,23 @@ public class DAOSubject extends DBConnect{
     public List<Subject> searchTutorSubjects(String searchTerm) throws SQLException {
         List<Subject> subjects = new ArrayList<>();
         String sql = """
-            SELECT DISTINCT s.SubjectID, s.SubjectName, s.Description, s.Status
-            FROM Subject s
-            JOIN CV c ON s.SubjectID = c.SubjectId
-            JOIN Tutor t ON c.CVID = t.CVID
-            JOIN User u ON t.UserID = u.UserID
-            WHERE s.Status = 'Active' 
-            AND (s.SubjectID LIKE ? OR s.SubjectName LIKE ? OR s.Description LIKE ? 
-                 OR t.TutorID LIKE ? OR u.UserName LIKE ?)
+            SELECT 
+                t.TutorID,
+                u.UserName,
+                s.SubjectID,
+                c.Desciption AS Description
+            FROM Tutor t
+            JOIN CV c ON t.CVID = c.CVID
+            JOIN Users u ON c.UserID = u.UserID
+            JOIN Subject s ON s.SubjectID = c.SubjectId
+            WHERE c.Status = 'Approved' 
+            AND (
+                CAST(s.SubjectID AS NVARCHAR(20)) LIKE ?
+                OR s.SubjectName LIKE ? 
+                OR c.Desciption LIKE ? 
+                OR CAST(t.TutorID AS NVARCHAR(20)) LIKE ? 
+                OR u.UserName LIKE ?
+            )
             ORDER BY s.SubjectName
             """;
         
@@ -295,12 +308,11 @@ public class DAOSubject extends DBConnect{
             
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                subjects.add(new Subject(
-                    rs.getInt("SubjectID"),
-                    rs.getString("SubjectName"),
-                    rs.getString("Description"),
-                    rs.getString("Status")
-                ));
+                int tutorID = rs.getInt("TutorID");
+                String userName = rs.getString("UserName");
+                int subjectID = rs.getInt("SubjectID");
+                String description = rs.getString("Description");
+                subjects.add(new Subject(subjectID, description, tutorID, userName));
             }
         }
         return subjects;

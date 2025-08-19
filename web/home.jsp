@@ -122,7 +122,7 @@
                                 </div>
                                 <ul class="nav navbar-nav">    
                                     <li class="active"><a href="home"><fmt:message key="home"/></a></li>
-                                    <li><a href="user"><fmt:message key="our_tutor"/></a></li>
+                                    <li><a href="Tutor"><fmt:message key="our_tutor"/></a></li>
                                     <li><a href="ViewBlog"><fmt:message key="blog"/></a></li>
                                         <c:if test="${sessionScope.user != null && sessionScope.user.roleID == 3}">
                                         <li><a href="CreateSchedule"><fmt:message key="view_schedule"/></a></li>

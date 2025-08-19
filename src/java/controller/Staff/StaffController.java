@@ -63,11 +63,10 @@ public class StaffController extends HttpServlet {
             // Tạo kết nối database
             model.DBConnect db = new model.DBConnect();
             
-            // Query lấy 5 tutor mới nhất với RoleID = 2
-            String sql = "SELECT TOP 5 u.* FROM [User] u " +
-                        "INNER JOIN Role r ON u.RoleID = r.RoleID " +
-                        "WHERE r.RoleID = 2 " +
-                        "ORDER BY u.UserID DESC";
+            // Query lấy 5 tutor mới nhất với RoleID = 2 (Users là tên bảng đúng)
+            String sql = "SELECT TOP 5 u.* FROM Users u "
+                       + "WHERE u.RoleID = 2 "
+                       + "ORDER BY u.UserID DESC";
             
             java.sql.ResultSet rs = db.getData(sql);
             
@@ -79,7 +78,7 @@ public class StaffController extends HttpServlet {
                 user.setEmail(rs.getString("Email"));
                 user.setPhone(rs.getString("Phone"));
                 user.setAvatar(rs.getString("Avatar"));
-                user.setIsActive(rs.getInt("isActive"));
+                user.setIsActive(rs.getInt("IsActive"));
                 user.setRoleID(rs.getInt("RoleID"));
                 
                 newTutors.add(user);
