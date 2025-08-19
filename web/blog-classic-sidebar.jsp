@@ -12,16 +12,16 @@
         <meta name="keywords" content="" />
         <meta name="author" content="" />
         <meta name="robots" content="" />
-        <meta name="description" content="G4 SmartTutor : Smart tutor, effective learning." />
-        <meta property="og:title" content="G4 SmartTutor : Smart tutor, effective learning." />
-        <meta property="og:description" content="G4 SmartTutor : Smart tutor, effective learning." />
+        <meta name="description" content="G5 SmartTutor : Smart tutor, effective learning." />
+        <meta property="og:title" content="G5 SmartTutor : Smart tutor, effective learning." />
+        <meta property="og:description" content="G5 SmartTutor : Smart tutor, effective learning." />
         <meta property="og:image" content="" />
         <meta name="format-detection" content="telephone=no">
 
-        <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon" />
-        <link rel="shortcut icon" type="image/x-icon" href="assets/images/favicon.png" />
+        <link rel="icon" href="${pageContext.request.contextPath}/assets/images/favicon.ico" type="image/x-icon" />
+        <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets/images/favicon.png" />
 
-        <title>G4 SmartTutor</title>
+        <title>G5 SmartTutor</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <link rel="stylesheet" type="text/css" href="assets/css/assets.css">

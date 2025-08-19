@@ -3,18 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/New%20folder/SWP391_G5_TutorManagement/SWP391_Group5_TutorManagement/src/java/UserController/resetService.java</file>
-            <file>file:/D:/New%20folder/SWP391_G5_TutorManagement/SWP391_Group5_TutorManagement/web/home.jsp</file>
-            <file>file:/D:/New%20folder/SWP391_G5_TutorManagement/SWP391_Group5_TutorManagement/src/java/UserController/LogoutServlet.java</file>
-            <file>file:/D:/New%20folder/SWP391_G5_TutorManagement/SWP391_Group5_TutorManagement/src/java/UserController/ActivateServlet.java</file>
-            <file>file:/D:/New%20folder/SWP391_G5_TutorManagement/SWP391_Group5_TutorManagement/src/java/AdminController/AdminIndexServlet.java</file>
-            <file>file:/D:/New%20folder/SWP391_G5_TutorManagement/SWP391_Group5_TutorManagement/src/java/controller/Customer/HomePageServlet.java</file>
-            <file>file:/D:/New%20folder/SWP391_G5_TutorManagement/SWP391_Group5_TutorManagement/web/register.jsp</file>
-            <file>file:/D:/New%20folder/SWP391_G5_TutorManagement/SWP391_Group5_TutorManagement/src/java/UserController/requestPassword.java</file>
-            <file>file:/D:/New%20folder/SWP391_G5_TutorManagement/SWP391_Group5_TutorManagement/src/java/model/DAOTutor.java</file>
-            <file>file:/D:/New%20folder/SWP391_G5_TutorManagement/SWP391_Group5_TutorManagement/web/WEB-INF/web.xml</file>
-            <file>file:/D:/New%20folder/SWP391_G5_TutorManagement/SWP391_Group5_TutorManagement/src/java/UserController/UserRegister.java</file>
-            <file>file:/D:/New%20folder/SWP391_G5_TutorManagement/SWP391_Group5_TutorManagement/src/java/model/DAOUser.java</file>
+            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/src/java/model/DAOSubject.java</file>
         </group>
     </open-files>
 </project-private>

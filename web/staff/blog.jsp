@@ -19,15 +19,15 @@
         <meta name="keywords" content="" />
         <meta name="author" content="" />
         <meta name="robots" content="" />
-        <meta name="description" content="G4 SmartTutor : Smart tutor, effective learning." />
-        <meta property="og:title" content="G4 SmartTutor : Smart tutor, effective learning." />
-        <meta property="og:description" content="G4 SmartTutor : Smart tutor, effective learning." />
+        <meta name="description" content="G5 SmartTutor : Smart tutor, effective learning." />
+        <meta property="og:title" content="G5 SmartTutor : Smart tutor, effective learning." />
+        <meta property="og:description" content="G5 SmartTutor : Smart tutor, effective learning." />
         <meta property="og:image" content="" />
         <meta name="format-detection" content="telephone=no">
 
         <!-- FAVICONS ICON -->
-        <link rel="icon" href="../error-404.jsp" type="image/x-icon" />
-        <link rel="shortcut icon" type="image/x-icon" href="assets/images/favicon.png" />
+        <link rel="icon" href="${pageContext.request.contextPath}/assets/images/favicon.ico" type="image/x-icon" />
+        <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets/images/favicon.png" />
 
         <!-- PAGE TITLE -->
         <title>G5 SmartTutor</title>
@@ -36,12 +36,12 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <!-- All PLUGINS CSS -->
-        <link rel="stylesheet" type="text/css" href="assets/css/assets.css">
-        <link rel="stylesheet" type="text/css" href="assets/css/typography.css">
-        <link rel="stylesheet" type="text/css" href="assets/css/shortcodes/shortcodes.css">
-        <link rel="stylesheet" type="text/css" href="assets/css/style.css">
-        <link rel="stylesheet" type="text/css" href="assets/css/dashboard.css">
-        <link class="skin" rel="stylesheet" type="text/css" href="assets/css/color/color-1.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/assets.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/typography.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/shortcodes/shortcodes.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/style.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/dashboard.css">
+        <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/color/color-1.css">
     </head>
     <%
         User user = (User) session.getAttribute("user");
@@ -334,24 +334,24 @@
         <div class="ttr-overlay"></div>
 
         <!-- External JavaScripts -->
-        <script src="assets/js/jquery.min.js"></script>
-        <script src="assets/vendors/bootstrap/js/popper.min.js"></script>
-        <script src="assets/vendors/bootstrap/js/bootstrap.min.js"></script>
-        <script src="assets/vendors/bootstrap-select/bootstrap-select.min.js"></script>
-        <script src="assets/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
-        <script src="assets/vendors/magnific-popup/magnific-popup.js"></script>
-        <script src="assets/vendors/counter/waypoints-min.js"></script>
-        <script src="assets/vendors/counter/counterup.min.js"></script>
-        <script src="assets/vendors/imagesloaded/imagesloaded.js"></script>
-        <script src="assets/vendors/masonry/masonry.js"></script>
-        <script src="assets/vendors/masonry/filter.js"></script>
-        <script src="assets/vendors/owl-carousel/owl.carousel.js"></script>
-        <script src='assets/vendors/scroll/scrollbar.min.js'></script>
-        <script src="assets/js/functions.js"></script>
-        <script src="assets/vendors/chart/chart.min.js"></script>
-        <script src="assets/js/admin.js"></script>
-        <script src='assets/vendors/calendar/moment.min.js'></script>
-        <script src='assets/vendors/calendar/fullcalendar.js'></script>
-        <script src='assets/vendors/switcher/switcher.js'></script>
+        <script src="${pageContext.request.contextPath}/assets/js/jquery.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/vendors/bootstrap/js/popper.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/vendors/bootstrap/js/bootstrap.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/vendors/bootstrap-select/bootstrap-select.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/vendors/magnific-popup/magnific-popup.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/vendors/counter/waypoints-min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/vendors/counter/counterup.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/vendors/imagesloaded/imagesloaded.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/vendors/masonry/masonry.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/vendors/masonry/filter.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/vendors/owl-carousel/owl.carousel.js"></script>
+        <script src='${pageContext.request.contextPath}/assets/vendors/scroll/scrollbar.min.js'></script>
+        <script src="${pageContext.request.contextPath}/assets/js/functions.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/vendors/chart/chart.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/admin.js"></script>
+        <script src='${pageContext.request.contextPath}/assets/vendors/calendar/moment.min.js'></script>
+        <script src='${pageContext.request.contextPath}/assets/vendors/calendar/fullcalendar.js'></script>
+        <script src='${pageContext.request.contextPath}/assets/vendors/switcher/switcher.js'></script>
     </body>
 </html>
