@@ -17,7 +17,6 @@
 
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>G5 SmartTutor</title>
         <link rel="stylesheet" type="text/css" href="assets/css/assets.css">
         <link rel="stylesheet" type="text/css" href="assets/css/typography.css">
@@ -53,12 +52,12 @@
             <div class="account-form">
                 <div class="account-head" style="background-image:url(assets/images/background/bg.jpg); position: relative;">
                     <div class="language-switcher">
-                        <select class="header-lang-bx" onchange="window.location.href = 'LanguageServlet?lang=' + this.value;">
+                        <select class="header-lang-bx" onchange="window.location.href = '${pageContext.request.contextPath}/LanguageServlet?lang=' + this.value;">
                             <option value="en" ${sessionScope.locale == null || sessionScope.locale == 'en' ? 'selected' : ''}><fmt:message key="english"/></option>
                             <option value="vi" ${sessionScope.locale == 'vi' ? 'selected' : ''}><fmt:message key="vietnamese"/></option>
                         </select>
                     </div>
-                    <a href="home"><img src="assets/images/logo-white-2.png" alt=""></a>
+                    <a href="home"><img src="${pageContext.request.contextPath}/assets/images/logo-white-2.png" alt=""></a>
                 </div>
                 <div class="account-form-inner">
                     <div class="account-container">

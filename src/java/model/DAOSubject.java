@@ -223,18 +223,18 @@ public class DAOSubject extends DBConnect{
         return null;
     }
     
-    public List<Subject> getAllTutorSubjects() throws SQLException {
+    public List<Subject> searchSubjects(String searchTerm) throws SQLException {
         List<Subject> subjects = new ArrayList<>();
-        String sql = """
-            SELECT DISTINCT s.SubjectID, s.SubjectName, s.Description, s.Status
-            FROM Subject s
-            JOIN CV c ON s.SubjectID = c.SubjectId
-            JOIN Tutor t ON c.CVID = t.CVID
-            WHERE s.Status = 'Active'
-            ORDER BY s.SubjectName
-            """;
-        try (Statement st = conn.createStatement();
-             ResultSet rs = st.executeQuery(sql)) {
+        String sql = "SELECT SubjectID, SubjectName, Description, Status FROM Subject " +
+                     "WHERE SubjectName LIKE ? OR Description LIKE ? " +
+                     "ORDER BY SubjectName";
+        
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            String searchPattern = "%" + searchTerm + "%";
+            ps.setString(1, searchPattern);
+            ps.setString(2, searchPattern);
+            
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 subjects.add(new Subject(
                     rs.getInt("SubjectID"),
@@ -242,6 +242,77 @@ public class DAOSubject extends DBConnect{
                     rs.getString("Description"),
                     rs.getString("Status")
                 ));
+            }
+        }
+        return subjects;
+    }
+    
+    public List<Subject> getAllTutorSubjects() throws SQLException {
+        List<Subject> subjects = new ArrayList<>();
+        String sql = """
+            SELECT 
+                t.TutorID,
+                u.UserName,
+                s.SubjectID,
+                c.Desciption AS Description
+            FROM Tutor t
+            JOIN CV c ON t.CVID = c.CVID
+            JOIN Users u ON c.UserID = u.UserID
+            JOIN Subject s ON s.SubjectID = c.SubjectId
+            WHERE c.Status = 'Approved'
+            ORDER BY s.SubjectName
+            """;
+        try (Statement st = conn.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+            while (rs.next()) {
+                int tutorID = rs.getInt("TutorID");
+                String userName = rs.getString("UserName");
+                int subjectID = rs.getInt("SubjectID");
+                String description = rs.getString("Description");
+                subjects.add(new Subject(subjectID, description, tutorID, userName));
+            }
+        }
+        return subjects;
+    }
+    
+    public List<Subject> searchTutorSubjects(String searchTerm) throws SQLException {
+        List<Subject> subjects = new ArrayList<>();
+        String sql = """
+            SELECT 
+                t.TutorID,
+                u.UserName,
+                s.SubjectID,
+                c.Desciption AS Description
+            FROM Tutor t
+            JOIN CV c ON t.CVID = c.CVID
+            JOIN Users u ON c.UserID = u.UserID
+            JOIN Subject s ON s.SubjectID = c.SubjectId
+            WHERE c.Status = 'Approved' 
+            AND (
+                CAST(s.SubjectID AS NVARCHAR(20)) LIKE ?
+                OR s.SubjectName LIKE ? 
+                OR c.Desciption LIKE ? 
+                OR CAST(t.TutorID AS NVARCHAR(20)) LIKE ? 
+                OR u.UserName LIKE ?
+            )
+            ORDER BY s.SubjectName
+            """;
+        
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            String searchPattern = "%" + searchTerm + "%";
+            ps.setString(1, searchPattern);
+            ps.setString(2, searchPattern);
+            ps.setString(3, searchPattern);
+            ps.setString(4, searchPattern);
+            ps.setString(5, searchPattern);
+            
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                int tutorID = rs.getInt("TutorID");
+                String userName = rs.getString("UserName");
+                int subjectID = rs.getInt("SubjectID");
+                String description = rs.getString("Description");
+                subjects.add(new Subject(subjectID, description, tutorID, userName));
             }
         }
         return subjects;

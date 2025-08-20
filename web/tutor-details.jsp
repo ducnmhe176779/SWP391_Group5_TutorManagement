@@ -12,9 +12,9 @@
         <meta name="keywords" content="" />
         <meta name="author" content="" />
         <meta name="robots" content="" />
-        <meta name="description" content="G4 SmartTutor : Smart tutor, effective learning." />
-        <meta property="og:title" content="G4 SmartTutor : Smart tutor, effective learning." />
-        <meta property="og:description" content="G4 SmartTutor : Smart tutor, effective learning." />
+        <meta name="description" content="G5 SmartTutor : Smart tutor, effective learning." />
+        <meta property="og:title" content="G5 SmartTutor : Smart tutor, effective learning." />
+        <meta property="og:description" content="G5 SmartTutor : Smart tutor, effective learning." />
         <meta property="og:image" content="" />
         <meta name="format-detection" content="telephone=no">
 
@@ -145,7 +145,7 @@
             </header>
             <!-- Content -->
             <div class="page-content bg-white">
-                <form action="Tutordetail"></form>
+                
                 <div class="page-banner ovbl-dark" style="background-image:url(assets/images/banner/banner2.jpg);">
                     <div class="container">
                         <div class="page-banner-entry">

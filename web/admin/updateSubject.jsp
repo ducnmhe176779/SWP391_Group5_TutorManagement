@@ -1,9 +1,7 @@
 <%@page import="entity.User"%>
-<%@page import="entity.Subject"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-
 <!DOCTYPE html>
 <html lang="${sessionScope.locale != null ? sessionScope.locale : 'en'}">
     <head>
@@ -16,19 +14,12 @@
         <meta name="description" content="G5 SmartTutor : Smart tutor, effective learning." />
         <meta property="og:title" content="G5 SmartTutor : Smart tutor, effective learning." />
         <meta property="og:description" content="G5 SmartTutor : Smart tutor, effective learning." />
+        <meta property="og:image" content="" />
         <meta name="format-detection" content="telephone=no">
-
-        <!-- FAVICONS ICON -->
-        <link rel="icon" href="${pageContext.request.contextPath}/error-404.jsp" type="image/x-icon" />
+        <link rel="icon" href="${pageContext.request.contextPath}/assets/images/favicon.ico" type="image/x-icon" />
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets/images/favicon.png" />
-
-        <!-- PAGE TITLE -->
-        <title>G5 SmartTutor</title>
-
-        <!-- MOBILE SPECIFIC -->
+        <title>G5 SmartTutor - Update Subject</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-
-        <!-- CSS -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/assets.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/vendors/calendar/fullcalendar.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/typography.css">
@@ -36,14 +27,79 @@
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/style.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/color/color-1.css">
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/custom-blue.css">
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/force-blue.css">
+        <style>
+            .error { color: red; margin-bottom: 10px; font-weight: bold; padding: 10px; background-color: #f8d7da; border-radius: 4px; }
+            .success { color: green; margin-bottom: 10px; font-weight: bold; padding: 10px; background-color: #d4edda; border-radius: 4px; }
+            .form-group { margin-bottom: 15px; }
+            .form-group label { display: block; margin-bottom: 5px; font-weight: 600; }
+            .form-group input, .form-group textarea, .form-group select { 
+                width: 100%; 
+                padding: 10px; 
+                box-sizing: border-box; 
+                border: 1px solid #ddd; 
+                border-radius: 4px;
+                font-size: 14px;
+            }
+            .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+                outline: none;
+                border-color: #007bff;
+                box-shadow: 0 0 0 2px rgba(0,123,255,.25);
+            }
+            .btn-primary {
+                background-color: #007bff;
+                border-color: #007bff;
+                padding: 10px 20px;
+                font-size: 16px;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+            .btn-primary:hover {
+                background-color: #0056b3;
+                border-color: #0056b3;
+            }
+            .btn-secondary {
+                background-color: #6c757d;
+                border-color: #6c757d;
+                padding: 10px 20px;
+                font-size: 16px;
+                border-radius: 4px;
+                cursor: pointer;
+                margin-right: 10px;
+                text-decoration: none;
+                display: inline-block;
+                transition: all 0.3s ease;
+            }
+            .btn-secondary:hover {
+                background-color: #545b62;
+                border-color: #545b62;
+                color: white;
+                text-decoration: none;
+            }
+            .widget-box {
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                padding: 20px;
+            }
+            .wc-title h4 {
+                color: #333;
+                margin-bottom: 20px;
+                padding-bottom: 10px;
+                border-bottom: 2px solid #007bff;
+            }
+        </style>
     </head>
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
         <%
             User user = (User) session.getAttribute("user");
             if (user == null) {
                 response.sendRedirect(request.getContextPath() + "/login.jsp");
+                return;
+            }
+            // Kiểm tra quyền admin
+            if (user.getRoleID() != 1) {
+                response.sendRedirect(request.getContextPath() + "/home");
                 return;
             }
         %>
@@ -82,7 +138,7 @@
                 <div class="ttr-header-right ttr-with-seperator">
                     <ul class="ttr-header-navigation">
                         <li>
-                            <a href="${pageContext.request.contextPath}/admin/index" class="ttr-material-button ttr-submenu-toggle">
+                            <a href="${pageContext.request.contextPath}/admin/adminprofile" class="ttr-material-button ttr-submenu-toggle">
                                 <span class="ttr-user-avatar">
                                     <img alt="" 
                                          src="${pageContext.request.contextPath}/<%= user.getAvatar() != null ? user.getAvatar() : "uploads/default_avatar.jpg"%>" 
@@ -92,8 +148,8 @@
                             </a>
                             <div class="ttr-header-submenu">
                                 <ul>
-                                    <li><a href="${pageContext.request.contextPath}/admin/profile">My Profile</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/logout">Logout</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/admin/adminprofile"><fmt:message key="my_profile"/></a></li>
+                                    <li><a href="${pageContext.request.contextPath}/logout"><fmt:message key="logout"/></a></li>
                                 </ul>
                             </div>
                         </li>
@@ -102,7 +158,7 @@
             </div>
         </header>
 
-        <!-- Left sidebar menu -->
+        <!-- Sidebar -->
         <div class="ttr-sidebar">
             <div class="ttr-sidebar-wrapper content-scroll">
                 <div class="ttr-sidebar-logo">
@@ -126,26 +182,52 @@
                                 <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
                             </a>
                             <ul>
-                                <li><a href="${pageContext.request.contextPath}/admin/ViewSchedule" class="ttr-material-button"><span class="ttr-label"><fmt:message key="view_schedule"/></span></a></li>
-                                <li><a href="${pageContext.request.contextPath}/admin/ListRated" class="ttr-material-button"><span class="ttr-label"><fmt:message key="tutor_reviews"/></span></a></li>
-                                <li><a href="${pageContext.request.contextPath}/admin/AdminSubjectController?service=listSubject" class="ttr-material-button"><span class="ttr-label"><fmt:message key="control_subject"/></span></a></li>
+                                <li><a href="${pageContext.request.contextPath}/admin/TutorList" class="ttr-material-button"><span class="ttr-label"><fmt:message key="tutor_list"/></span></a></li>
+                                <li><a href="${pageContext.request.contextPath}/admin/AdminListRated" class="ttr-material-button"><span class="ttr-label"><fmt:message key="tutor_reviews"/></span></a></li>
+                                <li><a href="${pageContext.request.contextPath}/admin/RequestCV" class="ttr-material-button"><span class="ttr-label"><fmt:message key="status_cv"/></span></a></li>
+                                <li><a href="${pageContext.request.contextPath}/admin/ViewBooking" class="ttr-material-button"><span class="ttr-label"><fmt:message key="booking_manage"/></span></a></li>
+                                <li><a href="${pageContext.request.contextPath}/admin/AdminViewSchedule" class="ttr-material-button"><span class="ttr-label"><fmt:message key="view_schedule"/></span></a></li>
+                                <li><a href="${pageContext.request.contextPath}/admin/AdminSubjectController" class="ttr-material-button"><span class="ttr-label"><fmt:message key="subject_management"/></span></a></li>
                             </ul>
                         </li>
                         <li>
                             <a href="#" class="ttr-material-button">
-                                <span class="ttr-icon"><i class="ti-book"></i></span>
-                                <span class="ttr-label"><fmt:message key="content_management"/></span>
+                                <span class="ttr-icon"><i class="ti-user"></i></span>
+                                <span class="ttr-label"><fmt:message key="staff_management"/></span>
                                 <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
                             </a>
                             <ul>
-                                <li><a href="${pageContext.request.contextPath}/admin/BlogController?service=listBlog" class="ttr-material-button"><span class="ttr-label"><fmt:message key="blog"/></span></a></li>
-                                <li><a href="${pageContext.request.contextPath}/admin/BlogController?service=addBlog" class="ttr-material-button"><span class="ttr-label"><fmt:message key="add_blog"/></span></a></li>
+                                <li><a href="${pageContext.request.contextPath}/admin/StaffList" class="ttr-material-button"><span class="ttr-label"><fmt:message key="staff_list"/></span></a></li>
+                                <li><a href="${pageContext.request.contextPath}/admin/StaffManage" class="ttr-material-button"><span class="ttr-label"><fmt:message key="add_new_staff"/></span></a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#" class="ttr-material-button">
+                                <span class="ttr-icon"><i class="ti-id-badge"></i></span>
+                                <span class="ttr-label"><fmt:message key="user_management"/></span>
+                                <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
+                            </a>
+                            <ul>
+                                <li><a href="${pageContext.request.contextPath}/admin/UserList" class="ttr-material-button"><span class="ttr-label"><fmt:message key="user_list"/></span></a></li>
+                                <li><a href="${pageContext.request.contextPath}/admin/ReportManager" class="ttr-material-button"><span class="ttr-label"><fmt:message key="report"/></span></a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#" class="ttr-material-button">
+                                <span class="ttr-icon"><i class="ti-credit-card"></i></span>
+                                <span class="ttr-label"><fmt:message key="payment"/></span>
+                                <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
+                            </a>
+                            <ul>
+                                <li><a href="${pageContext.request.contextPath}/admin/approveWithdrawal" class="ttr-material-button"><span class="ttr-label"><fmt:message key="request_withdrawal"/></span></a></li>
+                                <li><a href="${pageContext.request.contextPath}/admin/PaymentHistory" class="ttr-material-button"><span class="ttr-label"><fmt:message key="view_history_payment"/></span></a></li>
+                                <li><a href="${pageContext.request.contextPath}/admin/systemRevenue" class="ttr-material-button"><span class="ttr-label"><fmt:message key="system_revenue"/></span></a></li>
                             </ul>
                         </li>
                         <li>
                             <a href="${pageContext.request.contextPath}/admin/historyLog" class="ttr-material-button">
                                 <span class="ttr-icon"><i class="ti-clipboard"></i></span>
-                                <span class="ttr-label"><fmt:message key="user_tutor_logs"/></span>
+                                <span class="ttr-label"><fmt:message key="history_log"/></span>
                             </a>
                         </li>
                         <li class="ttr-seperate"></li>
@@ -166,59 +248,95 @@
                     </ul>
                 </div>
                 <div class="row">
-                    <div class="col-lg-6 m-b30">
+                    <div class="col-lg-8 m-b30">
                         <div class="widget-box">
                             <div class="wc-title">
                                 <h4><fmt:message key="update_subject"/></h4>
                             </div>
+                            
+                            <!-- Hiển thị thông báo lỗi -->
+                            <c:if test="${not empty sessionScope.error}">
+                                <div class="error">${sessionScope.error}</div>
+                                <c:remove var="error" scope="session" />
+                            </c:if>
+                            
+                            <!-- Hiển thị thông báo thành công -->
+                            <c:if test="${not empty sessionScope.success}">
+                                <div class="success">${sessionScope.success}</div>
+                                <c:remove var="success" scope="session" />
+                            </c:if>
+                            
                             <div class="widget-inner">
-                                <c:if test="${not empty sessionScope.error}">
-                                    <div style="color: red;">
-                                        ${sessionScope.error}
+                                <form action="${pageContext.request.contextPath}/admin/AdminSubjectController" method="post">
+                                    <input type="hidden" name="service" value="updateSubject">
+                                    <input type="hidden" name="subjectID" value="${subject.subjectID}">
+                                    
+                                    <div class="form-group">
+                                        <label for="subjectName"><fmt:message key="subject_name"/>:</label>
+                                        <input type="text" class="form-control" id="subjectName" name="subjectName" 
+                                               value="${subject.subjectName}" required>
                                     </div>
-                                    <c:remove var="error" scope="session" />
-                                </c:if>
-                                <c:if test="${not empty sessionScope.message}">
-                                    <div style="color: green;">
-                                        ${sessionScope.message}
+                                    
+                                    <div class="form-group">
+                                        <label for="description"><fmt:message key="description"/>:</label>
+                                        <textarea class="form-control" id="description" name="description" 
+                                                  rows="4" placeholder="Nhập mô tả môn học...">${subject.description}</textarea>
                                     </div>
-                                    <c:remove var="message" scope="session" />
-                                </c:if>
-                                
-                                <c:if test="${not empty subject}">
-                                    <form action="${pageContext.request.contextPath}/admin/AdminSubjectController?service=updateSubject" method="post">
-                                        <input type="hidden" name="subjectID" value="${subject.subjectID}">
-                                        <div class="form-group">
-                                            <label for="subjectName"><fmt:message key="subject_name"/></label>
-                                            <input type="text" class="form-control" id="subjectName" name="subjectName" value="${subject.subjectName}" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="description"><fmt:message key="description"/></label>
-                                            <textarea class="form-control" id="description" name="description" rows="3">${subject.description}</textarea>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="status"><fmt:message key="status"/></label>
-                                            <select class="form-control" id="status" name="status" required>
-                                                <option value="Active" ${subject.status == 'Active' ? 'selected' : ''}><fmt:message key="active"/></option>
-                                                <option value="Inactive" ${subject.status == 'Inactive' ? 'selected' : ''}><fmt:message key="inactive"/></option>
-                                            </select>
-                                        </div>
-                                        <button type="submit" name="submit" class="submit-btn"><fmt:message key="update_subject"/></button>
-                                        <a href="${pageContext.request.contextPath}/admin/AdminSubjectController?service=listSubject" class="btn" style="margin-left: 10px;"><fmt:message key="cancel"/></a>
-                                    </form>
-                                </c:if>
-                                
-                                <c:if test="${empty subject}">
-                                    <p><fmt:message key="subject_not_found"/></p>
-                                    <a href="${pageContext.request.contextPath}/admin/AdminSubjectController?service=listSubject" class="btn"><fmt:message key="back_to_list"/></a>
-                                </c:if>
+                                    
+                                    <div class="form-group">
+                                        <label for="status"><fmt:message key="status"/>:</label>
+                                        <select class="form-control" id="status" name="status" required>
+                                            <option value="Active" ${subject.status == 'Active' ? 'selected' : ''}>
+                                                <fmt:message key="active"/>
+                                            </option>
+                                            <option value="Inactive" ${subject.status == 'Inactive' ? 'selected' : ''}>
+                                                <fmt:message key="inactive"/>
+                                            </option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <a href="${pageContext.request.contextPath}/admin/AdminSubjectController?service=listSubject" 
+                                           class="btn btn-secondary">
+                                            <i class="fa fa-arrow-left"></i> <fmt:message key="back"/>
+                                        </a>
+                                        <button type="submit" name="submit" class="btn btn-primary">
+                                            <i class="fa fa-save"></i> <fmt:message key="update_subject"/>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Thông tin môn học hiện tại -->
+                    <div class="col-lg-4 m-b30">
+                        <div class="widget-box">
+                            <div class="wc-title">
+                                <h4><fmt:message key="subject_info"/></h4>
+                            </div>
+                            <div class="widget-inner">
+                                <div class="form-group">
+                                    <label><strong><fmt:message key="subject_id"/>:</strong></label>
+                                    <p>${subject.subjectID}</p>
+                                </div>
+                                <div class="form-group">
+                                    <label><strong><fmt:message key="subject_name"/>:</strong></label>
+                                    <p>${subject.subjectName}</p>
+                                </div>
+                                <div class="form-group">
+                                    <label><strong><fmt:message key="current_status"/>:</strong></label>
+                                    <span class="badge ${subject.status == 'Active' ? 'badge-success' : 'badge-danger'}">
+                                        ${subject.status}
+                                    </span>
+                                </div>
+
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </main>
-
         <div class="ttr-overlay"></div>
 
         <!-- External JavaScripts -->
@@ -241,5 +359,23 @@
         <script src="${pageContext.request.contextPath}/assets/vendors/calendar/moment.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets/vendors/calendar/fullcalendar.js"></script>
         <script src="${pageContext.request.contextPath}/assets/vendors/switcher/switcher.js"></script>
+        
+        <script>
+            // Xác nhận trước khi cập nhật
+            document.querySelector('form').addEventListener('submit', function(e) {
+                if (!confirm('Bạn có chắc chắn muốn cập nhật môn học này?')) {
+                    e.preventDefault();
+                }
+            });
+            
+            // Kiểm tra form validation
+            document.getElementById('subjectName').addEventListener('blur', function() {
+                if (this.value.trim() === '') {
+                    this.style.borderColor = '#dc3545';
+                } else {
+                    this.style.borderColor = '#28a745';
+                }
+            });
+        </script>
     </body>
 </html>
