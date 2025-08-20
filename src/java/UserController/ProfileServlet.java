@@ -29,8 +29,7 @@ import java.net.URLEncoder; // Thêm để mã hóa tham số URL
         maxRequestSize = 1024 * 1024 * 50)   // Kích thước tối đa của toàn bộ request: 50MB
 public class ProfileServlet extends HttpServlet {
 
-    private static final String PROFILE_PAGE = "/profile_user.jsp";
-    private static final String LOGIN_PAGE = "login.jsp";
+
     private static final int MIN_PASSWORD_LENGTH = 8;
 
     @Override
@@ -40,12 +39,12 @@ public class ProfileServlet extends HttpServlet {
         User currentUser = (User) session.getAttribute("user");
 
         if (currentUser == null) {
-            response.sendRedirect(LOGIN_PAGE);
+            response.sendRedirect("login.jsp");
             return;
         }
 
         request.setAttribute("user", currentUser);
-        request.getRequestDispatcher(PROFILE_PAGE).forward(request, response);
+        request.getRequestDispatcher("/profile_user.jsp").forward(request, response);
     }
 
     @Override
@@ -55,7 +54,7 @@ public class ProfileServlet extends HttpServlet {
         User currentUser = (User) session.getAttribute("user");
 
         if (currentUser == null) {
-            response.sendRedirect(LOGIN_PAGE);
+            response.sendRedirect("login.jsp");
             return;
         }
 
