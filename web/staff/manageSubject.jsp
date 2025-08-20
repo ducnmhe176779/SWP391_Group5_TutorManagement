@@ -56,34 +56,32 @@
             
             
             
-            /* Style cho thanh tìm kiếm và sắp xếp */
-            .search-sort-container {
-                background: #f8f9fa;
-                padding: 20px;
-                border-radius: 8px;
-                border: 1px solid #e9ecef;
+            /* Style cho thanh tìm kiếm */
+            .search-container {
+                display: flex;
+                align-items: center;
+                gap: 10px;
                 margin-bottom: 20px;
             }
             
+            .search-box {
+                flex: 1;
+                max-width: 400px;
+            }
+            
             .search-box input {
-                border: 1px solid #ced4da;
-                transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+                width: 100%;
+                padding: 10px 15px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                font-size: 14px;
+                transition: border-color 0.3s ease;
             }
             
             .search-box input:focus {
-                border-color: #1e40af;
-                outline: 0;
-                box-shadow: 0 0 0 0.2rem rgba(30, 64, 175, 0.25);
-            }
-            
-            .sort-controls select {
-                border: 1px solid #ced4da;
-                transition: border-color 0.15s ease-in-out;
-            }
-            
-            .sort-controls select:focus {
-                border-color: #1e40af;
-                outline: 0;
+                outline: none;
+                border-color: #007bff;
+                box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
             }
             
             /* CSS ĐƠN GIẢN để sửa lỗi font chữ bị trồng lên nhau */
@@ -359,14 +357,12 @@
                             <form method="GET" action="${pageContext.request.contextPath}/staff/SubjectController" style="margin-bottom: 20px;">
                                 <input type="hidden" name="service" value="listSubject">
                                 <input type="hidden" name="size" value="5">
-                                <div class="search-sort-container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
-                                    <div class="search-box" style="flex: 1; min-width: 250px;">
+                                <div class="search-container">
+                                    <div class="search-box">
                                         <input type="text" id="subjectSearch" name="search" placeholder="Tìm kiếm môn học... (Tự động)"  
-                                               value="${searchTerm != null ? searchTerm : ''}"
-                                               style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                                               value="${searchTerm != null ? searchTerm : ''}">
                                     </div>
                                     <button type="submit" class="btn" style="margin: 0; padding: 10px 20px; font-weight: 500;">Tìm kiếm</button>
-                                    <button type="button" id="resetBtn" class="btn" style="margin: 0; padding: 10px 20px; font-weight: 500;">Reset</button>
                                 </div>
                             </form>
                             
@@ -406,14 +402,11 @@
                                  <!-- Phân trang cho Subject List -->
                                  <c:choose>
                                      <c:when test="${not empty searchTerm}">
-                                         <!-- Chế độ search: Hiển thị tất cả kết quả tìm kiếm -->
                                          <div class="search-results-info">
                                              <span>Kết quả tìm kiếm: ${fn:length(subjectList)} môn học phù hợp với "${searchTerm}"</span>
                                          </div>
-                                         <!-- Ẩn pagination khi search -->
                                      </c:when>
                                      <c:otherwise>
-                                         <!-- Chế độ bình thường: Hiển thị pagination -->
                                          <c:if test="${totalPages > 1}">
                                                                                            <div class="pagination-container">
                                                   <div class="pagination-controls">
@@ -434,7 +427,7 @@
                                                                           <span class="pagination-current">${i}</span>
                                                                       </c:when>
                                                                       <c:otherwise>
-                                                                          <a href="?page=${i}&size=${pageSize}&search=${param.search}&sortField=${param.sortField}&sortOrder=${param.sortOrder}" class="pagination-btn">${i}</a>
+                                                                          <a href="?page=${i}&size=${pageSize}&search=${param.search}" class="pagination-btn">${i}</a>
                                                                       </c:otherwise>
                                                                   </c:choose>
                                                               </c:forEach>
@@ -510,11 +503,10 @@
                                 <h4><fmt:message key="tutor_subject_list"/></h4>
                             </div>
                             
-                            <!-- Thanh tìm kiếm cho Tutor-Subject (client-side) -->
-                            <div class="search-sort-container" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
-                                <div class="search-box" style="flex: 1; min-width: 250px;">
-                                    <input type="text" id="tutorSubjectSearch" placeholder="Tìm kiếm tutor-subject..." 
-                                           style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                            <!-- Thanh tìm kiếm cho Tutor-Subject -->
+                            <div class="search-container" style="margin-bottom: 20px;">
+                                <div class="search-box">
+                                    <input type="text" id="tutorSubjectSearch" placeholder="Tìm kiếm tutor-subject...">
                                 </div>
                             </div>
                             

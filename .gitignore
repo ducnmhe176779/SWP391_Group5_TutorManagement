@@ -24,4 +24,6 @@ dist/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Ignore NetBeans private config
 /nbproject/private/
