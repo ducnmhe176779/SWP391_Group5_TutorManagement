@@ -247,7 +247,7 @@
                                 <li><a href="RequestCV" class="ttr-material-button"><span class="ttr-label"><fmt:message key="status_cv"/></span></a></li>
                                 <li><a href="ViewBooking" class="ttr-material-button"><span class="ttr-label"><fmt:message key="booking_manage"/></span></a></li>
                                 <li><a href="AdminViewSchedule" class="ttr-material-button"><span class="ttr-label"><fmt:message key="view_schedule"/></span></a></li>
-                                <li><a href="manageSubject" class="ttr-material-button"><span class="ttr-label"><fmt:message key="subject_management"/></span></a></li>
+                                <li><a href="${pageContext.request.contextPath}/admin/AdminSubjectController?service=listSubject&size=5&tutorSize=5" class="ttr-material-button"><span class="ttr-label"><fmt:message key="subject_management"/></span></a></li>
                             </ul>
                         </li>
                         <li>
@@ -331,7 +331,7 @@
                                 <input type="hidden" name="size" value="5">
                                 <div class="search-container">
                                     <div class="search-box">
-                                        <input type="text" id="subjectSearch" name="search" placeholder="Tìm kiếm môn học... (Tự động)"  
+                                        <input type="text" id="subjectSearch" name="search" placeholder="Tìm kiếm môn học..."  
                                                value="${searchTerm != null ? searchTerm : ''}">
                                     </div>
                                     <button type="submit" class="btn" style="margin: 0; padding: 10px 20px; font-weight: 500;">Tìm kiếm</button>
@@ -440,7 +440,7 @@
                                                             <!-- Luôn hiển thị trang cuối -->
                                                             <c:if test="${totalPages > 1}">
                                                                 <c:choose>
-                                                                    <c:when test="${currentPage == totalPages}">
+                                                                    <c:when test="${i == currentPage}">
                                                                         <span class="pagination-current">${totalPages}</span>
                                                                     </c:when>
                                                                     <c:otherwise>
@@ -541,35 +541,6 @@
 
         <!-- External JavaScripts -->
         <script src="${pageContext.request.contextPath}/assets/js/jquery.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/js/bootstrap.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/js/functions.js"></script>
-        
-        <!-- Script xử lý tìm kiếm -->
-        <script>
-            $(document).ready(function() {
-                // Tìm kiếm cho Subject List - Xử lý real-time search với delay
-                let searchTimeout;
-                
-                $('#subjectSearch').on('input', function() {
-                    const searchTerm = $(this).val().toLowerCase();
-                    
-                    // Clear timeout cũ
-                    clearTimeout(searchTimeout);
-                    
-                    // Nếu có search term, đợi 500ms rồi submit form
-                    if (searchTerm.trim() !== '') {
-                        searchTimeout = setTimeout(function() {
-                            // Submit form để tìm kiếm trong toàn bộ database
-                            $('#subjectSearch').closest('form').submit();
-                        }, 500);
-                    } else {
-                        // Nếu xóa hết search term, reload trang để hiển thị lại pagination
-                        if (window.location.search.includes('search=')) {
-                            window.location.href = window.location.pathname;
-                        }
-                    }
-                });
-            });
-        </script>
+        <script src="${pageContext.request.contextPath}/admin/assets/js/admin.js"></script>
     </body>
 </html>
