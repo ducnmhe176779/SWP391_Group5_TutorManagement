@@ -8,28 +8,52 @@ import java.sql.Timestamp;
 
 /**
  *
- * @author DatAnh
+ * @author Heizxje
  */
 public class HistoryLog {
-
-    private int logId;
+    private int logID;
     private Integer userId;
-    private String actionType;
-    private String targetId;
-    private String details;
-    private Timestamp logDate;
-    private String roleName;
+    private Integer roleId;
+    private String action;
+    private String description;
+    private Timestamp timestamp;
+    private String ipAddress;
+    private String userAgent;
+    private String targetId; // for backward compatibility
+    
+    // Thông tin bổ sung từ User
     private String fullName;
     private String email;
-    private int roleId; // Thêm thuộc tính RoleID
-
-    // Getters và Setters
-    public int getLogId() {
-        return logId;
+    private String roleName;
+    
+    public HistoryLog() {
     }
 
-    public void setLogId(int logId) {
-        this.logId = logId;
+    public HistoryLog(int logID, Integer userId, Integer roleId, String action, String description, Timestamp timestamp) {
+        this.logID = logID;
+        this.userId = userId;
+        this.roleId = roleId;
+        this.action = action;
+        this.description = description;
+        this.timestamp = timestamp;
+    }
+
+    public HistoryLog(Integer userId, Integer roleId, String action, String description, String ipAddress, String userAgent) {
+        this.userId = userId;
+        this.roleId = roleId;
+        this.action = action;
+        this.description = description;
+        this.ipAddress = ipAddress;
+        this.userAgent = userAgent;
+    }
+
+    // Getters and Setters
+    public int getLogID() {
+        return logID;
+    }
+
+    public void setLogID(int logID) {
+        this.logID = logID;
     }
 
     public Integer getUserId() {
@@ -40,44 +64,52 @@ public class HistoryLog {
         this.userId = userId;
     }
 
-    public String getActionType() {
-        return actionType;
+    public Integer getRoleId() {
+        return roleId;
     }
 
-    public void setActionType(String actionType) {
-        this.actionType = actionType;
+    public void setRoleId(Integer roleId) {
+        this.roleId = roleId;
     }
 
-    public String getTargetId() {
-        return targetId;
+    public String getAction() {
+        return action;
     }
 
-    public void setTargetId(String targetId) {
-        this.targetId = targetId;
+    public void setAction(String action) {
+        this.action = action;
     }
 
-    public String getDetails() {
-        return details;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDetails(String details) {
-        this.details = details;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public Timestamp getLogDate() {
-        return logDate;
+    public Timestamp getTimestamp() {
+        return timestamp;
     }
 
-    public void setLogDate(Timestamp logDate) {
-        this.logDate = logDate;
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
     }
 
-    public String getRoleName() {
-        return roleName;
+    public String getIpAddress() {
+        return ipAddress;
     }
 
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
+    }
+
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
     }
 
     public String getFullName() {
@@ -96,11 +128,54 @@ public class HistoryLog {
         this.email = email;
     }
 
-    public int getRoleId() {
-        return roleId;
+    public String getRoleName() {
+        return roleName;
     }
 
-    public void setRoleId(int roleId) {
-        this.roleId = roleId;
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    // Backward-compatible getters for existing JSPs
+    // Map old API names to new fields to avoid breaking views
+    public String getActionType() {
+        return getAction();
+    }
+
+    public String getDetails() {
+        return getDescription();
+    }
+
+    public java.util.Date getLogDate() {
+        return getTimestamp();
+    }
+
+    // Backward-compatible setters/getters used by older DAO code
+    public void setLogId(int logId) {
+        this.logID = logId;
+    }
+
+    public int getLogId() {
+        return this.logID;
+    }
+
+    public void setActionType(String actionType) {
+        this.action = actionType;
+    }
+
+    public void setDetails(String details) {
+        this.description = details;
+    }
+
+    public void setLogDate(Timestamp ts) {
+        this.timestamp = ts;
+    }
+
+    public String getTargetId() {
+        return targetId;
+    }
+
+    public void setTargetId(String targetId) {
+        this.targetId = targetId;
     }
 }
