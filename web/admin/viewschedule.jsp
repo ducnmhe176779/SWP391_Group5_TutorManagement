@@ -1,10 +1,15 @@
+<%-- 
+    Document   : viewschedule
+    Created on : Mar 22, 2025
+    Author     : Heizxje
+--%>
 <%@page import="entity.User"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <!DOCTYPE html>
-<html lang="${not empty sessionScope.locale ? sessionScope.locale : 'en'}">
+<html lang="${sessionScope.locale != null ? sessionScope.locale : 'en'}">
     <head>
         <!-- META -->
         <meta charset="utf-8">
@@ -15,11 +20,10 @@
         <meta name="description" content="G5 SmartTutor : Smart tutor, effective learning." />
         <meta property="og:title" content="G5 SmartTutor : Smart tutor, effective learning." />
         <meta property="og:description" content="G5 SmartTutor : Smart tutor, effective learning." />
-        <meta property="og:image" content="" />
         <meta name="format-detection" content="telephone=no">
 
         <!-- FAVICONS ICON -->
-        <link rel="icon" href="../error-404.jsp" type="image/x-icon" />
+        <link rel="icon" href="${pageContext.request.contextPath}/error-404.jsp" type="image/x-icon" />
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets/images/favicon.png" />
 
         <!-- PAGE TITLE -->
@@ -51,7 +55,7 @@
                 border: 1px solid #ddd;
             }
             .table-responsive th {
-                background-color: #4CAF50;
+                background-color: #2196F3;
                 color: white;
             }
             .table-responsive tr:nth-child(even) {
@@ -68,16 +72,16 @@
                 padding: 10px 20px;
                 margin: 0 5px;
                 text-decoration: none;
-                background-color: #4CAF50;
+                background-color: #2196F3;
                 color: white;
                 border-radius: 5px;
                 transition: background-color 0.3s;
             }
             .pagination a:hover {
-                background-color: #45a049;
+                background-color: #1976D2;
             }
             .pagination a.active {
-                background-color: #45a049;
+                background-color: #1976D2;
                 font-weight: bold;
             }
             .pagination a.disabled {
@@ -85,24 +89,28 @@
                 cursor: not-allowed;
             }
             .action-links button {
-                background-color: #4CAF50;
+                background-color: #2196F3;
                 color: white;
                 border: none;
                 padding: 5px 10px;
                 cursor: pointer;
             }
             .action-links button:hover {
-                background-color: #45a049;
+                background-color: #1976D2;
             }
         </style>
     </head>
-    <%
-        User user = (User) session.getAttribute("user");
-    %>
-    <fmt:setLocale value="${not empty sessionScope.locale ? sessionScope.locale : 'en'}"/>
-    <fmt:setBundle basename="messages"/>
-    
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
+        <%
+            User user = (User) session.getAttribute("user");
+            if (user == null) {
+                response.sendRedirect(request.getContextPath() + "/login.jsp");
+                return;
+            }
+        %>
+        <fmt:setLocale value="${sessionScope.locale != null ? sessionScope.locale : 'en'}"/>
+        <fmt:setBundle basename="messages"/>
+
         <!-- Header -->
         <header class="ttr-header">
             <div class="ttr-header-wrapper">
@@ -112,7 +120,7 @@
                 </div>
                 <div class="ttr-logo-box">
                     <div>
-                        <a href="${pageContext.request.contextPath}/staff/dashboard" class="ttr-logo">
+                        <a href="${pageContext.request.contextPath}/admin/index" class="ttr-logo">
                             <img class="ttr-logo-mobile" alt="" src="${pageContext.request.contextPath}/assets/images/logo-mobile.png" width="30" height="30">
                             <img class="ttr-logo-desktop" alt="" src="${pageContext.request.contextPath}/assets/images/logo-white.png" width="160" height="27">
                         </a>
@@ -120,7 +128,7 @@
                 </div>
                 <div class="ttr-header-menu">
                     <ul class="ttr-header-navigation">
-                        <li><a href="${pageContext.request.contextPath}/staff/dashboard" class="ttr-material-button ttr-submenu-toggle"><fmt:message key="home"/></a></li>
+                        <li><a href="${pageContext.request.contextPath}/admin/index" class="ttr-material-button ttr-submenu-toggle"><fmt:message key="home"/></a></li>
                         <li>
                             <a href="#" class="ttr-material-button ttr-submenu-toggle"><fmt:message key="language"/> <i class="fa fa-angle-down"></i></a>
                             <div class="ttr-header-submenu">
@@ -135,7 +143,7 @@
                 <div class="ttr-header-right ttr-with-seperator">
                     <ul class="ttr-header-navigation">
                         <li>
-                            <a href="${pageContext.request.contextPath}/staff/dashboard" class="ttr-material-button ttr-submenu-toggle">
+                            <a href="${pageContext.request.contextPath}/admin/adminprofile" class="ttr-material-button ttr-submenu-toggle">
                                 <span class="ttr-user-avatar">
                                     <img alt="" 
                                          src="${pageContext.request.contextPath}/<%= user.getAvatar() != null ? user.getAvatar() : "uploads/default_avatar.jpg"%>" 
@@ -145,7 +153,7 @@
                             </a>
                             <div class="ttr-header-submenu">
                                 <ul>
-                                    <li><a href="${pageContext.request.contextPath}/staff/staffprofile"><fmt:message key="my_profile"/></a></li>
+                                    <li><a href="${pageContext.request.contextPath}/admin/adminprofile"><fmt:message key="my_profile"/></a></li>
                                     <li><a href="${pageContext.request.contextPath}/logout"><fmt:message key="logout"/></a></li>
                                 </ul>
                             </div>
@@ -155,22 +163,19 @@
             </div>
         </header>
 
-        <!-- Left sidebar menu start -->
+        <!-- Sidebar -->
         <div class="ttr-sidebar">
             <div class="ttr-sidebar-wrapper content-scroll">
-                <!-- Side menu logo start -->
                 <div class="ttr-sidebar-logo">
-                    <a href="${pageContext.request.contextPath}/staff/dashboard"><img alt="" src="${pageContext.request.contextPath}/assets/images/logo.png" width="122" height="27"></a>
+                    <a href="${pageContext.request.contextPath}/admin/index"><img alt="" src="${pageContext.request.contextPath}/assets/images/logo.png" width="122" height="27"></a>
                     <div class="ttr-sidebar-toggle-button">
                         <i class="ti-arrow-left"></i>
                     </div>
                 </div>
-                <!-- Side menu logo end -->
-                <!-- Sidebar menu start -->
                 <nav class="ttr-sidebar-navi">
                     <ul>
                         <li>
-                            <a href="${pageContext.request.contextPath}/staff/dashboard" class="ttr-material-button">
+                            <a href="${pageContext.request.contextPath}/admin/index" class="ttr-material-button">
                                 <span class="ttr-icon"><i class="ti-home"></i></span>
                                 <span class="ttr-label"><fmt:message key="dashboard"/></span>
                             </a>
@@ -182,32 +187,57 @@
                                 <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
                             </a>
                             <ul>
-                                <li><a href="${pageContext.request.contextPath}/staff/ViewSchedule" class="ttr-material-button"><span class="ttr-label"><fmt:message key="view_schedule"/></span></a></li>
-                                <li><a href="${pageContext.request.contextPath}/staff/ListRated" class="ttr-material-button"><span class="ttr-label"><fmt:message key="tutor_reviews"/></span></a></li>
-                                <li><a href="${pageContext.request.contextPath}/staff/SubjectController?service=listSubject" class="ttr-material-button"><span class="ttr-label"><fmt:message key="control_subject"/></span></a></li>
+                                <li><a href="${pageContext.request.contextPath}/admin/TutorList" class="ttr-material-button"><span class="ttr-label"><fmt:message key="tutor_list"/></span></a></li>
+                                <li><a href="${pageContext.request.contextPath}/admin/AdminListRated" class="ttr-material-button"><span class="ttr-label"><fmt:message key="tutor_reviews"/></span></a></li>
+                                <li><a href="${pageContext.request.contextPath}/admin/RequestCV" class="ttr-material-button"><span class="ttr-label"><fmt:message key="status_cv"/></span></a></li>
+                                <li><a href="${pageContext.request.contextPath}/admin/ViewBooking" class="ttr-material-button"><span class="ttr-label"><fmt:message key="booking_manage"/></span></a></li>
+                                <li><a href="${pageContext.request.contextPath}/admin/AdminViewSchedule" class="ttr-material-button"><span class="ttr-label"><fmt:message key="view_schedule"/></span></a></li>
+                                <li><a href="${pageContext.request.contextPath}/admin/AdminSubjectController" class="ttr-material-button"><span class="ttr-label"><fmt:message key="subject_management"/></span></a></li>
                             </ul>
                         </li>
                         <li>
                             <a href="#" class="ttr-material-button">
-                                <span class="ttr-icon"><i class="ti-book"></i></span>
-                                <span class="ttr-label"><fmt:message key="content_management"/></span>
+                                <span class="ttr-icon"><i class="ti-user"></i></span>
+                                <span class="ttr-label"><fmt:message key="staff_management"/></span>
                                 <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
                             </a>
                             <ul>
-                                <li><a href="${pageContext.request.contextPath}/staff/BlogController?service=listBlog" class="ttr-material-button"><span class="ttr-label"><fmt:message key="blog"/></span></a></li>
-                                <li><a href="${pageContext.request.contextPath}/staff/BlogController?service=addBlog" class="ttr-material-button"><span class="ttr-label"><fmt:message key="add_blog"/></span></a></li>
+                                <li><a href="${pageContext.request.contextPath}/admin/StaffList" class="ttr-material-button"><span class="ttr-label"><fmt:message key="staff_list"/></span></a></li>
+                                <li><a href="${pageContext.request.contextPath}/admin/StaffManage" class="ttr-material-button"><span class="ttr-label"><fmt:message key="add_new_staff"/></span></a></li>
                             </ul>
                         </li>
                         <li>
-                            <a href="${pageContext.request.contextPath}/staff/historyLog" class="ttr-material-button">
+                            <a href="#" class="ttr-material-button">
+                                <span class="ttr-icon"><i class="ti-id-badge"></i></span>
+                                <span class="ttr-label"><fmt:message key="user_management"/></span>
+                                <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
+                            </a>
+                            <ul>
+                                <li><a href="${pageContext.request.contextPath}/admin/UserList" class="ttr-material-button"><span class="ttr-label"><fmt:message key="user_list"/></span></a></li>
+                                <li><a href="${pageContext.request.contextPath}/admin/ReportManager" class="ttr-material-button"><span class="ttr-label"><fmt:message key="report"/></span></a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#" class="ttr-material-button">
+                                <span class="ttr-icon"><i class="ti-credit-card"></i></span>
+                                <span class="ttr-label"><fmt:message key="payment"/></span>
+                                <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
+                            </a>
+                            <ul>
+                                <li><a href="${pageContext.request.contextPath}/admin/approveWithdrawal" class="ttr-material-button"><span class="ttr-label"><fmt:message key="request_withdrawal"/></span></a></li>
+                                <li><a href="${pageContext.request.contextPath}/admin/PaymentHistory" class="ttr-material-button"><span class="ttr-label"><fmt:message key="view_history_payment"/></span></a></li>
+                                <li><a href="${pageContext.request.contextPath}/admin/systemRevenue" class="ttr-material-button"><span class="ttr-label"><fmt:message key="system_revenue"/></span></a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="${pageContext.request.contextPath}/admin/historyLog" class="ttr-material-button">
                                 <span class="ttr-icon"><i class="ti-clipboard"></i></span>
-                                <span class="ttr-label"><fmt:message key="user_tutor_logs"/></span>
+                                <span class="ttr-label"><fmt:message key="history_log"/></span>
                             </a>
                         </li>
                         <li class="ttr-seperate"></li>
                     </ul>
                 </nav>
-                <!-- Sidebar menu end -->
             </div>
         </div>
 
@@ -215,10 +245,10 @@
         <main class="ttr-wrapper">
             <div class="container-fluid">
                 <div class="db-breadcrumb">
-                    <h4 class="breadcrumb-title"><fmt:message key="schedule_list"/></h4>
+                    <h4 class="breadcrumb-title"><fmt:message key="view_schedule"/></h4>
                     <ul class="db-breadcrumb-list">
-                        <li><a href="${pageContext.request.contextPath}/staff/dashboard"><i class="fa fa-home"></i><fmt:message key="home"/></a></li>
-                        <li><fmt:message key="schedule_list"/></li>
+                        <li><a href="${pageContext.request.contextPath}/admin/index"><i class="fa fa-home"></i><fmt:message key="home"/></a></li>
+                        <li><fmt:message key="view_schedule"/></li>
                     </ul>
                 </div>
                 <div class="row">
@@ -232,10 +262,10 @@
                                     <thead>
                                         <tr>
                                             <th><fmt:message key="schedule_id"/></th>
-                                            <th><fmt:message key="tutor_name"/></th>
+                                            <th><fmt:message key="tutor_id"/></th>
                                             <th><fmt:message key="start_time"/></th>
                                             <th><fmt:message key="end_time"/></th>
-                                            <th><fmt:message key="subject_name"/></th>
+                                            <th><fmt:message key="subject_id"/></th>
                                             <th><fmt:message key="is_booked"/></th>
                                             <th><fmt:message key="action"/></th>
                                         </tr>
@@ -244,32 +274,37 @@
                                         <c:forEach var="schedule" items="${schedules}">
                                             <tr>
                                                 <td>${schedule.scheduleID}</td>
-                                                <td>${schedule.tutorName}</td>
-                                                <td>${schedule.startTime}</td>
-                                                <td>${schedule.endTime}</td>
-                                                <td>${schedule.subjectName}</td>
-                                                <td>${schedule.booked ? '<fmt:message key="yes"/>' : '<fmt:message key="no"/>'}</td>
+                                                <td>${schedule.tutorID}</td>
+                                                <td><fmt:formatDate value="${schedule.startTime}" pattern="dd/MM/yyyy HH:mm"/></td>
+                                                <td><fmt:formatDate value="${schedule.endTime}" pattern="dd/MM/yyyy HH:mm"/></td>
+                                                <td>${schedule.subjectID}</td>
+                                                <td>${schedule.booked ? fmt.message(key='yes') : fmt.message(key='no')}</td>
                                                 <td class="action-links">
-                                                    <form action="ViewSchedule" method="POST" onsubmit="return confirmApprove()">
+                                                    <form action="${pageContext.request.contextPath}/admin/ViewSchedule" method="POST" onsubmit="return confirmApprove()">
                                                         <input type="hidden" name="scheduleID" value="${schedule.scheduleID}">
                                                         <button type="submit"><fmt:message key="approve"/></button>
                                                     </form>
                                                 </td>
                                             </tr>
                                         </c:forEach>
+                                        <c:if test="${empty schedules}">
+                                            <tr>
+                                                <td colspan="7" class="text-center"><fmt:message key="no_schedules_found"/></td>
+                                            </tr>
+                                        </c:if>
                                     </tbody>
                                 </table>
                             </div>
                             <!-- Pagination -->
                             <div class="pagination">
                                 <c:if test="${currentPage > 1}">
-                                    <a href="ViewSchedule?page=${currentPage - 1}"><fmt:message key="previous"/></a>
+                                    <a href="${pageContext.request.contextPath}/admin/ViewSchedule?page=${currentPage - 1}"><fmt:message key="previous"/></a>
                                 </c:if>
                                 <c:forEach var="i" begin="1" end="${totalPages}">
-                                    <a href="ViewSchedule?page=${i}" class="${i == currentPage ? 'active' : ''}">${i}</a>
+                                    <a href="${pageContext.request.contextPath}/admin/ViewSchedule?page=${i}" class="${i == currentPage ? 'active' : ''}">${i}</a>
                                 </c:forEach>
                                 <c:if test="${currentPage < totalPages}">
-                                    <a href="ViewSchedule?page=${currentPage + 1}"><fmt:message key="next"/></a>
+                                    <a href="${pageContext.request.contextPath}/admin/ViewSchedule?page=${currentPage + 1}"><fmt:message key="next"/></a>
                                 </c:if>
                             </div>
                         </div>
@@ -293,17 +328,17 @@
         <script src="${pageContext.request.contextPath}/assets/vendors/masonry/masonry.js"></script>
         <script src="${pageContext.request.contextPath}/assets/vendors/masonry/filter.js"></script>
         <script src="${pageContext.request.contextPath}/assets/vendors/owl-carousel/owl.carousel.js"></script>
-        <script src='${pageContext.request.contextPath}/assets/vendors/scroll/scrollbar.min.js'></script>
+        <script src="${pageContext.request.contextPath}/assets/vendors/scroll/scrollbar.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets/js/functions.js"></script>
         <script src="${pageContext.request.contextPath}/assets/vendors/chart/chart.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets/js/admin.js"></script>
-        <script src='${pageContext.request.contextPath}/assets/vendors/calendar/moment.min.js'></script>
-        <script src='${pageContext.request.contextPath}/assets/vendors/calendar/fullcalendar.js'></script>
-        <script src='${pageContext.request.contextPath}/assets/vendors/switcher/switcher.js'></script>
+        <script src="${pageContext.request.contextPath}/assets/vendors/calendar/moment.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/vendors/calendar/fullcalendar.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/vendors/switcher/switcher.js"></script>
         <script type="text/javascript">
-            function confirmApprove() {
-                return confirm("<fmt:message key="confirm_approve_schedule"/>");
-            }
+                                                        function confirmApprove() {
+                                                            return confirm("<fmt:message key='confirm_approve_schedule'/>");
+                                                        }
         </script>
     </body>
 </html>
