@@ -30,8 +30,9 @@ public class AdminIndexServlet extends HttpServlet {
             return;
         }
         
-        // Forward đến admin/index.jsp
-        request.getRequestDispatcher("/admin/index.jsp").forward(request, response);
+        // Chuyển hướng sang /admin/dashboard để nạp đầy đủ dữ liệu (logs, stats...)
+        response.sendRedirect(request.getContextPath() + "/admin/dashboard");
+        return;
     }
 
     @Override

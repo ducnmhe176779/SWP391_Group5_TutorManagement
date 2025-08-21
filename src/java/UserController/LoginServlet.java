@@ -1,6 +1,7 @@
 package UserController;
 
 import model.DAOUser;
+import model.DAOHistoryLog;
 import entity.User;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
@@ -59,6 +60,12 @@ public class LoginServlet extends HttpServlet {
                 handleDeactivatedAccount(user, request, response);
             } else {
                 System.out.println("Login successful: UserID=" + user.getUserID() + ", RoleID=" + user.getRoleID());
+
+                // Ghi history log: LOGIN (tương thích DAO hiện tại)
+                try {
+                    new DAOHistoryLog().logLogin(user.getUserID());
+                } catch (Exception ignore) { /* không chặn luồng đăng nhập */ }
+
                 session.setAttribute("user", user);
                 session.setAttribute("userId", user.getUserID());
                 redirectBasedOnRole(user, request, response);
