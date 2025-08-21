@@ -15,5 +15,19 @@
     <welcome-file-list>
         <welcome-file>home</welcome-file>
     </welcome-file-list>
+    
+    <!-- CV Controller Mapping -->
+    <servlet>
+        <servlet-name>CVController</servlet-name>
+        <servlet-class>UserController.CVController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CVController</servlet-name>
+        <url-pattern>/cv</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CVController</servlet-name>
+        <url-pattern>/cv.jsp</url-pattern>
+    </servlet-mapping>
 
 </web-app>
