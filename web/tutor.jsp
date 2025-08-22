@@ -41,7 +41,7 @@
             User user = (User) session.getAttribute("user");
             DAOTutorRating dao = new DAOTutorRating();
         %>
-        <!-- Thi?t l?p Locale và Resource Bundle -->
+        <!-- Thi?t l?p Locale vï¿½ Resource Bundle -->
         <fmt:setLocale value="${sessionScope.locale != null ? sessionScope.locale : 'en'}"/>
         <fmt:setBundle basename="messages"/>
 
@@ -176,7 +176,13 @@
                                         <div class="col-md-6 col-lg-4 col-sm-6 m-b30">
                                             <div class="cours-bx">
                                                 <div class="action-box">
-                                                    <img src="<%=rs.getString(5)%>" alt="">
+                                                    <%
+                                                        String avatar = rs.getString(5);
+                                                        if (avatar == null || avatar.trim().isEmpty()) {
+                                                            avatar = "uploads/default_avatar.jpg";
+                                                        }
+                                                    %>
+                                                    <img src="<%=avatar%>" alt="" onerror="this.src='uploads/default_avatar.jpg'">
                                                     <a href="Tutordetail?tutorID=<%=rs.getInt(1)%>" class="btn"><fmt:message key="read_more"/></a>
                                                 </div>
                                                 <div class="info-bx text-center">

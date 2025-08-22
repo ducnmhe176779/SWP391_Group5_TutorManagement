@@ -344,4 +344,61 @@ public class DAOTutor extends DBConnect {
         }
         return tutorId;
     }
+
+    // Method mới: Lấy danh sách tutors theo subject (trả về Object[] để dễ sử dụng trong JSP)
+    public List<Object[]> getTutorsBySubject(int subjectID) {
+        List<Object[]> tutors = new ArrayList<>();
+        String sql = """
+        SELECT t.TutorID, u.FullName
+        FROM Tutor t
+        JOIN CV c ON t.CVID = c.CVID
+        JOIN Users u ON c.UserID = u.UserID
+        WHERE c.SubjectId = ?
+        ORDER BY u.FullName
+    """;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, subjectID);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Object[] tutorData = new Object[2];
+                tutorData[0] = rs.getInt("TutorID");
+                tutorData[1] = rs.getString("FullName");
+                tutors.add(tutorData);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return tutors;
+    }
+
+    // Method mới: Lấy thông tin chi tiết tutor theo ID
+    public Object[] getTutorDetailById(int tutorID) {
+        String sql = """
+        SELECT t.TutorID, u.FullName, u.Avatar, c.Education, c.Experience, c.Certificates, u.Email, u.Phone, t.Rating
+        FROM Tutor t
+        JOIN CV c ON t.CVID = c.CVID
+        JOIN Users u ON c.UserID = u.UserID
+        WHERE t.TutorID = ?
+    """;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, tutorID);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Object[] tutorData = new Object[9];
+                tutorData[0] = rs.getInt("TutorID");
+                tutorData[1] = rs.getString("FullName");
+                tutorData[2] = rs.getString("Avatar");
+                tutorData[3] = rs.getString("Education");
+                tutorData[4] = rs.getString("Experience");
+                tutorData[5] = rs.getString("Certificates");
+                tutorData[6] = rs.getString("Email");
+                tutorData[7] = rs.getString("Phone");
+                tutorData[8] = rs.getFloat("Rating");
+                return tutorData;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

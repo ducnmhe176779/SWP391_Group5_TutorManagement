@@ -198,7 +198,7 @@
                                                     </a>
                                                 </li>
                                                 <li><a href="profile"><fmt:message key="my_profile"/></a></li>
-                                                <li><a href="logout"><fmt:message key="logout"/></a></li>
+                                                <li><a href="${pageContext.request.contextPath}/logout"><fmt:message key="logout"/></a></li>
                                             </ul>
                                         </div>
                                     </li>
