@@ -44,7 +44,7 @@ public class ProfileServlet extends HttpServlet {
         }
 
         request.setAttribute("user", currentUser);
-        request.getRequestDispatcher("/profile_user.jsp").forward(request, response);
+        request.getRequestDispatcher("/profile.jsp").forward(request, response);
     }
 
     @Override
