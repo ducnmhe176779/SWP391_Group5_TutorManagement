@@ -46,7 +46,52 @@ public class DAOSubject extends DBConnect{
         }
         return result;
     }
-    
+ 
+
+    public Subject getSubjectById(int subjectID) throws SQLException {
+        // Sửa đổi: Thêm cột Status vào câu lệnh SELECT
+        String sql = "SELECT SubjectID, SubjectName, Description, Status FROM Subject WHERE SubjectID = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, subjectID);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                // Sửa đổi: Sử dụng constructor mới có status
+                return new Subject(
+                        rs.getInt("SubjectID"),
+                        rs.getString("SubjectName"),
+                        rs.getString("Description"),
+                        rs.getString("Status")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // Phương thức để lấy tất cả Tutor-Subject với UserName chỉ khi TutorSubject.Approved = true
+public List<Subject> getAllTutorSubjects() throws SQLException {
+    List<Subject> subjectList = new ArrayList<>();
+    String sql = """
+            SELECT TutorID, UserName, TutorSubject.SubjectID, Desciption 
+            FROM dbo.Users 
+            JOIN dbo.CV ON CV.UserID = Users.UserID
+            JOIN dbo.TutorSubject ON TutorSubject.SubjectID = CV.SubjectId
+            WHERE status = 'Approved'"""; // Assuming 'Approved' is a boolean or integer (1 for true)
+
+    try (PreparedStatement stmt = conn.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
+        while (rs.next()) {
+            int tutorID = rs.getInt("TutorID");
+            String userName = rs.getString("UserName");
+            int subjectID = rs.getInt("SubjectID");
+            String description = rs.getString("Desciption");
+            // Sử dụng constructor được comment "Constructor cho getAllTutorSubjects"
+            subjectList.add(new Subject(subjectID, description, tutorID, userName));
+        }
+    }
+    return subjectList;
+}
+       
     public List<Subject> getAllSubjects(){
         List<Subject> subjects = new ArrayList<>();
         String sql = "Select SubjectID, SubjectName, Description, Status from Subject";
@@ -206,22 +251,6 @@ public class DAOSubject extends DBConnect{
         return subjects;
     }
     
-    public Subject getSubjectById(int subjectId) throws SQLException {
-        String sql = "SELECT SubjectID, SubjectName, Description, Status FROM Subject WHERE SubjectID = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, subjectId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return new Subject(
-                    rs.getInt("SubjectID"),
-                    rs.getString("SubjectName"),
-                    rs.getString("Description"),
-                    rs.getString("Status")
-                );
-            }
-        }
-        return null;
-    }
     
     public List<Subject> searchSubjects(String searchTerm) throws SQLException {
         List<Subject> subjects = new ArrayList<>();
@@ -247,33 +276,6 @@ public class DAOSubject extends DBConnect{
         return subjects;
     }
     
-    public List<Subject> getAllTutorSubjects() throws SQLException {
-        List<Subject> subjects = new ArrayList<>();
-        String sql = """
-            SELECT 
-                t.TutorID,
-                u.UserName,
-                s.SubjectID,
-                c.Desciption AS Description
-            FROM Tutor t
-            JOIN CV c ON t.CVID = c.CVID
-            JOIN Users u ON c.UserID = u.UserID
-            JOIN Subject s ON s.SubjectID = c.SubjectId
-            WHERE c.Status = 'Approved'
-            ORDER BY s.SubjectName
-            """;
-        try (Statement st = conn.createStatement();
-             ResultSet rs = st.executeQuery(sql)) {
-            while (rs.next()) {
-                int tutorID = rs.getInt("TutorID");
-                String userName = rs.getString("UserName");
-                int subjectID = rs.getInt("SubjectID");
-                String description = rs.getString("Description");
-                subjects.add(new Subject(subjectID, description, tutorID, userName));
-            }
-        }
-        return subjects;
-    }
     
     public List<Subject> searchTutorSubjects(String searchTerm) throws SQLException {
         List<Subject> subjects = new ArrayList<>();

@@ -43,6 +43,8 @@ public class ProfileServlet extends HttpServlet {
             return;
         }
 
+
+
         // Kiểm tra xem có userID được truyền vào không (để xem profile của user khác)
         String userIDParam = request.getParameter("userID");
         User userToDisplay = currentUser; // Mặc định hiển thị profile của user đang đăng nhập
@@ -72,6 +74,7 @@ public class ProfileServlet extends HttpServlet {
 
         request.setAttribute("user", userToDisplay);
         request.getRequestDispatcher("/profile_user.jsp").forward(request, response);
+
     }
 
     @Override
