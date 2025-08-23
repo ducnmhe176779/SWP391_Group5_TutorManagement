@@ -82,7 +82,7 @@ public class CreateScheduleServlet extends HttpServlet {
         
         request.setAttribute("subjectList", subjectList);
         request.setAttribute("scheduleList", scheduleList);
-        request.getRequestDispatcher("/tutor/createSchedule.jsp").forward(request, response);
+        request.getRequestDispatcher("/tutor/createschedule.jsp").forward(request, response);
     }
 
     @Override
