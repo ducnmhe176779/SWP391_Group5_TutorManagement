@@ -1,6 +1,8 @@
 package model;
 
 import entity.Booking;
+import entity.Schedule;
+import entity.Subject;
 import entity.Slot;
 import java.sql.*;
 import java.util.ArrayList;
@@ -42,9 +44,9 @@ public class DAOBooking extends DBConnect {
 
     public int addSlotsAndBookings(List<Slot> slots, List<Booking> bookings) {
         int result = 0;
-        String slotSql = "INSERT INTO [dbo].[Slot] (scheduleID, status) VALUES (?, ?)";
+        String slotSql = "INSERT INTO [dbo].[Slot] (TutorID, StartTime, EndTime, SubjectID, Status) VALUES (?, ?, ?, ?, ?)";
         String bookingSql = "INSERT INTO [dbo].[Booking] (studentID, tutorID, slotID, bookingDate, status, subjectID) VALUES (?, ?, ?, ?, ?, ?)";
-        String updateScheduleSql = "UPDATE [dbo].[Schedule] SET IsBooked = 1 WHERE scheduleID = ?";
+        String updateScheduleSql = "UPDATE [dbo].[Schedule] SET IsBooked = 1 WHERE ScheduleID = ?";
 
         try {
             conn.setAutoCommit(false);
@@ -52,8 +54,11 @@ public class DAOBooking extends DBConnect {
 
             try (PreparedStatement slotPs = conn.prepareStatement(slotSql, Statement.RETURN_GENERATED_KEYS)) {
                 for (Slot slot : slots) {
-                    slotPs.setInt(1, slot.getScheduleID());
-                    slotPs.setString(2, slot.getStatus());
+                    slotPs.setInt(1, slot.getTutorID());
+                    slotPs.setTimestamp(2, slot.getStartTime());
+                    slotPs.setTimestamp(3, slot.getEndTime());
+                    slotPs.setInt(4, slot.getSubjectID());
+                    slotPs.setString(5, slot.getStatus());
                     slotPs.executeUpdate();
                     try (ResultSet rs = slotPs.getGeneratedKeys()) {
                         if (rs.next()) {
@@ -65,10 +70,12 @@ public class DAOBooking extends DBConnect {
 
             try (PreparedStatement updateSchedulePs = conn.prepareStatement(updateScheduleSql)) {
                 for (Slot slot : slots) {
-                    updateSchedulePs.setInt(1, slot.getScheduleID());
-                    updateSchedulePs.addBatch();
+                    // Cần tìm ScheduleID tương ứng với Slot
+                    // Tạm thời bỏ qua phần này vì không có ScheduleID trong Slot
+                    // updateSchedulePs.setInt(1, slot.getScheduleID());
+                    // updateSchedulePs.addBatch();
                 }
-                updateSchedulePs.executeBatch();
+                // updateSchedulePs.executeBatch();
             }
 
             try (PreparedStatement bookingPs = conn.prepareStatement(bookingSql, Statement.RETURN_GENERATED_KEYS)) {
@@ -197,6 +204,86 @@ public class DAOBooking extends DBConnect {
             }
         }
         return totalBookings;
+    }
+
+    // Thêm method để kiểm tra học sinh đã đặt lịch chưa
+    public boolean hasStudentBookedSchedule(int studentId, int scheduleId) {
+        // Kiểm tra xem học sinh đã đặt lịch này chưa
+        // Vì chúng ta đang tạo Slot từ Schedule, nên cần kiểm tra theo cách khác
+        String sql = """
+            SELECT COUNT(*) FROM Booking b
+            INNER JOIN Slot s ON b.SlotID = s.SlotID
+            WHERE b.StudentID = ? AND s.TutorID = (
+                SELECT TutorID FROM Schedule WHERE ScheduleID = ?
+            ) AND s.StartTime = (
+                SELECT StartTime FROM Schedule WHERE ScheduleID = ?
+            ) AND s.EndTime = (
+                SELECT EndTime FROM Schedule WHERE ScheduleID = ?
+            )
+        """;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, studentId);
+            ps.setInt(2, scheduleId);
+            ps.setInt(3, scheduleId);
+            ps.setInt(4, scheduleId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi kiểm tra booking: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Thêm method để lấy booking theo student ID
+    public List<Booking> getBookingsByStudentId(int studentId) {
+        List<Booking> bookings = new ArrayList<>();
+        String sql = """
+            SELECT b.*, sl.StartTime, sl.EndTime, sub.SubjectName, u.FullName as TutorName, sl.Status as SlotStatus
+            FROM Booking b
+            INNER JOIN Slot sl ON b.SlotID = sl.SlotID
+            INNER JOIN Subject sub ON b.SubjectID = sub.SubjectID
+            INNER JOIN Users u ON b.TutorID = u.UserID
+            WHERE b.StudentID = ?
+            ORDER BY b.BookingDate DESC
+        """;
+        
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, studentId);
+            ResultSet rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                Booking booking = new Booking();
+                booking.setBookingID(rs.getInt("BookingID"));
+                booking.setStudentID(rs.getInt("StudentID"));
+                booking.setStudentName(rs.getString("StudentName"));
+                booking.setTutorID(rs.getInt("TutorID"));
+                booking.setTutorName(rs.getString("TutorName"));
+                booking.setSlotID(rs.getInt("SlotID"));
+                booking.setBookingDate(rs.getDate("BookingDate"));
+                booking.setStatus(rs.getString("Status"));
+                booking.setSubjectID(rs.getInt("SubjectID"));
+                
+                // Tạo Slot object (thay vì Schedule)
+                Slot slot = new Slot();
+                slot.setSlotID(rs.getInt("SlotID"));
+                slot.setStatus(rs.getString("SlotStatus"));
+                booking.setSlot(slot);
+                
+                // Tạo Subject object
+                Subject subject = new Subject();
+                subject.setSubjectName(rs.getString("SubjectName"));
+                booking.setSubject(subject);
+                
+                bookings.add(booking);
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi lấy booking theo student ID: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return bookings;
     }
 }
 

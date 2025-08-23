@@ -1,7 +1,8 @@
 <%@page import="java.util.ArrayList"%>
 <%@page import="model.DAOCv"%>
+<%@page import="entity.User"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="java.sql.ResultSet,entity.User,entity.Subject,java.util.List"%>
+<%@page import="java.sql.ResultSet,entity.Subject,java.util.List"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="${sessionScope.locale != null ? sessionScope.locale : 'en'}">
@@ -34,16 +35,141 @@
         <link rel="stylesheet" type="text/css" href="assets/css/shortcodes/shortcodes.css">
         <link rel="stylesheet" type="text/css" href="assets/css/style.css">
         <link class="skin" rel="stylesheet" type="text/css" href="assets/css/color/color-1.css">
+        
+        <!-- Custom CSS for Tutor Details -->
+        <style>
+            .courses-post img {
+                object-fit: cover;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                transition: transform 0.3s ease;
+                max-width: 100%;
+                height: auto;
+            }
+            
+            .tutor-main-image {
+                object-fit: cover;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                transition: transform 0.3s ease;
+                max-width: 100%;
+                height: auto;
+                display: block;
+                margin: 0 auto;
+            }
+            
+            .courses-post img:hover,
+            .tutor-main-image:hover {
+                transform: scale(1.02);
+                box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            }
+            
+            /* Ensure image container is visible */
+            .courses-post {
+                text-align: center;
+                padding: 20px;
+                background: white;
+                border-radius: 15px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                margin: 20px 0;
+            }
+            
+            /* Debug info styling */
+            .debug-info {
+                background: #f8f9fa;
+                border: 1px solid #dee2e6;
+                border-radius: 5px;
+                padding: 15px;
+                margin: 15px 0;
+                font-family: monospace;
+                font-size: 12px;
+                color: #495057;
+            }
+            
+            .avatar-placeholder {
+                width: 32px;
+                height: 32px;
+                background: linear-gradient(45deg, #007bff, #0056b3);
+                color: white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: bold;
+                font-size: 14px;
+            }
+            
+            .reviewer-avatar img {
+                border-radius: 50%;
+                object-fit: cover;
+            }
+            
+            .tutor-info-section {
+                background: #f8f9fa;
+                border-radius: 15px;
+                padding: 20px;
+                margin: 20px 0;
+                border: 1px solid #e9ecef;
+            }
+            
+            .tutor-name {
+                color: #2c3e50;
+                font-weight: 700;
+                margin-bottom: 15px;
+            }
+            
+            .tutor-description {
+                background: white;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                margin: 20px 0;
+            }
+        </style>
     </head>
     <body id="bg">
         <%
-            ResultSet rsTutor = (ResultSet) request.getAttribute("rsTutor");
-            rsTutor.next();
-        %>
-        <%
-            List<Subject> list = (List<Subject>) request.getAttribute("list");
-            ResultSet rs = (ResultSet) request.getAttribute("rs");
+            // Khai báo và khởi tạo các biến cần thiết
             User user = (User) session.getAttribute("user");
+            
+            // Lấy thông tin tutor từ attributes
+            Integer tutorID = (Integer) request.getAttribute("tutorID");
+            String tutorFullName = (String) request.getAttribute("tutorFullName");
+            String tutorSubjectName = (String) request.getAttribute("tutorSubjectName");
+            Float tutorRating = (Float) request.getAttribute("tutorRating");
+            String finalAvatarPath = (String) request.getAttribute("tutorAvatar");
+            Integer tutorPrice = (Integer) request.getAttribute("tutorPrice");
+            String tutorDescription = (String) request.getAttribute("tutorDescription");
+            String tutorCertificates = (String) request.getAttribute("tutorCertificates");
+            Integer tutorSubjectID = (Integer) request.getAttribute("tutorSubjectID");
+            String tutorSkill = (String) request.getAttribute("tutorSkill");
+            
+            // Kiểm tra xem có dữ liệu tutor không
+            boolean hasTutorData = (tutorID != null);
+            
+            if (finalAvatarPath == null || finalAvatarPath.trim().isEmpty()) {
+                finalAvatarPath = "uploads/default_avatar.jpg";
+            }
+            
+            // Lấy các attributes khác
+            Double averageRating = (Double) request.getAttribute("averageRating");
+            if (averageRating == null) averageRating = 0.0;
+            
+            Integer reviewCount = (Integer) request.getAttribute("reviewCount");
+            if (reviewCount == null) reviewCount = 0;
+            
+            int[] ratingDistribution = (int[]) request.getAttribute("ratingDistribution");
+            if (ratingDistribution == null) ratingDistribution = new int[5];
+            
+            List<Object[]> reviews = (List<Object[]>) request.getAttribute("reviews");
+            if (reviews == null) reviews = new ArrayList<>();
+            
+            // Debug info - commented out
+            // System.out.println("JSP DEBUG - Final Avatar Path: " + finalAvatarPath);
+            // System.out.println("JSP DEBUG - Full URL: " + request.getContextPath() + "/" + finalAvatarPath);
+            // System.out.println("JSP DEBUG - Has Tutor Data: " + hasTutorData);
+            // System.out.println("JSP DEBUG - Average Rating: " + averageRating);
+            // System.out.println("JSP DEBUG - Review Count: " + reviewCount);
         %>
         <%
             String successMessage = (String) session.getAttribute("successMessage");
@@ -161,6 +287,22 @@
                         </ul>
                     </div>
                 </div>
+                
+                <!-- Debug info - Hidden -->
+                <!-- 
+                <div class="debug-info">
+                    <strong>Debug Info:</strong><br>
+                    Has Tutor Data: <%=hasTutorData%><br>
+                    Tutor ID: <%=tutorID%><br>
+                    Tutor Name: <%=tutorFullName%><br>
+                    Tutor Avatar Attribute: ${tutorAvatar}<br>
+                    Final Avatar Path: <%=finalAvatarPath%><br>
+                    Full URL: ${pageContext.request.contextPath}/<%=finalAvatarPath%><br>
+                    Context Path: ${pageContext.request.contextPath}
+                </div>
+                -->
+                
+                <% if (hasTutorData) { %>
                 <div class="content-block">
                     <div class="section-area section-sp1">
                         <div class="container">
@@ -169,18 +311,17 @@
                                     <div class="course-detail-bx">
                                         <div class="course-price">
                                             <del>VND</del>
-                                            <h4 class="price"><%=rsTutor.getInt(6)%></h4>
+                                            <h4 class="price"><%=tutorPrice != null ? tutorPrice : 0%></h4>
                                         </div>	
                                         <div class="course-buy-now text-center">
-                                            <a href="bookschedule?subjectId=<%=rsTutor.getInt("SubjectID")%>&tutorId=<%=rsTutor.getInt("TutorID")%>" class="btn radius-xl text-uppercase"><fmt:message key="booking"/></a>
+                                            <a href="BookSchedule?subjectId=<%=tutorSubjectID != null ? tutorSubjectID : 0%>&tutorId=<%=tutorID != null ? tutorID : 0%>" class="btn radius-xl text-uppercase"><fmt:message key="booking"/></a>
                                         </div>
                                         <div class="cours-more-info">
                                             <div class="review">
-                                                <span><%= request.getAttribute("reviewCount")%> <fmt:message key="reviews"/></span>
+                                                <span><%= reviewCount%> <fmt:message key="reviews"/></span>
                                                 <ul class="cours-star">
                                                     <%
-                                                        double avgRating = (Double) request.getAttribute("averageRating");
-                                                        int soSao = (int) Math.floor(avgRating);
+                                                        int soSao = (int) Math.floor(averageRating);
                                                         soSao = Math.max(0, Math.min(5, soSao));
                                                         for (int i = 0; i < soSao; i++) {
                                                     %>
@@ -197,28 +338,32 @@
                                             </div>
                                             <div class="price categories">
                                                 <span><fmt:message key="subject"/></span>
-                                                <h5 class="text-primary"><%=rsTutor.getString(3)%></h5>
+                                                <h5 class="text-primary"><%=tutorSubjectName != null ? tutorSubjectName : "Không có môn học"%></h5>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-lg-9 col-md-8 col-sm-12">
                                     <div class="courses-post">
-                                        <img width="300" height="300" src="<%=rsTutor.getString(5)%>" alt="">
+                                        <img width="300" height="300" 
+                                             src="${pageContext.request.contextPath}/<%=finalAvatarPath%>" 
+                                             alt="<%=tutorFullName != null ? tutorFullName : "Tutor"%>"
+                                             onerror="this.src='${pageContext.request.contextPath}/uploads/default_avatar.jpg'"
+                                             class="tutor-main-image">
                                         <div class="ttr-post-info">
                                             <div class="ttr-post-title ">
-                                                <h2 class="post-title"><%=rsTutor.getString(2)%></h2>
+                                                <h2 class="post-title"><%=tutorFullName != null ? tutorFullName : "Không có tên"%></h2>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="courese-overview" id="overview">
                                         <div class="col-md-12 col-lg-8">
                                             <h5 class="m-b5"><fmt:message key="tutor_description"/></h5>
-                                            <p><%=rsTutor.getString(7)%></p>
+                                            <p><%=tutorDescription != null ? tutorDescription : "Không có mô tả"%></p>
                                             <h5 class="m-b5"><fmt:message key="certification"/></h5>
-                                            <p><%=rsTutor.getString("Certificates")%></p>
+                                            <p><%=tutorCertificates != null ? tutorCertificates : "Không có chứng chỉ"%></p>
                                             <h5 class="m-b5"><fmt:message key="skill"/></h5>
-                                            <p><%=rsTutor.getString("Skill")%></p>
+                                            <p><%=tutorSkill != null ? tutorSkill : "Không có thông tin kỹ năng"%></p>
                                             <ul class="list-checked primary"></ul>
                                         </div>
                                     </div>
@@ -227,11 +372,11 @@
                                     <h4><fmt:message key="what_my_students_say"/></h4>
                                     <div class="review-bx">
                                         <div class="all-review">
-                                            <h2 class="rating-type"><%= String.format("%.1f", request.getAttribute("averageRating"))%></h2>
+                                            <h2 class="rating-type"><%= String.format("%.1f", averageRating)%></h2>
                                             <ul class="cours-star">
                                                 <%
                                                     for (int i = 0; i < 5; i++) {
-                                                        if (i < Math.floor(avgRating)) {
+                                                        if (i < Math.floor(averageRating)) {
                                                 %>
                                                 <li class="active"><i class="fa fa-star"></i></li>
                                                     <%
@@ -243,14 +388,12 @@
                                                         }
                                                     %>
                                             </ul>
-                                            <span><%= request.getAttribute("reviewCount")%> <fmt:message key="reviews"/></span>
+                                            <span><%= reviewCount%> <fmt:message key="reviews"/></span>
                                         </div>
                                         <div class="rating-distribution">
                                             <%
-                                                int[] ratingDist = (int[]) request.getAttribute("ratingDistribution");
-                                                int reviewCount = (Integer) request.getAttribute("reviewCount");
                                                 for (int i = 4; i >= 0; i--) {
-                                                    int count = ratingDist[i];
+                                                    int count = ratingDistribution[i];
                                                     double percentage = reviewCount > 0 ? (double) count / reviewCount * 100 : 0;
                                             %>
                                             <div class="rating-bar">
@@ -267,7 +410,6 @@
                                     </div>
                                     <div class="student-reviews" id="student-reviews">
                                         <%
-                                            List<Object[]> reviews= (List<Object[]>)request.getAttribute("reviews");
                                             int displayLimit = Math.min(6, reviews.size());
                                             for (int i = 0; i < displayLimit; i++) {
                                                 Object[] review = reviews.get(i);
@@ -393,6 +535,13 @@
                         });
                     </script>
                 </div>
+                <% } else { %>
+                <div class="container">
+                    <h2><fmt:message key="tutor_not_found"/></h2>
+                    <p><fmt:message key="tutor_not_found_description"/></p>
+                    <a href="Tutor" class="btn radius-xl text-uppercase"><fmt:message key="back_to_tutors"/></a>
+                </div>
+                <% } %>
             </div>
             <!-- Footer -->
             <footer>

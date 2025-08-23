@@ -43,8 +43,38 @@ public class ProfileServlet extends HttpServlet {
             return;
         }
 
-        request.setAttribute("user", currentUser);
-        request.getRequestDispatcher("/profile.jsp").forward(request, response);
+
+
+        // Kiểm tra xem có userID được truyền vào không (để xem profile của user khác)
+        String userIDParam = request.getParameter("userID");
+        User userToDisplay = currentUser; // Mặc định hiển thị profile của user đang đăng nhập
+
+        if (userIDParam != null && !userIDParam.trim().isEmpty()) {
+            try {
+                int targetUserID = Integer.parseInt(userIDParam);
+                
+                // Nếu userID khác với user đang đăng nhập, lấy thông tin của user đó
+                if (targetUserID != currentUser.getUserID()) {
+                    DAOUser daoUser = new DAOUser();
+                    User targetUser = daoUser.getUserById(targetUserID);
+                    
+                    if (targetUser != null) {
+                        userToDisplay = targetUser;
+                        // Đánh dấu rằng đang xem profile của user khác
+                        request.setAttribute("viewingOtherUser", true);
+                    } else {
+                        // Nếu không tìm thấy user, hiển thị thông báo lỗi
+                        request.setAttribute("error", "Không tìm thấy thông tin người dùng");
+                    }
+                }
+            } catch (NumberFormatException e) {
+                request.setAttribute("error", "ID người dùng không hợp lệ");
+            }
+        }
+
+        request.setAttribute("user", userToDisplay);
+        request.getRequestDispatcher("/profile_user.jsp").forward(request, response);
+
     }
 
     @Override

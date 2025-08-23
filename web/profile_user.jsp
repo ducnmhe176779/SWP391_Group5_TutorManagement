@@ -4,10 +4,21 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%
-    User user = (User) session.getAttribute("user");
+    // Lấy user từ request attribute (có thể là user khác nếu đang xem profile của user khác)
+    User user = (User) request.getAttribute("user");
     if (user == null) {
-        response.sendRedirect("login.jsp");
-        return;
+        // Fallback: lấy từ session nếu không có trong request
+        user = (User) session.getAttribute("user");
+        if (user == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
+    }
+    
+    // Kiểm tra xem có đang xem profile của user khác không
+    Boolean viewingOtherUser = (Boolean) request.getAttribute("viewingOtherUser");
+    if (viewingOtherUser == null) {
+        viewingOtherUser = false;
     }
 %>
 <!DOCTYPE html>
@@ -152,6 +163,20 @@
                         </ul>
                     </div>
                 </div>
+                
+                <!-- Thông báo khi đang xem profile của user khác -->
+                <% if (viewingOtherUser) { %>
+                <div class="container">
+                    <div class="alert alert-info" style="margin: 20px 0;">
+                        <i class="fa fa-info-circle"></i> 
+                        Bạn đang xem profile của: <strong><%= user.getFullName()%></strong> 
+                        (<%= user.getEmail()%>)
+                        <a href="${pageContext.request.contextPath}/staff/dashboard" class="btn btn-sm btn-outline-primary ml-3">
+                            <i class="fa fa-arrow-left"></i> Quay lại Dashboard
+                        </a>
+                    </div>
+                </div>
+                <% } %>
                 <div class="content-block">
                     <div class="section-area section-sp1">
                         <div class="container">

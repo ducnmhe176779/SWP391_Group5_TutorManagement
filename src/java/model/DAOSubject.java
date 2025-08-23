@@ -91,32 +91,7 @@ public List<Subject> getAllTutorSubjects() throws SQLException {
     }
     return subjectList;
 }
-    
-    public List<Subject> getTutorSubjects(int id) throws SQLException {
-        List<Subject> subjectList = new ArrayList<>();
-        String sql = """
-                     SELECT CV.SubjectId, SubjectName, Tutor.TutorID 
-                     FROM dbo.Subject 
-                     JOIN dbo.CV ON CV.SubjectId = Subject.SubjectID
-                     JOIN dbo.Tutor ON Tutor.CVID = CV.CVID
-                     JOIN dbo.Users ON Users.UserID = CV.UserID
-                     WHERE CV.UserID = ?
-                     """;
-
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id); // Truyền giá trị id vào tham số ?
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    int tutorID = rs.getInt("TutorID");
-                    int subjectID = rs.getInt("SubjectId");
-                    String subjectName = rs.getString("SubjectName");
-                    subjectList.add(new Subject(subjectID, subjectName, tutorID));
-                }
-            }
-        }
-        return subjectList;
-    }
-    
+       
     public List<Subject> getAllSubjects(){
         List<Subject> subjects = new ArrayList<>();
         String sql = "Select SubjectID, SubjectName, Description, Status from Subject";
@@ -383,6 +358,36 @@ public List<Subject> getAllTutorSubjects() throws SQLException {
             }
         } catch (SQLException e) {
             System.out.println("Lỗi khi lấy các Subject.");
+            e.printStackTrace();
+        }
+        return subjects;
+    }
+    
+    /**
+     * Lấy danh sách môn học của một tutor cụ thể
+     */
+    public List<Subject> getTutorSubjects(int userId) {
+        List<Subject> subjects = new ArrayList<>();
+        String sql = """
+            SELECT DISTINCT s.* 
+            FROM Subject s
+            INNER JOIN CV c ON s.SubjectID = c.SubjectId
+            INNER JOIN Tutor t ON c.CVID = t.CVID
+            WHERE c.UserID = ?
+        """;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Subject subject = new Subject(
+                    rs.getInt("SubjectID"),
+                    rs.getString("SubjectName"),
+                    rs.getString("Description"),
+                    rs.getString("Status")
+                );
+                subjects.add(subject);
+            }
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return subjects;
