@@ -41,8 +41,6 @@ public class Cv {
         this.description = description;
         this.skill = skill;
         this.price = price;
-        this.user = user;
-        this.subject = subject;
     }
     
 

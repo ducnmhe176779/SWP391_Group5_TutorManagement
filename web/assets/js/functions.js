@@ -312,7 +312,10 @@ Theme Version:	1.0.0
         /* Set Bootstrap Drop Down */
         var setBootstrapDropDown = function(){
             if(!checkSelectorExistence('select')){return;}	
-            jQuery('select').selectpicker();
+            // Kiểm tra xem selectpicker có tồn tại không
+            if (typeof jQuery.fn.selectpicker !== 'undefined') {
+                jQuery('select').selectpicker();
+            }
         }
         
         /* Set Countdown */

@@ -360,4 +360,34 @@ public class DAOSubject extends DBConnect{
         }
         return subjects;
     }
+    
+    /**
+     * Lấy danh sách môn học của một tutor cụ thể
+     */
+    public List<Subject> getTutorSubjects(int userId) {
+        List<Subject> subjects = new ArrayList<>();
+        String sql = """
+            SELECT DISTINCT s.* 
+            FROM Subject s
+            INNER JOIN CV c ON s.SubjectID = c.SubjectId
+            INNER JOIN Tutor t ON c.CVID = t.CVID
+            WHERE c.UserID = ?
+        """;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Subject subject = new Subject(
+                    rs.getInt("SubjectID"),
+                    rs.getString("SubjectName"),
+                    rs.getString("Description"),
+                    rs.getString("Status")
+                );
+                subjects.add(subject);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return subjects;
+    }
 }

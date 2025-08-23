@@ -390,5 +390,25 @@ public class DAOTutorRating extends DBConnect {
             throw ex;
         }
     }
+    
+    /**
+     * Update tutor avatar in Users table
+     * @param tutorId The tutor ID
+     * @param avatarPath The new avatar path
+     * @return Number of rows updated
+     */
+    public int updateTutorAvatar(int tutorId, String avatarPath) throws SQLException {
+        String sql = "UPDATE Users SET Avatar = ? WHERE UserID IN (SELECT u.UserID FROM Users u JOIN CV c ON u.UserID = c.UserID JOIN Tutor t ON c.CVID = t.CVID WHERE t.TutorID = ?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, avatarPath);
+            ps.setInt(2, tutorId);
+            int rowsUpdated = ps.executeUpdate();
+            Logger.getLogger(DAOTutorRating.class.getName()).log(Level.INFO, "Updated " + rowsUpdated + " rows for tutor " + tutorId + " with avatar: " + avatarPath);
+            return rowsUpdated;
+        } catch (SQLException ex) {
+            Logger.getLogger(DAOTutorRating.class.getName()).log(Level.SEVERE, "Error updating tutor avatar", ex);
+            throw ex;
+        }
+    }
 }
 

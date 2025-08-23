@@ -15,5 +15,70 @@
     <welcome-file-list>
         <welcome-file>home</welcome-file>
     </welcome-file-list>
+    
+    <!-- CV Controller Mapping -->
+    <servlet>
+        <servlet-name>CVController</servlet-name>
+        <servlet-class>UserController.CVController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CVController</servlet-name>
+        <url-pattern>/cv</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CVController</servlet-name>
+        <url-pattern>/cv.jsp</url-pattern>
+    </servlet-mapping>
+    
+    <!-- Logout Controller Mapping -->
+    <servlet>
+        <servlet-name>LogoutServlet</servlet-name>
+        <servlet-class>UserController.LogoutServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LogoutServlet</servlet-name>
+        <url-pattern>/logout</url-pattern>
+    </servlet-mapping>
+    
+    <!-- Profile Controller Mapping -->
+    <servlet>
+        <servlet-name>ProfileServlet</servlet-name>
+        <servlet-class>UserController.ProfileServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ProfileServlet</servlet-name>
+        <url-pattern>/profile</url-pattern>
+    </servlet-mapping>
+    
+    <!-- Create Schedule Controller Mapping -->
+    <servlet>
+        <servlet-name>CreateScheduleServlet</servlet-name>
+        <servlet-class>controller.Tutor.CreateScheduleServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CreateScheduleServlet</servlet-name>
+        <url-pattern>/tutor/CreateSchedule</url-pattern>
+    </servlet-mapping>
+    
+    <!-- Book Schedule Controller Mapping -->
+    <servlet>
+        <servlet-name>BookScheduleServlet</servlet-name>
+        <servlet-class>UserController.BookScheduleServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BookScheduleServlet</servlet-name>
+        <url-pattern>/BookSchedule</url-pattern>
+    </servlet-mapping>
+    
+    <!-- Tutor Detail Controller Mapping -->
+    <servlet>
+        <servlet-name>TutorDetailController</servlet-name>
+        <servlet-class>UserController.TutorDetailController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>TutorDetailController</servlet-name>
+        <url-pattern>/Tutordetail</url-pattern>
+    </servlet-mapping>
+    
 
 </web-app>

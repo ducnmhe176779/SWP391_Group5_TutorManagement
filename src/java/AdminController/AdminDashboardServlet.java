@@ -46,6 +46,8 @@ public class AdminDashboardServlet extends HttpServlet {
         }
 
         System.out.println("Admin user: " + currentUser.getFullName() + " (ID: " + currentUser.getUserID() + ")");
+        
+        // Admin accessed dashboard
 
         // Khởi tạo các danh sách dữ liệu với giá trị mặc định
         List<User> newUsers = new ArrayList<>();
