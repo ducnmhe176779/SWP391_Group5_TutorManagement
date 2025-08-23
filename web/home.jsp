@@ -77,9 +77,9 @@
                                                         </span>
                                                     </a>
                                                 </li>
-                                                <li><a href="profile.jsp"><fmt:message key="my_profile"/></a></li>
-                                                <li><a href="StudentPaymentHistory.jsp"><fmt:message key="history_payment"/></a></li>
-                                                <li><a href="cv.jsp"><fmt:message key="become_a_tutor"/></a></li>
+                                                <li><a href="profile"><fmt:message key="my_profile"/></a></li>
+                                                <li><a href="StudentPaymentHistory"><fmt:message key="history_payment"/></a></li>
+                                                <li><a href="cv"><fmt:message key="become_a_tutor"/></a></li>
                                                 <li><a href="logout"><fmt:message key="logout"/></a></li>
                                             </ul>
                                         </div>
