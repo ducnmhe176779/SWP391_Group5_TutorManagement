@@ -69,4 +69,45 @@
         <servlet-name>TutorDetailController</servlet-name>
         <url-pattern>/Tutordetail</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewScheduleServlet</servlet-name>
+        <url-pattern>/myschedule</url-pattern>
+    </servlet-mapping>
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
+    <servlet>
+        <servlet-name>StaffListServlet</servlet-name>
+        <servlet-class>AdminController.StaffListServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StaffListServlet</servlet-name>
+        <url-pattern>/admin/StaffList</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>PaymentBookingServlet</servlet-name>
+        <servlet-class>controller.Customer.PaymentBookingServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>PaymentBookingServlet</servlet-name>
+        <url-pattern>/payment</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>VnpayReturnBooking</servlet-name>
+        <servlet-class>controller.Customer.VnpayReturnBooking</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>VnpayReturnBooking</servlet-name>
+        <url-pattern>/vnpayReturn</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>ReportController</servlet-name>
+        <servlet-class>UserController.ReportController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ReportController</servlet-name>
+        <url-pattern>/Report</url-pattern>
+    </servlet-mapping>
 </web-app>
