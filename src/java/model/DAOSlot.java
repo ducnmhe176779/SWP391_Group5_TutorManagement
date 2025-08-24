@@ -1,12 +1,45 @@
 package model;
 
+import entity.Schedule;
 import entity.Slot;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DAOSlot extends DBConnect {
-    
+
+    public List<Slot> getAllSlots() {
+        List<Slot> slots = new ArrayList<>();
+        String sql = """
+        SELECT s.SlotID, s.ScheduleID, s.Status, 
+               sc.TutorID, sc.StartTime, sc.EndTime, sc.IsBooked, sc.SubjectId
+        FROM Slot s
+        JOIN Schedule sc ON s.ScheduleID = sc.ScheduleID
+    """;
+        try (Statement st = conn.createStatement(); ResultSet rs = st.executeQuery(sql)) {
+            while (rs.next()) {
+                Slot slot = new Slot();
+                slot.setSlotID(rs.getInt("SlotID"));
+                slot.setScheduleID(rs.getInt("ScheduleID"));
+                slot.setStatus(rs.getString("Status"));
+
+                Schedule schedule = new Schedule();
+                schedule.setScheduleID(rs.getInt("ScheduleID"));
+                schedule.setTutorID(rs.getInt("TutorID"));
+                schedule.setStartTime(rs.getTimestamp("StartTime"));
+                schedule.setEndTime(rs.getTimestamp("EndTime"));
+                schedule.setIsBooked(rs.getBoolean("IsBooked"));
+                schedule.setSubjectId(rs.getInt("SubjectId"));
+
+                slot.setSchedule(schedule);
+                slots.add(slot);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return slots;
+    }
+   
     /**
      * Thêm Slot mới vào database
      */
@@ -141,4 +174,5 @@ public class DAOSlot extends DBConnect {
             return false;
         }
     }
+
 }

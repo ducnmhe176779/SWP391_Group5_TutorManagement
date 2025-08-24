@@ -4,13 +4,14 @@ package entity;
 import java.sql.Timestamp;
 
 public class Slot {
+    private int scheduleID;
     private int slotID;
     private int tutorID;
     private Timestamp startTime;
     private Timestamp endTime;
     private int subjectID;
     private String status;
-    
+    private Schedule schedule;
     // Constructors
     public Slot() {
     }
@@ -72,7 +73,12 @@ public class Slot {
     public void setStatus(String status) {
         this.status = status;
     }
-    
+        public void setScheduleID(int scheduleID) {
+        this.scheduleID = scheduleID;
+    }
+        public void setSchedule(Schedule schedule) {
+        this.schedule = schedule;
+    }
     @Override
     public String toString() {
         return "Slot{" +
