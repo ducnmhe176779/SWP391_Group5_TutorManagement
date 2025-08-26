@@ -179,7 +179,7 @@ public class BookScheduleServlet extends HttpServlet {
 
                 // Debug: Lấy tất cả schedules trước
                 System.out.println("=== DEBUG: Lấy TẤT CẢ schedules ===");
-                List<Schedule> allSchedules = daoSchedule.getAllSchedulesByTutorAndSubjectDebug(tutorId, subjectId);
+               List<Schedule> allSchedules = daoSchedule.getAllSchedulesByTutorAndSubjectDebug(tutorId, subjectId);
                 
                 // Lấy danh sách lịch có sẵn của tutor (có filter)
                 System.out.println("=== DEBUG: Lấy schedules có filter ===");
