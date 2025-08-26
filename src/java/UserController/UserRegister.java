@@ -150,7 +150,7 @@ public class UserRegister extends HttpServlet {
                 }
 
                 // Gửi email kích hoạt
-                String activationLink = "http://localhost:8080/SWP391_Group5_TutorManagement/activate?token=" + token;
+                String activationLink = "http://localhost:9999/SWP391_Group5_TutorManagement/activate?token=" + token;
                 boolean isEmailSent = resetSvc.sendActivationEmail(email, activationLink, fullName);
 
                 if (!isEmailSent) {
@@ -384,6 +384,8 @@ public class UserRegister extends HttpServlet {
             }
             
             int cvId = daoCv.sendCv(cv);
+            System.out.println("DEBUG: CV creation result - cvId: " + cvId);
+            
             if (cvId > 0) {
                 System.out.println("DEBUG: CV created successfully with ID: " + cvId);
                 
@@ -409,19 +411,27 @@ public class UserRegister extends HttpServlet {
                 tutor.setRating(0.0f); // Rating ban đầu
                 tutor.setPrice(0.0f); // Giá mặc định, sẽ được cập nhật sau
                 
+                System.out.println("DEBUG: Attempting to create Tutor with CVID: " + cvId);
+                System.out.println("DEBUG: CVID value: " + cvId);
                 int tutorResult = daoTutor.addTutor(tutor);
+                System.out.println("DEBUG: Tutor creation result: " + tutorResult);
+                
                 if (tutorResult > 0) {
-                    // Lấy TutorID vừa tạo
-                    int tutorId = daoTutor.getTutorIdByUserId(userId);
+                    // TutorID đã được trả về trực tiếp từ OUTPUT clause
+                    int tutorId = tutorResult;
+                    System.out.println("DEBUG: Using TutorID from OUTPUT clause: " + tutorId);
                     
                     // Xử lý subjects được chọn
                     boolean subjectsCreated = createTutorSubjects(request, tutorId);
+                    System.out.println("DEBUG: Subjects creation result: " + subjectsCreated);
                     
                     // Xử lý skills được nhập
                     boolean skillsCreated = createTutorSkills(request, tutorId);
+                    System.out.println("DEBUG: Skills creation result: " + skillsCreated);
                     
                     // Xử lý experiences được nhập
                     boolean experiencesCreated = createTutorExperiences(request, tutorId);
+                    System.out.println("DEBUG: Experiences creation result: " + experiencesCreated);
                     
                     // Log thông tin bổ sung
                     if (skills != null && !skills.trim().isEmpty()) {
@@ -434,11 +444,17 @@ public class UserRegister extends HttpServlet {
                         System.out.println("CV image uploaded: " + cvImagePath);
                     }
                     
-                    System.out.println("DEBUG: Registration results - Subjects: " + subjectsCreated + 
+                    System.out.println("DEBUG: Final registration results - Subjects: " + subjectsCreated + 
                                      ", Skills: " + skillsCreated + ", Experiences: " + experiencesCreated);
                     
-                    return subjectsCreated && skillsCreated && experiencesCreated;
+                    boolean finalResult = subjectsCreated && skillsCreated && experiencesCreated;
+                    System.out.println("DEBUG: Final return value: " + finalResult);
+                    return finalResult;
+                } else {
+                    System.out.println("ERROR: Failed to create Tutor record. tutorResult: " + tutorResult);
                 }
+            } else {
+                System.out.println("ERROR: Failed to create CV. cvId: " + cvId);
             }
             return false;
         } catch (Exception e) {
@@ -458,27 +474,26 @@ public class UserRegister extends HttpServlet {
                 // Nếu không chọn môn học nào, tạo default với subject ID 1
                 return createDefaultTutorSubject(tutorId);
             }
-            
-            // Sử dụng DAO mới để tạo multiple subjects
-            model.DAOTutorSubject daoTutorSubject = new model.DAOTutorSubject();
-            java.util.List<Integer> subjectIds = new java.util.ArrayList<>();
-            
-            for (String subjectIdStr : selectedSubjects) {
-                try {
-                    int subjectId = Integer.parseInt(subjectIdStr);
-                    subjectIds.add(subjectId);
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid subject ID: " + subjectIdStr);
+            // Chỉ cho phép 1 môn được chọn: lấy phần tử đầu tiên hợp lệ
+            // Nếu front-end là radio, selectedSubjects chỉ có 1 phần tử
+            String first = selectedSubjects[0];
+            int subjectId;
+            try {
+                subjectId = Integer.parseInt(first);
+            } catch (NumberFormatException e) {
+                // Nếu client gửi SubjectName, convert sang ID
+                model.DAOSubject daoSubject = new model.DAOSubject();
+                subjectId = daoSubject.getSubjectIdByName(first);
+                if (subjectId <= 0) {
+                    System.out.println("Cannot resolve SubjectName to ID: " + first + ", fallback to default subject 1");
+                    return createDefaultTutorSubject(tutorId);
                 }
             }
-            
-            if (!subjectIds.isEmpty()) {
-                boolean result = daoTutorSubject.addTutorSubjects(tutorId, subjectIds);
-                System.out.println("Created TutorSubjects for " + subjectIds.size() + " subjects: " + result);
-                return result;
-            } else {
-                return createDefaultTutorSubject(tutorId);
-            }
+
+            model.DAOTutorSubject daoTutorSubject = new model.DAOTutorSubject();
+            boolean result = daoTutorSubject.addTutorSubject(tutorId, subjectId);
+            System.out.println("Created single TutorSubject for SubjectID=" + subjectId + ": " + result);
+            return result;
             
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error creating tutor subjects", e);
@@ -492,15 +507,12 @@ public class UserRegister extends HttpServlet {
     private boolean createSingleTutorSubject(int tutorId, int subjectId) {
         try {
             // Kiểm tra xem có DAO cho TutorSubject không, nếu không thì tạo manual
-            String sql = "INSERT INTO TutorSubject (TutorID, SubjectID, Description, PricePerHour, Status) VALUES (?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO TutorSubject (TutorID, SubjectID) VALUES (?, ?)";
             
             model.DBConnect dbConnect = new model.DBConnect();
             try (java.sql.PreparedStatement ps = dbConnect.getConnection().prepareStatement(sql)) {
                 ps.setInt(1, tutorId);
                 ps.setInt(2, subjectId);
-                ps.setString(3, "Sẽ cập nhật mô tả sau");
-                ps.setFloat(4, 0.0f); // Giá mặc định
-                ps.setString(5, "Active");
                 
                 int result = ps.executeUpdate();
                 return result > 0;

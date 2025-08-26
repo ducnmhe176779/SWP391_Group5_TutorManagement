@@ -22,7 +22,7 @@ public class DAOTutorExperience extends DBConnect {
      * Add a single experience for tutor
      */
     public boolean addTutorExperience(TutorExperience experience) {
-        String sql = "INSERT INTO TutorExperience (TutorID, JobTitle, Company, Location, StartDate, EndDate, IsCurrent, Description, Achievements) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO TutorExperience (TutorID, JobTitle, Company, Location, StartDate, EndDate, IsCurrent, Description, Achievements, CreatedAt, UpdatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, GETDATE(), GETDATE())";
         
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, experience.getTutorID());
@@ -56,13 +56,16 @@ public class DAOTutorExperience extends DBConnect {
      */
     public boolean addTutorExperiences(int tutorID, List<TutorExperience> experiences) {
         if (experiences == null || experiences.isEmpty()) {
+            System.out.println("DEBUG: No experiences to add for TutorID " + tutorID);
             return true; // Nothing to add
         }
         
-        String sql = "INSERT INTO TutorExperience (TutorID, JobTitle, Company, Location, StartDate, EndDate, IsCurrent, Description, Achievements) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO TutorExperience (TutorID, JobTitle, Company, Location, StartDate, EndDate, IsCurrent, Description, Achievements, CreatedAt, UpdatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, GETDATE(), GETDATE())";
         
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             conn.setAutoCommit(false); // Start transaction
+            
+            System.out.println("DEBUG: Executing TutorExperience batch insert for TutorID " + tutorID + " with " + experiences.size() + " experiences");
             
             for (TutorExperience experience : experiences) {
                 stmt.setInt(1, tutorID);
@@ -96,6 +99,7 @@ public class DAOTutorExperience extends DBConnect {
             } catch (SQLException rollbackEx) {
                 LOGGER.log(Level.SEVERE, "Error rolling back transaction", rollbackEx);
             }
+            System.out.println("ERROR: SQL Exception in addTutorExperiences: " + e.getMessage());
             LOGGER.log(Level.SEVERE, "Error adding tutor experiences batch", e);
             return false;
         } finally {

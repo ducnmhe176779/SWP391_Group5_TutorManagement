@@ -264,8 +264,8 @@
                         <small><fmt:formatNumber value="${hour}" pattern="00"/>:59</small>
                     </div>
                     
-                    <!-- Days for this hour (Monday=2, Sunday=1) -->
-                    <c:forEach var="dayIndex" begin="2" end="7">
+                    <!-- Days for this hour (ISO Monday=1..Sunday=7) -->
+                    <c:forEach var="dayIndex" begin="1" end="7">
                         <c:set var="cellKey" value="${dayIndex}-${hour}"/>
                         <c:set var="hasSchedule" value="false"/>
                         
@@ -312,50 +312,6 @@
                         </div>
                     </c:forEach>
                     
-                    <!-- Sunday (dayIndex=1) -->
-                    <c:set var="cellKey" value="1-${hour}"/>
-                    <c:set var="hasSchedule" value="false"/>
-                    
-                    <c:forEach var="schedule" items="${scheduleList}">
-                        <c:set var="scheduleHour"><fmt:formatDate value="${schedule.startTime}" pattern="H"/></c:set>
-                        <c:set var="scheduleDay"><fmt:formatDate value="${schedule.startTime}" pattern="u"/></c:set>
-                        
-                        <c:if test="${scheduleHour == hour && scheduleDay == 1}">
-                            <c:set var="hasSchedule" value="true"/>
-                            <c:set var="currentSchedule" value="${schedule}"/>
-                        </c:if>
-                    </c:forEach>
-                    
-                    <div class="schedule-cell ${hasSchedule ? (currentSchedule.isBooked ? 'schedule-booked' : 'schedule-available') : ''}" 
-                         onclick="createSchedule(1, ${hour})">
-                        <c:if test="${hasSchedule}">
-                            <div class="schedule-content">
-                                <div class="subject-name">${currentSchedule.subject.subjectName}</div>
-                                <div class="schedule-time">
-                                    <fmt:formatDate value="${currentSchedule.startTime}" pattern="HH:mm"/> - 
-                                    <fmt:formatDate value="${currentSchedule.endTime}" pattern="HH:mm"/>
-                                </div>
-                                
-                                <c:choose>
-                                    <c:when test="${currentSchedule.isBooked}">
-                                        <div class="occupied-label">Đã có học sinh</div>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <button class="create-btn" onclick="event.stopPropagation(); deleteSchedule(${currentSchedule.scheduleID})">
-                                            <i class="fas fa-trash"></i> Xóa
-                                        </button>
-                                    </c:otherwise>
-                                </c:choose>
-                            </div>
-                        </c:if>
-                        
-                        <c:if test="${!hasSchedule}">
-                            <div class="text-center text-muted" style="padding: 10px;">
-                                <i class="fas fa-plus-circle"></i><br>
-                                <small>Tạo lịch</small>
-                            </div>
-                        </c:if>
-                    </div>
                 </c:forEach>
             </div>
             
@@ -383,25 +339,25 @@
     
     <script>
         function createSchedule(dayIndex, hour) {
-            // Set default values for quick create form
-            const now = new Date();
-            const nextWeek = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-            
-            // Calculate the date for the selected day
-            const dayOffset = (dayIndex === 1 ? 7 : dayIndex) - 1; // Sunday=1 becomes 7, Monday=2 becomes 1
-            const targetDate = new Date(nextWeek);
-            targetDate.setDate(nextWeek.getDate() - nextWeek.getDay() + dayOffset);
+            // Set default values for quick create form (tuần hiện tại, không nhảy sang tuần sau)
+            const today = new Date();
+            const mondayOffset = ((today.getDay() + 6) % 7); // Monday=0, Sunday=6
+            const monday = new Date(today);
+            monday.setDate(today.getDate() - mondayOffset);
+
+            // dayIndex: ISO 1..7 (Sun..Sat). Convert to 0..6 with Mon=0
+            const isoDay = dayIndex === 1 ? 7 : dayIndex; // Sun=1 -> 7
+            const dayOffset = isoDay - 1; // Mon=1 -> 0
+            const targetDate = new Date(monday);
+            targetDate.setDate(monday.getDate() + dayOffset);
             targetDate.setHours(hour, 0, 0, 0);
-            
-            // Format for datetime-local input
+
             const dateStr = targetDate.getFullYear() + '-' + 
                            String(targetDate.getMonth() + 1).padStart(2, '0') + '-' + 
                            String(targetDate.getDate()).padStart(2, '0') + 'T' + 
                            String(hour).padStart(2, '0') + ':00';
-            
+
             document.querySelector('input[name="startTime"]').value = dateStr;
-            
-            // Scroll to form
             document.querySelector('.quick-create').scrollIntoView({ behavior: 'smooth' });
         }
         
@@ -411,15 +367,7 @@
             }
         }
         
-        // Set minimum date to today
-        document.addEventListener('DOMContentLoaded', function() {
-            const today = new Date();
-            const tomorrow = new Date(today);
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            
-            const dateStr = tomorrow.toISOString().slice(0, 16);
-            document.querySelector('input[name="startTime"]').min = dateStr;
-        });
+        // Không giới hạn min-date theo yêu cầu
     </script>
 </body>
 </html>

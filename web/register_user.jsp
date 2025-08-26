@@ -235,7 +235,7 @@
                                         <div class="form-group">
                                             <div class="input-group1">
                                                 <label><fmt:message key="dob"/></label>
-                                                <input type="date" name="Dob" class="form-control" required>
+                                                <input type="date" name="Dob" id="dobUser" class="form-control" required>
                                             </div>
                                         </div>
                                     </div>
@@ -296,5 +296,45 @@
             <script src="assets/js/functions.js"></script>
             <script src="assets/js/contact.js"></script>
             <script src='assets/vendors/switcher/switcher.js'></script>
+            <script>
+                (function() {
+                    var dobInput = document.getElementById('dobUser');
+                    if (dobInput) {
+                        var today = new Date();
+                        var yyyy = today.getFullYear();
+                        var mm = String(today.getMonth() + 1).padStart(2, '0');
+                        var dd = String(today.getDate()).padStart(2, '0');
+                        var maxDate = yyyy + '-' + mm + '-' + dd;
+                        dobInput.setAttribute('max', maxDate);
+
+                        var form = dobInput.form;
+                        if (form) {
+                            form.addEventListener('submit', function(e) {
+                                var value = dobInput.value;
+                                if (!value) return;
+                                var dob = new Date(value + 'T00:00:00');
+                                var now = new Date();
+                                if (dob > now) {
+                                    e.preventDefault();
+                                    alert('Ngày sinh không được ở tương lai.');
+                                    dobInput.focus();
+                                    return false;
+                                }
+                                var age = now.getFullYear() - dob.getFullYear();
+                                var m = now.getMonth() - dob.getMonth();
+                                if (m < 0 || (m === 0 && now.getDate() < dob.getDate())) {
+                                    age--;
+                                }
+                                if (age < 13) {
+                                    e.preventDefault();
+                                    alert('Bạn phải đủ 13 tuổi trở lên.');
+                                    dobInput.focus();
+                                    return false;
+                                }
+                            });
+                        }
+                    }
+                })();
+            </script>
     </body>
 </html>

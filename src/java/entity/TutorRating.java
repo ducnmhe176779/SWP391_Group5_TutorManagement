@@ -32,7 +32,7 @@ public class TutorRating {
         this.rating = rating;
         this.comment = comment;
         this.ratingDate = ratingDate;
-        this.fullName = username;
+        this.fullName = fullName;
     }
 
     public TutorRating(int ratingId, int bookingId, int studentId, int tutorId, int rating, String comment, Timestamp ratingDate) {

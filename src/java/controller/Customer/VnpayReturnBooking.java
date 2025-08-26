@@ -94,12 +94,9 @@ public class VnpayReturnBooking extends HttpServlet {
                         
                         if (schedule != null) {
                             Slot slot = new Slot();
-                            slot.setTutorID(Integer.parseInt(tutorId));
-                            slot.setSubjectID(Integer.parseInt(subjectId));
-                            slot.setStatus("Available");
-                            // Convert Date to Timestamp
-                            slot.setStartTime(new java.sql.Timestamp(schedule.getStartTime().getTime()));
-                            slot.setEndTime(new java.sql.Timestamp(schedule.getEndTime().getTime()));
+                            // Map Schedule -> Slot by ScheduleID per DB schema
+                            slot.setScheduleID(schedule.getScheduleID());
+                            slot.setStatus("Booked");
                             slots.add(slot);
 
                             Booking booking = new Booking();

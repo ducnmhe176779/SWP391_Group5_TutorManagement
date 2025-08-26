@@ -64,6 +64,7 @@ public class BookingCalendarServlet extends HttpServlet {
             
             // Lấy tuần hiện tại (bắt đầu từ thứ 2)
             Calendar cal = Calendar.getInstance();
+            cal.setFirstDayOfWeek(Calendar.MONDAY);
             cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
             cal.set(Calendar.HOUR_OF_DAY, 0);
             cal.set(Calendar.MINUTE, 0);
@@ -75,6 +76,12 @@ public class BookingCalendarServlet extends HttpServlet {
             // Lấy lịch available để booking
             DAOSchedule daoSchedule = new DAOSchedule();
             List<Schedule> availableSchedules = daoSchedule.getAllSchedulesForCalendar(tutorId, new Date());
+            // Debug each schedule DOW
+            for (Schedule s : availableSchedules) {
+                Calendar sc = Calendar.getInstance();
+                sc.setTime(s.getStartTime());
+                System.out.println("DEBUG CAL: schedId=" + s.getScheduleID() + ", start=" + s.getStartTime() + ", DOW=" + sc.get(Calendar.DAY_OF_WEEK));
+            }
             
             // Lấy thông tin tutor
             DAOTutor daoTutor = new DAOTutor();
@@ -115,6 +122,7 @@ public class BookingCalendarServlet extends HttpServlet {
         List<Date> dayDates = new ArrayList<>();
         
         Calendar cal = Calendar.getInstance();
+        cal.setFirstDayOfWeek(Calendar.MONDAY);
         cal.setTime(startOfWeek);
         
         // Tạo 7 ngày từ thứ 2 đến chủ nhật
@@ -136,11 +144,12 @@ public class BookingCalendarServlet extends HttpServlet {
         for (Schedule schedule : schedules) {
             Calendar schedCal = Calendar.getInstance();
             schedCal.setTime(schedule.getStartTime());
-            
-            int dayOfWeek = schedCal.get(Calendar.DAY_OF_WEEK);
+            // Convert Calendar.DAY_OF_WEEK (Sun=1..Sat=7) -> ISO (Mon=1..Sun=7)
+            int dowJava = schedCal.get(Calendar.DAY_OF_WEEK); // 1..7
+            int isoDay = ((dowJava + 5) % 7) + 1; // Mon=1..Sun=7
             int hour = schedCal.get(Calendar.HOUR_OF_DAY);
             
-            String key = dayOfWeek + "-" + hour;
+            String key = isoDay + "-" + hour;
             gridData.put(key, schedule);
         }
         

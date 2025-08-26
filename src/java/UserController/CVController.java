@@ -79,7 +79,18 @@ public class CVController extends HttpServlet {
             String education = request.getParameter("education");
             String experience = request.getParameter("experience");
             String certificates = request.getParameter("certificates");
-            int subjectId = Integer.parseInt(request.getParameter("Subject"));
+            // Cho phép client gửi SubjectName hoặc SubjectID; nếu là chữ, convert sang ID
+            String subjectParam = request.getParameter("Subject");
+            int subjectId;
+            try {
+                subjectId = Integer.parseInt(subjectParam);
+            } catch (NumberFormatException e) {
+                subjectId = dao2.getSubjectIdByName(subjectParam);
+                if (subjectId <= 0) {
+                    // fallback an toàn
+                    subjectId = 1;
+                }
+            }
             String description = request.getParameter("Description");
             String skill = request.getParameter("Skill");
             float price = Float.parseFloat(request.getParameter("Price"));

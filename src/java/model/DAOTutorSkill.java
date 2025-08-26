@@ -23,7 +23,7 @@ public class DAOTutorSkill extends DBConnect {
      * Add a single skill for tutor
      */
     public boolean addTutorSkill(TutorSkill skill) {
-        String sql = "INSERT INTO TutorSkills (TutorID, SkillName, SkillLevel, YearsOfExperience, Description, CategoryID) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO TutorSkills (TutorID, SkillName, SkillLevel, YearsOfExperience, Description, CategoryID, CreatedAt, UpdatedAt) VALUES (?, ?, ?, ?, ?, ?, GETDATE(), GETDATE())";
         
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, skill.getTutorID());
@@ -53,13 +53,16 @@ public class DAOTutorSkill extends DBConnect {
      */
     public boolean addTutorSkills(int tutorID, List<TutorSkill> skills) {
         if (skills == null || skills.isEmpty()) {
+            System.out.println("DEBUG: No skills to add for TutorID " + tutorID);
             return true; // Nothing to add
         }
         
-        String sql = "INSERT INTO TutorSkills (TutorID, SkillName, SkillLevel, YearsOfExperience, Description, CategoryID) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO TutorSkills (TutorID, SkillName, SkillLevel, YearsOfExperience, Description, CategoryID, CreatedAt, UpdatedAt) VALUES (?, ?, ?, ?, ?, ?, GETDATE(), GETDATE())";
         
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             conn.setAutoCommit(false); // Start transaction
+            
+            System.out.println("DEBUG: Executing TutorSkills batch insert for TutorID " + tutorID + " with " + skills.size() + " skills");
             
             for (TutorSkill skill : skills) {
                 stmt.setInt(1, tutorID);
@@ -89,6 +92,7 @@ public class DAOTutorSkill extends DBConnect {
             } catch (SQLException rollbackEx) {
                 LOGGER.log(Level.SEVERE, "Error rolling back transaction", rollbackEx);
             }
+            System.out.println("ERROR: SQL Exception in addTutorSkills: " + e.getMessage());
             LOGGER.log(Level.SEVERE, "Error adding tutor skills batch", e);
             return false;
         } finally {

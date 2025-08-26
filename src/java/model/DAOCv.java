@@ -71,6 +71,35 @@ public class DAOCv extends DBConnect {
         }
         return null;
     }
+
+    /**
+     * Lấy CV đã Approved mới nhất của một user
+     */
+    public Cv getLatestApprovedCVByUserId(int userId) {
+        String sql = "SELECT TOP 1 CVID, UserID, Education, Experience, Certificates, Status, SubjectId, Desciption, Skill, Price "
+                   + "FROM CV WHERE UserID = ? AND Status = 'Approved' ORDER BY CVID DESC";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new Cv(
+                        rs.getInt("CVID"),
+                        rs.getInt("UserID"),
+                        rs.getString("Education"),
+                        rs.getString("Experience"),
+                        rs.getString("Certificates"),
+                        rs.getString("Status"),
+                        rs.getInt("SubjectId"),
+                        rs.getString("Desciption"),
+                        rs.getString("Skill"),
+                        rs.getFloat("Price")
+                );
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DAOCv.class.getName()).log(Level.SEVERE, "Error getLatestApprovedCVByUserId", ex);
+        }
+        return null;
+    }
         public Cv getCVbyUserId(int cvId) {
         String sql = "SELECT CVID, UserID, Education, Experience, Certificates, Status, SubjectId, Desciption, Skill, Price FROM CV WHERE UserID = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {

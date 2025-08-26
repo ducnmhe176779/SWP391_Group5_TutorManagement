@@ -23,17 +23,41 @@ public class DAOTutorSubject extends DBConnect {
      * Add a single tutor subject relationship
      */
     public boolean addTutorSubject(int tutorId, int subjectId) {
-        String sql = "INSERT INTO TutorSubject (TutorID, SubjectID, Description, PricePerHour, Status) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO TutorSubject (TutorID, SubjectID) VALUES (?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, tutorId);
             pstmt.setInt(2, subjectId);          
-            pstmt.setString(3, "Sẽ cập nhật mô tả sau");
-            pstmt.setFloat(4, 0.0f);
-            pstmt.setString(5, "Active");
+            
+            System.out.println("DEBUG: Executing TutorSubject SQL: " + sql);
+            System.out.println("DEBUG: Parameters - TutorID: " + tutorId + ", SubjectID: " + subjectId);
+            
+            // Kiểm tra xem TutorID có tồn tại trong bảng Tutor không
+            String checkTutorSql = "SELECT COUNT(*) FROM Tutor WHERE TutorID = ?";
+            try (PreparedStatement checkPs = conn.prepareStatement(checkTutorSql)) {
+                checkPs.setInt(1, tutorId);
+                ResultSet rs = checkPs.executeQuery();
+                if (rs.next()) {
+                    int tutorCount = rs.getInt(1);
+                    System.out.println("DEBUG: Tutor count for TutorID " + tutorId + ": " + tutorCount);
+                }
+            }
+            
+            // Kiểm tra xem SubjectID có tồn tại trong bảng Subject không
+            String checkSubjectSql = "SELECT COUNT(*) FROM Subject WHERE SubjectID = ?";
+            try (PreparedStatement checkPs = conn.prepareStatement(checkSubjectSql)) {
+                checkPs.setInt(1, subjectId);
+                ResultSet rs = checkPs.executeQuery();
+                if (rs.next()) {
+                    int subjectCount = rs.getInt(1);
+                    System.out.println("DEBUG: Subject count for SubjectID " + subjectId + ": " + subjectCount);
+                }
+            }
             
             int rowsAffected = pstmt.executeUpdate();
+            System.out.println("DEBUG: TutorSubject SQL execution result: " + rowsAffected);
             return rowsAffected > 0;
         } catch (SQLException e) {
+            System.out.println("ERROR: SQL Exception in addTutorSubject: " + e.getMessage());
             LOGGER.log(Level.SEVERE, "Error adding tutor subject", e);
             return false;
         }
@@ -43,16 +67,13 @@ public class DAOTutorSubject extends DBConnect {
      * Add multiple subjects for a tutor
      */
     public boolean addTutorSubjects(int tutorId, List<Integer> subjectIds) {
-        String sql = "INSERT INTO TutorSubject (TutorID, SubjectID, Description, PricePerHour, Status) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO TutorSubject (TutorID, SubjectID) VALUES (?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             conn.setAutoCommit(false);
             
             for (Integer subjectId : subjectIds) {
                 pstmt.setInt(1, tutorId);
                 pstmt.setInt(2, subjectId);
-                pstmt.setString(3, "Sẽ cập nhật mô tả sau");
-                pstmt.setFloat(4, 0.0f);
-                pstmt.setString(5, "Active");
                 pstmt.addBatch();
             }
             
@@ -86,11 +107,10 @@ public class DAOTutorSubject extends DBConnect {
     public List<TutorSubject> getSubjectsByTutorId(int tutorId) {
         List<TutorSubject> tutorSubjects = new ArrayList<>();
         String sql = """
-            SELECT ts.TutorSubjectID, ts.TutorID, ts.SubjectID, ts.Description, 
-                   ts.PricePerHour, ts.Status, s.SubjectName
+            SELECT ts.TutorID, ts.SubjectID, s.SubjectName
             FROM TutorSubject ts
             INNER JOIN Subject s ON ts.SubjectID = s.SubjectID
-            WHERE ts.TutorID = ? AND ts.Status = 'Active'
+            WHERE ts.TutorID = ?
             ORDER BY s.SubjectName
         """;
         
@@ -100,12 +120,8 @@ public class DAOTutorSubject extends DBConnect {
             
             while (rs.next()) {
                 TutorSubject tutorSubject = new TutorSubject();
-                tutorSubject.setTutorSubjectID(rs.getInt("TutorSubjectID"));
                 tutorSubject.setTutorID(rs.getInt("TutorID"));
                 tutorSubject.setSubjectID(rs.getInt("SubjectID"));
-                tutorSubject.setDescription(rs.getString("Description"));
-                tutorSubject.setPricePerHour(rs.getFloat("PricePerHour"));
-                tutorSubject.setStatus(rs.getString("Status"));
                 tutorSubject.setSubjectName(rs.getString("SubjectName"));
                 
                 tutorSubjects.add(tutorSubject);
@@ -128,7 +144,6 @@ public class DAOTutorSubject extends DBConnect {
             INNER JOIN Tutor t ON ts.TutorID = t.TutorID
             INNER JOIN CV cv ON t.CVID = cv.CVID
             WHERE ts.SubjectID = ? 
-              AND ts.Status = 'Active'
               AND cv.Status = 'Approved'
             ORDER BY ts.TutorID
         """;

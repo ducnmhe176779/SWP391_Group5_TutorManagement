@@ -76,6 +76,9 @@ public class Slot {
         public void setScheduleID(int scheduleID) {
         this.scheduleID = scheduleID;
     }
+    public int getScheduleID() {
+        return this.scheduleID;
+    }
         public void setSchedule(Schedule schedule) {
         this.schedule = schedule;
     }

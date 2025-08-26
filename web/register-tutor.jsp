@@ -402,7 +402,7 @@
                                         <div class="form-group">
                                             <div class="input-group1">
                                                 <label><i class="fa fa-calendar"></i> Ngày sinh *</label>
-                                                <input type="date" name="Dob" class="form-control" required>
+                                                <input type="date" name="Dob" id="dobTutor" class="form-control" required>
                                             </div>
                                         </div>
                                     </div>
@@ -528,7 +528,7 @@
                                                     <c:otherwise>
                                                         <c:forEach items="${subjects}" var="subject">
                                                             <div class="subject-option">
-                                                                <input type="checkbox" name="selectedSubjects" value="${subject.subjectID}" 
+                                                                <input type="radio" name="selectedSubjects" value="${subject.subjectID}" 
                                                                        id="subject_${subject.subjectID}">
                                                                 <label for="subject_${subject.subjectID}">
                                                                     <strong>${subject.subjectName}</strong>
@@ -607,6 +607,29 @@
                                 </div>
                             </div>
 
+                            <!-- Terms and Agreement Section -->
+                            <div class="form-section clearfix">
+                                <h3 class="section-title">
+                                    <i class="fa fa-file-contract"></i> Điều khoản & Cam kết bắt buộc
+                                </h3>
+                                <div class="row placeani clearfix">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <div class="note-text">
+                                                Để đảm bảo quyền lợi học sinh và quá trình thẩm định khi có khiếu nại, mỗi buổi học phải được ghi nhận thành một bản ghi (record) trong hệ thống. Vui lòng đọc chi tiết tại
+                                                <a href="${pageContext.request.contextPath}/terms/tutor-terms.jsp" target="_blank" rel="noopener">Điều khoản & Cam kết dành cho Gia sư</a>.
+                                            </div>
+                                            <div class="input-group">
+                                                <input type="checkbox" id="agreeTerms" name="AgreeTerms" value="1" required>
+                                                <label for="agreeTerms" style="display:inline-block; margin-left:8px;">
+                                                    Tôi đã đọc và đồng ý với điều khoản bắt buộc ở trên.
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Submit Button -->
                             <div class="row">
                                 <div class="col-lg-12 m-b30 text-center">
@@ -653,6 +676,14 @@
                             field.focus();
                             return false;
                         }
+                    }
+
+                    // Check terms agreement
+                    if (!$('#agreeTerms').is(':checked')) {
+                        e.preventDefault();
+                        alert('Bạn phải đồng ý với điều khoản bắt buộc.');
+                        $('#agreeTerms').focus();
+                        return false;
                     }
                 });
                 
@@ -724,6 +755,44 @@
                 // Initialize subject selection display
                 updateSubjectSelection();
             });
+            // DOB validation and max date setup
+            (function() {
+                var dobInput = document.getElementById('dobTutor');
+                if (dobInput) {
+                    var today = new Date();
+                    var yyyy = today.getFullYear();
+                    var mm = String(today.getMonth() + 1).padStart(2, '0');
+                    var dd = String(today.getDate()).padStart(2, '0');
+                    var maxDate = yyyy + '-' + mm + '-' + dd;
+                    dobInput.setAttribute('max', maxDate);
+                    var form = dobInput.form;
+                    if (form) {
+                        form.addEventListener('submit', function(e) {
+                            var value = dobInput.value;
+                            if (!value) return;
+                            var dob = new Date(value + 'T00:00:00');
+                            var now = new Date();
+                            if (dob > now) {
+                                e.preventDefault();
+                                alert('Ngày sinh không được ở tương lai.');
+                                dobInput.focus();
+                                return false;
+                            }
+                            var age = now.getFullYear() - dob.getFullYear();
+                            var m = now.getMonth() - dob.getMonth();
+                            if (m < 0 || (m === 0 && now.getDate() < dob.getDate())) {
+                                age--;
+                            }
+                            if (age < 18) {
+                                e.preventDefault();
+                                alert('Gia sư phải đủ 18 tuổi trở lên.');
+                                dobInput.focus();
+                                return false;
+                            }
+                        });
+                    }
+                }
+            })();
         </script>
     </body>
 </html>
