@@ -80,6 +80,24 @@ public class BookScheduleServlet extends HttpServlet {
         String subjectIdStr = request.getParameter("subjectId");
         String tutorIdStr = request.getParameter("tutorId");
         
+        // Chuyển hướng calendar view sang BookingCalendarServlet
+        String view = request.getParameter("view");
+        if ("calendar".equals(view)) {
+            response.sendRedirect(request.getContextPath() + "/booking-calendar?" + request.getQueryString());
+            return;
+        }
+        
+        // Nếu có tutorId, chuyển luôn đến calendar view
+        if (tutorIdStr != null && !tutorIdStr.trim().isEmpty() && !tutorIdStr.equals("null")) {
+            try {
+                int tutorId = Integer.parseInt(tutorIdStr);
+                response.sendRedirect(request.getContextPath() + "/booking-calendar?view=calendar&tutorId=" + tutorId);
+                return;
+            } catch (NumberFormatException e) {
+                // Continue with normal flow if tutorId is invalid
+            }
+        }
+        
         if (subjectIdStr == null || subjectIdStr.trim().isEmpty()) {
             // Redirect với subjectId=1 (English) mặc định
             response.sendRedirect(request.getContextPath() + "/BookSchedule?subjectId=1");
@@ -293,57 +311,17 @@ public class BookScheduleServlet extends HttpServlet {
                 return;
             }
 
-            System.out.println("DEBUG: Bắt đầu tạo booking mới");
+            System.out.println("DEBUG: Chuẩn bị chuyển đến PaymentDetail để xem chi tiết");
             
-            // Tạo booking mới
-            Booking booking = new Booking();
-            booking.setStudentID(user.getUserID());
-            booking.setStudentName(user.getFullName());
-            booking.setTutorID(tutorId);
-            booking.setTutorName("Tutor ID: " + tutorId); // Có thể cải thiện bằng cách lấy tên thật
+            // Chuyển đến PaymentDetail để hiển thị chi tiết đơn hàng
+            request.setAttribute("scheduleIds", new String[]{String.valueOf(scheduleId)});
+            request.setAttribute("tutorId", String.valueOf(tutorId));
+            request.setAttribute("subjectId", String.valueOf(subjectId));
             
-            // Tạm thời sử dụng ScheduleID làm SlotID để test
-            // TODO: Sau này sẽ tạo Slot thực sự
-            int slotId = schedule.getScheduleID();
-            System.out.println("DEBUG: Sử dụng ScheduleID làm SlotID: " + slotId);
-            
-            booking.setSlotID(slotId);
-            booking.setBookingDate(new Date(System.currentTimeMillis()));
-            booking.setStatus("Pending");
-            booking.setSubjectID(subjectId);
-            
-            System.out.println("DEBUG: Booking object đã tạo - StudentID: " + booking.getStudentID() + 
-                             ", TutorID: " + booking.getTutorID() + 
-                             ", SlotID: " + booking.getSlotID() + 
-                             ", SubjectID: " + booking.getSubjectID());
-
-            // Thêm booking vào database
-            System.out.println("DEBUG: Gọi daoBooking.addBooking()");
-            int result = daoBooking.addBooking(booking);
-            System.out.println("DEBUG: Kết quả addBooking: " + result);
-            
-            if (result > 0) {
-                System.out.println("DEBUG: Booking thành công, cập nhật trạng thái lịch");
-                // Cập nhật trạng thái lịch
-                schedule.setIsBooked(true);
-                boolean updateResult = daoSchedule.updateScheduleStatus(scheduleId, true);
-                System.out.println("DEBUG: Kết quả updateScheduleStatus: " + updateResult);
-                
-                // Lưu thông tin cần thiết vào session để hiển thị trong trang thanh toán
-                HttpSession session = request.getSession();
-                session.setAttribute("tutorName", request.getAttribute("tutorName"));
-                session.setAttribute("subjectName", request.getAttribute("subjectName"));
-                session.setAttribute("totalAmount", "10.0"); // Giá cố định, có thể lấy từ database sau
-                session.setAttribute("selectedSchedules", java.util.Arrays.asList(schedule));
-                
-                System.out.println("DEBUG: Forward đến trang thanh toán");
-                // Forward đến trang thanh toán thay vì redirect
-                request.getRequestDispatcher("/payment.jsp").forward(request, response);
-                return;
-            } else {
-                System.out.println("DEBUG: Lỗi - addBooking trả về 0");
-                request.setAttribute("error", "Có lỗi xảy ra khi đặt lịch. Vui lòng thử lại.");
-            }
+            System.out.println("DEBUG: Forward đến PaymentDetail servlet");
+            // Forward đến PaymentDetail để hiển thị chi tiết trước khi thanh toán
+            request.getRequestDispatcher("/PaymentDetail").forward(request, response);
+            return;
 
         } catch (NumberFormatException e) {
             System.out.println("DEBUG: Lỗi NumberFormatException: " + e.getMessage());
@@ -360,6 +338,8 @@ public class BookScheduleServlet extends HttpServlet {
         doGet(request, response);
     }
     
+
+
     /**
      * Tạo Slot mới từ Schedule - TẠM THỜI KHÔNG SỬ DỤNG
      */

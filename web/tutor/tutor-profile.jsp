@@ -107,7 +107,7 @@
                                 </div>
                                 <ul class="nav navbar-nav">
                                     <li><a href="indextutor.jsp"><fmt:message key="home"/></a></li>
-                                    <li><a href="CreateSchedule"><fmt:message key="my_schedule"/></a></li>
+                                    <li><a href="${pageContext.request.contextPath}/tutor/schedule-management"><fmt:message key="my_schedule"/></a></li>
                                     <li><a href="bookingHistory"><fmt:message key="withdraw"/></a></li>
                                 </ul>
                             </div>
@@ -159,6 +159,9 @@
                                                 </li>
                                                 <li class="nav-item">
                                                     <a class="nav-link" data-toggle="tab" href="#Update_CV"><i class="ti-lock"></i><fmt:message key="Update_CV"/></a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link" data-toggle="tab" href="#update-price"><i class="ti-money"></i>Cập nhật giá</a>
                                                 </li>
                                             </ul>
                                         </div>
@@ -314,11 +317,72 @@
                                                             <input class="form-control" type="text" name="Description" value=${cv.getDescription()}>
                                                         </div>
                                                     </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label"><fmt:message key="skill"/></label>
+                                                        <div class="col-12 col-sm-9 col-md-9 col-lg-7">
+                                                            <input class="form-control" type="text" name="Skill" value=${cv.getSkill()}>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label"><fmt:message key="price"/></label>
+                                                        <div class="col-12 col-sm-9 col-md-9 col-lg-7">
+                                                            <input class="form-control" type="number" name="Price" value=${cv.getPrice()} min="10000" max="1000000" step="1000">
+                                                            <small class="form-text text-muted">Giá từ 10,000 đến 1,000,000 VND/giờ</small>
+                                                        </div>
+                                                    </div>
                                                     <div class="row">
                                                         <div class="col-12 col-sm-3 col-md-3 col-lg-2"></div>
                                                         <div class="col-12 col-sm-9 col-md-9 col-lg-7">
                                                             <button type="submit" class="btn btn-primary"><fmt:message key="save_changes"/></button>
                                                             <button type="reset" class="btn btn-secondary"><fmt:message key="cancel"/></button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="tab-pane" id="update-price">
+                                                <div class="profile-head">
+                                                    <h3>Cập nhật giá giờ học</h3>
+                                                    <div class="alert alert-info">
+                                                        <i class="fa fa-info-circle"></i> 
+                                                        Giá hiện tại: <strong id="current-price-display">
+                                                            <c:choose>
+                                                                <c:when test="${currentPrice != null && currentPrice > 0}">
+                                                                    <fmt:formatNumber value="${currentPrice}" type="number" maxFractionDigits="0"/>
+                                                                </c:when>
+                                                                <c:otherwise>Chưa đặt giá</c:otherwise>
+                                                            </c:choose>
+                                                        </strong> VND/giờ
+                                                    </div>
+                                                </div>
+                                                <form class="edit-profile" action="tutorprofile" method="POST">
+                                                    <input type="hidden" name="action" value="updatePrice">
+                                                    <div class="form-group row">
+                                                        <label class="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">Giá mới (VND/giờ)</label>
+                                                        <div class="col-12 col-sm-9 col-md-9 col-lg-7">
+                                                            <input class="form-control" type="number" name="newPrice" 
+                                                                   min="10000" max="1000000" step="1000" 
+                                                                   placeholder="Nhập giá từ 10,000 - 1,000,000 VND" required>
+                                                            <small class="form-text text-muted">
+                                                                Giá phải từ 10,000 đến 1,000,000 VND/giờ
+                                                            </small>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">Lý do thay đổi</label>
+                                                        <div class="col-12 col-sm-9 col-md-9 col-lg-7">
+                                                            <textarea class="form-control" name="priceReason" rows="3" 
+                                                                      placeholder="Mô tả ngắn gọn lý do thay đổi giá (không bắt buộc)"></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-12 col-sm-3 col-md-3 col-lg-2"></div>
+                                                        <div class="col-12 col-sm-9 col-md-9 col-lg-7">
+                                                            <button type="submit" class="btn btn-success">
+                                                                <i class="fa fa-money"></i> Cập nhật giá
+                                                            </button>
+                                                            <button type="reset" class="btn btn-secondary">
+                                                                <i class="fa fa-times"></i> Hủy
+                                                            </button>
                                                         </div>
                                                     </div>
                                                 </form>
@@ -376,6 +440,8 @@
                                                 $('#change-password').tab('show');
             <% } else if ("tutorCV".equals(request.getParameter("action"))) { %>
                                                 $('#Update_CV').tab('show');
+            <% } else if ("updatePrice".equals(request.getParameter("action"))) { %>
+                                                $('#update-price').tab('show');
             <% } else { %>
                                                 $('#edit-profile').tab('show');
             <% } %>

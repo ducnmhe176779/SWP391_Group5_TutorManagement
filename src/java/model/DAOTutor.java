@@ -40,6 +40,47 @@ public class DAOTutor extends DBConnect {
         }
         return result;
     }
+    
+    /**
+     * Cập nhật giá giờ học của tutor
+     */
+    public boolean updateTutorPrice(int tutorId, float newPrice) {
+        String sql = "UPDATE Tutor SET Price = ? WHERE TutorID = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setFloat(1, newPrice);
+            ps.setInt(2, tutorId);
+            int result = ps.executeUpdate();
+            return result > 0;
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi cập nhật giá tutor: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    /**
+     * Lấy TutorID từ UserID (cho tutor đang login)
+     */
+    public int getTutorIdByUserId(int userId) {
+        String sql = """
+            SELECT t.TutorID 
+            FROM Users u
+            JOIN CV c ON u.UserID = c.UserID
+            JOIN Tutor t ON c.CVID = t.CVID
+            WHERE u.UserID = ?
+        """;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("TutorID");
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi lấy TutorID từ UserID: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return -1; // Không tìm thấy
+    }
 
     public int deleteTutor(int tutorID) {
         int result = 0;
@@ -324,26 +365,7 @@ public class DAOTutor extends DBConnect {
         return false;
     }
 
-    public int getTutorIdByUserId(int userId) {
-        int tutorId = -1;
-        String sql = """
-        SELECT t.TutorID 
-        FROM Tutor t
-        JOIN CV c ON t.CVID = c.CVID
-        JOIN Users u ON c.UserID = u.UserID
-        WHERE u.UserID = ?
-    """;
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, userId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                tutorId = rs.getInt("TutorID");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return tutorId;
-    }
+
 
     // Method mới: Lấy danh sách tutors theo subject (trả về Object[] để dễ sử dụng trong JSP)
     public List<Object[]> getTutorsBySubject(int subjectID) {

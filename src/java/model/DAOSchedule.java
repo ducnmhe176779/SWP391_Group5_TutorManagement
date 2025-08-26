@@ -397,5 +397,104 @@ public boolean isScheduleConflict(int tutorId, Date startTime, Date endTime) thr
     }
 
 
+    /**
+     * Lấy TẤT CẢ lịch của tutor để hiển thị trên calendar (bao gồm cả đã book và chưa book)
+     */
+    public List<Schedule> getAllSchedulesForCalendar(int tutorId, java.util.Date fromDate) {
+        List<Schedule> schedules = new ArrayList<>();
+        
+        String query = """
+            SELECT s.*, sub.SubjectName, sub.SubjectID
+            FROM Schedule s
+            INNER JOIN Subject sub ON s.SubjectID = sub.SubjectID
+            WHERE s.TutorID = ? 
+                AND s.StartTime >= ?
+                AND s.Status = 'Available'
+            ORDER BY s.StartTime ASC
+        """;
+        
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, tutorId);
+            ps.setTimestamp(2, new Timestamp(fromDate.getTime()));
+            
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Schedule schedule = new Schedule();
+                schedule.setScheduleID(rs.getInt("ScheduleID"));
+                schedule.setTutorID(rs.getInt("TutorID"));
+                schedule.setStartTime(rs.getTimestamp("StartTime"));
+                schedule.setEndTime(rs.getTimestamp("EndTime"));
+                schedule.setIsBooked(rs.getBoolean("IsBooked"));
+                schedule.setSubjectId(rs.getInt("SubjectID"));
+                schedule.setStatus(rs.getString("Status"));
+                
+                Subject subject = new Subject();
+                subject.setSubjectID(rs.getInt("SubjectID"));
+                subject.setSubjectName(rs.getString("SubjectName"));
+                schedule.setSubject(subject);
+                
+                schedules.add(schedule);
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi lấy tất cả lịch cho calendar: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        return schedules;
+    }
+
+    /**
+     * Lấy lịch available của tutor để student có thể book
+     */
+    public List<Schedule> getAvailableSchedules(int tutorId, java.util.Date fromDate) {
+        List<Schedule> schedules = new ArrayList<>();
+        
+        String query = """
+            SELECT s.*, sub.SubjectName, sub.SubjectID
+            FROM Schedule s
+            INNER JOIN Subject sub ON s.SubjectID = sub.SubjectID
+            WHERE s.TutorID = ? 
+                AND s.StartTime >= ?
+                AND s.IsBooked = 0 
+                AND s.Status = 'Available'
+                AND NOT EXISTS (
+                    SELECT 1 FROM Booking b 
+                    WHERE b.SlotID = s.ScheduleID 
+                    AND b.Status NOT IN ('Cancelled')
+                )
+            ORDER BY s.StartTime ASC
+        """;
+        
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, tutorId);
+            ps.setTimestamp(2, new Timestamp(fromDate.getTime()));
+            
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Schedule schedule = new Schedule();
+                schedule.setScheduleID(rs.getInt("ScheduleID"));
+                schedule.setTutorID(rs.getInt("TutorID"));
+                schedule.setStartTime(rs.getTimestamp("StartTime"));
+                schedule.setEndTime(rs.getTimestamp("EndTime"));
+                schedule.setIsBooked(rs.getBoolean("IsBooked"));
+                schedule.setSubjectId(rs.getInt("SubjectID"));
+                schedule.setStatus(rs.getString("Status"));
+                
+                Subject subject = new Subject();
+                subject.setSubjectID(rs.getInt("SubjectID"));
+                subject.setSubjectName(rs.getString("SubjectName"));
+                schedule.setSubject(subject);
+                
+                schedules.add(schedule);
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi lấy lịch available: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        return schedules;
+    }
+
+
 
 }

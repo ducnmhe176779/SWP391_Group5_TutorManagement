@@ -62,7 +62,7 @@
                                     </li>
                                     <% if (user == null) { %>
                                     <li><a href="login.jsp"><fmt:message key="login"/></a></li>
-                                    <li><a href="register.jsp"><fmt:message key="register"/></a></li>
+                                    <li><a href="register-choice.jsp"><fmt:message key="register"/></a></li>
                                         <% } else {%>
                                     <li>
                                         <div class="ttr-header-submenu">

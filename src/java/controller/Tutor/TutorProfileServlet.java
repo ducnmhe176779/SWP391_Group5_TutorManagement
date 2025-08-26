@@ -7,6 +7,8 @@ package controller.Tutor;
 import entity.Cv;
 import entity.User;
 import model.DAOUser;
+import model.DAOTutor;
+import model.DAOCv;
 import java.io.IOException;
 import java.time.LocalDate;
 import jakarta.servlet.ServletException;
@@ -47,6 +49,15 @@ public class TutorProfileServlet extends HttpServlet {
         Cv cv= dao.getCVbyUserId(currentUser.getUserID());
         request.setAttribute("cv", cv);
         request.setAttribute("user", currentUser);
+        
+        // Load current tutor price
+        DAOTutor daoTutor = new DAOTutor();
+        int tutorId = daoTutor.getTutorIdByUserId(currentUser.getUserID());
+        if (tutorId != -1) {
+            float currentPrice = daoTutor.getPriceByTutorId(tutorId);
+            request.setAttribute("currentPrice", currentPrice);
+        }
+        
         request.getRequestDispatcher(TUTOR_PROFILE_PAGE).forward(request, response);
     }
 
@@ -66,8 +77,10 @@ public class TutorProfileServlet extends HttpServlet {
 
         if ("changePassword".equals(action)) {
             handleChangePassword(request, response, session, currentUser, daoUser);
-        } if ("tutorCV".equals(action)) {
+        } else if ("tutorCV".equals(action)) {
             handleUpdateCV(request, response, session, currentUser, daoUser);
+        } else if ("updatePrice".equals(action)) {
+            handleUpdatePrice(request, response, session, currentUser);
         } else {
             handleUpdateProfile(request, response, session, currentUser, daoUser);
         }
@@ -161,9 +174,11 @@ public class TutorProfileServlet extends HttpServlet {
         String Experience = request.getParameter("Experience");
         String Certificates = request.getParameter("Certificates");
         String Description = request.getParameter("Description");
+        String Skill = request.getParameter("Skill");
+        float Price = Float.parseFloat(request.getParameter("Price"));
         int n=0;
         DAOCv dao=new DAOCv();
-        n=dao.UpdateCV(userId, Education, Experience, Certificates, Description);
+        n=dao.UpdateCV(userId, Education, Experience, Certificates, Description, Skill, Price);
         Cv cv= dao.getCVbyUserId(userId);
         request.setAttribute("cv",cv);
         response.sendRedirect(request.getContextPath() + "/tutor/tutorprofile");
@@ -229,5 +244,75 @@ public class TutorProfileServlet extends HttpServlet {
 
     private void setMessage(HttpSession session, String message) {
         session.setAttribute("message", message);
+    }
+    
+    private void handleUpdatePrice(HttpServletRequest request, HttpServletResponse response,
+            HttpSession session, User currentUser) throws IOException {
+        
+        try {
+            String newPriceStr = request.getParameter("newPrice");
+            String priceReason = request.getParameter("priceReason");
+            
+            if (newPriceStr == null || newPriceStr.trim().isEmpty()) {
+                setError(session, "Vui lòng nhập giá mới.");
+                response.sendRedirect(request.getContextPath() + "/tutor/tutorprofile");
+                return;
+            }
+            
+            float newPrice = Float.parseFloat(newPriceStr);
+            
+            // Validate giá
+            if (newPrice < 10000) {
+                setError(session, "Giá phải từ 10,000 VND trở lên.");
+                response.sendRedirect(request.getContextPath() + "/tutor/tutorprofile");
+                return;
+            }
+            
+            if (newPrice > 1000000) {
+                setError(session, "Giá không được vượt quá 1,000,000 VND/giờ.");
+                response.sendRedirect(request.getContextPath() + "/tutor/tutorprofile");
+                return;
+            }
+            
+            DAOTutor daoTutor = new DAOTutor();
+            int tutorId = daoTutor.getTutorIdByUserId(currentUser.getUserID());
+            
+            if (tutorId == -1) {
+                setError(session, "Không tìm thấy thông tin tutor.");
+                response.sendRedirect(request.getContextPath() + "/tutor/tutorprofile");
+                return;
+            }
+            
+            // Lấy giá cũ để so sánh
+            float oldPrice = daoTutor.getPriceByTutorId(tutorId);
+            
+            // Cập nhật giá
+            boolean success = daoTutor.updateTutorPrice(tutorId, newPrice);
+            
+            if (success) {
+                String message = String.format("Cập nhật giá thành công! Giá cũ: %,.0f VND → Giá mới: %,.0f VND", 
+                                              oldPrice, newPrice);
+                if (priceReason != null && !priceReason.trim().isEmpty()) {
+                    message += " (Lý do: " + priceReason.trim() + ")";
+                }
+                setMessage(session, message);
+                
+                System.out.println("Tutor " + tutorId + " (" + currentUser.getFullName() + 
+                                 ") updated price from " + oldPrice + " to " + newPrice);
+                if (priceReason != null && !priceReason.trim().isEmpty()) {
+                    System.out.println("Reason: " + priceReason);
+                }
+            } else {
+                setError(session, "Có lỗi xảy ra khi cập nhật giá. Vui lòng thử lại.");
+            }
+            
+        } catch (NumberFormatException e) {
+            setError(session, "Giá không hợp lệ. Vui lòng nhập số.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            setError(session, "Có lỗi xảy ra: " + e.getMessage());
+        }
+        
+        response.sendRedirect(request.getContextPath() + "/tutor/tutorprofile");
     }
 }

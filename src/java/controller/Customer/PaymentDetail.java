@@ -71,7 +71,8 @@ public class PaymentDetail extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        // Xử lý giống như doPost để hiển thị chi tiết thanh toán
+        doPost(request, response);
     }
 
     /**
@@ -96,10 +97,21 @@ public class PaymentDetail extends HttpServlet {
             return;
         }
 
-        // Lấy dữ liệu từ form
+        // Lấy dữ liệu từ form hoặc từ forward
         String[] scheduleIds = request.getParameterValues("scheduleIds");
         String tutorId = request.getParameter("tutorId");
         String subjectId = request.getParameter("subjectId");
+        
+        // Nếu không có trong parameters, lấy từ attributes (từ forward)
+        if (scheduleIds == null) {
+            scheduleIds = (String[]) request.getAttribute("scheduleIds");
+        }
+        if (tutorId == null) {
+            tutorId = (String) request.getAttribute("tutorId");
+        }
+        if (subjectId == null) {
+            subjectId = (String) request.getAttribute("subjectId");
+        }
 
         // Kiểm tra dữ liệu đầu vào
         if (scheduleIds == null || tutorId == null || subjectId == null) {

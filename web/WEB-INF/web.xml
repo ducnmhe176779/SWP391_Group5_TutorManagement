@@ -42,16 +42,26 @@
         <servlet-name>ProfileServlet</servlet-name>
         <url-pattern>/profile</url-pattern>
     </servlet-mapping>
-    <!-- Create Schedule Controller Mapping -->
+    <!-- CreateScheduleServlet - Adding explicit mapping for compatibility -->
     <servlet>
         <servlet-name>CreateScheduleServlet</servlet-name>
         <servlet-class>controller.Tutor.CreateScheduleServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>CreateScheduleServlet</servlet-name>
-        <url-pattern>/tutor/CreateSchedule</url-pattern>
+        <url-pattern>/tutor/schedule-management</url-pattern>
     </servlet-mapping>
-    <!-- Book Schedule Controller Mapping -->
+    <!-- BookingCalendarServlet - Adding explicit mapping -->
+    <servlet>
+        <servlet-name>BookingCalendarServlet</servlet-name>
+        <servlet-class>UserController.BookingCalendarServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BookingCalendarServlet</servlet-name>
+        <url-pattern>/booking-calendar</url-pattern>
+    </servlet-mapping>
+    
+    <!-- BookScheduleServlet - Adding explicit mapping -->
     <servlet>
         <servlet-name>BookScheduleServlet</servlet-name>
         <servlet-class>UserController.BookScheduleServlet</servlet-class>
@@ -60,6 +70,7 @@
         <servlet-name>BookScheduleServlet</servlet-name>
         <url-pattern>/BookSchedule</url-pattern>
     </servlet-mapping>
+    
     <!-- Tutor Detail Controller Mapping -->
     <servlet>
         <servlet-name>TutorDetailController</servlet-name>

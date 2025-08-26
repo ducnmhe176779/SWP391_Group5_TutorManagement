@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@WebServlet(name = "CreateScheduleServlet", urlPatterns = {"/tutor/CreateSchedule"})
+@WebServlet(name = "CreateScheduleServlet", urlPatterns = {"/tutor/schedule-management"})
 public class CreateScheduleServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -82,7 +82,8 @@ public class CreateScheduleServlet extends HttpServlet {
         
         request.setAttribute("subjectList", subjectList);
         request.setAttribute("scheduleList", scheduleList);
-        request.getRequestDispatcher("/tutor/createSchedule.jsp").forward(request, response);
+        // Forward to new calendar view for tutor schedule management
+        request.getRequestDispatcher("/tutor/schedule-calendar.jsp").forward(request, response);
     }
 
     @Override
