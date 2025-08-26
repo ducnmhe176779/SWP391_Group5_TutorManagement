@@ -112,7 +112,7 @@
                             </div>
                             <ul class="nav navbar-nav">
                                 <li><a href="indextutor.jsp"><fmt:message key="home"/></a></li>
-                                <li class="active"><a href="CreateSchedule"><fmt:message key="my_schedule"/></a></li>
+                                <li class="active"><a href="${pageContext.request.contextPath}/tutor/schedule-management"><fmt:message key="my_schedule"/></a></li>
                                 <li><a href="bookingHistory"><fmt:message key="withdraw"/></a></li>
                             </ul>
                         </div>

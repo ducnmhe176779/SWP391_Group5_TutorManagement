@@ -27,7 +27,7 @@ public class AuthorizationFilter implements Filter {
     );
 
     private static final Set<String> TUTOR_URLS = Set.of(
-            "/tutor","/CreateSchedule"
+            "/tutor"
     );
     private static final Set<String> USER_URLS = Set.of(
             "/user","/Booking",

@@ -1,0 +1,234 @@
+/* STUDENT REGISTRATION FORM - UI OVERLAP FIX */
+/* Ultra aggressive overrides to fix text overlapping */
+
+* {
+    box-sizing: border-box !important;
+}
+
+.form-group {
+    margin-bottom: 25px !important;
+    clear: both !important;
+    overflow: hidden !important;
+    display: block !important;
+    width: 100% !important;
+    position: relative !important;
+}
+
+.form-group label {
+    display: block !important;
+    margin-bottom: 10px !important;
+    font-weight: 600 !important;
+    color: #333 !important;
+    width: 100% !important;
+    float: none !important;
+    clear: both !important;
+    position: static !important;
+    text-align: left !important;
+    line-height: 1.5 !important;
+    z-index: 1 !important;
+}
+
+.form-group label i {
+    margin-right: 8px !important;
+    color: #3498db !important;
+}
+
+.form-control {
+    width: 100% !important;
+    padding: 15px !important;
+    border: 2px solid #ddd !important;
+    border-radius: 8px !important;
+    font-size: 16px !important;
+    line-height: 1.5 !important;
+    box-sizing: border-box !important;
+    display: block !important;
+    clear: both !important;
+    margin: 0 !important;
+    position: static !important;
+    background: #fff !important;
+    color: #333 !important;
+    height: auto !important;
+    min-height: 50px !important;
+}
+
+.form-control:focus {
+    border-color: #3498db !important;
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1) !important;
+}
+
+.col-lg-6, .col-lg-12 {
+    width: 100% !important;
+    float: none !important;
+    padding: 0 !important;
+    margin: 0 0 20px 0 !important;
+    box-sizing: border-box !important;
+    display: block !important;
+    clear: both !important;
+    position: static !important;
+}
+
+.row {
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+    width: 100% !important;
+    clear: both !important;
+    overflow: hidden !important;
+}
+
+.row::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.form-section {
+    clear: both !important;
+    overflow: hidden !important;
+    padding: 30px !important;
+    margin-bottom: 30px !important;
+    background: #f8f9fa !important;
+    border-radius: 10px !important;
+    border-left: 4px solid #3498db !important;
+    position: static !important;
+}
+
+.section-title {
+    color: #2c3e50 !important;
+    font-size: 1.3rem !important;
+    margin-bottom: 20px !important;
+    font-weight: 600 !important;
+    clear: both !important;
+    display: block !important;
+    width: 100% !important;
+}
+
+.section-title i {
+    margin-right: 10px !important;
+    color: #3498db !important;
+    font-size: 1.2em !important;
+}
+
+/* Input group fixes */
+.input-group {
+    display: block !important;
+    width: 100% !important;
+    position: static !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Button fixes */
+.btn {
+    display: inline-block !important;
+    padding: 15px 30px !important;
+    margin: 10px 5px !important;
+    border-radius: 25px !important;
+    font-weight: 600 !important;
+    text-align: center !important;
+    cursor: pointer !important;
+    border: none !important;
+    text-decoration: none !important;
+    transition: all 0.3s ease !important;
+}
+
+.btn-student {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%) !important;
+    color: white !important;
+}
+
+.btn-student:hover {
+    background: linear-gradient(135deg, #2980b9 0%, #1f6391 100%) !important;
+    color: white !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3) !important;
+}
+
+/* File upload fixes */
+input[type="file"] {
+    width: 100% !important;
+    padding: 10px !important;
+    border: 2px dashed #3498db !important;
+    border-radius: 8px !important;
+    background: #f8f9fa !important;
+    cursor: pointer !important;
+}
+
+/* Date input fixes */
+input[type="date"] {
+    width: 100% !important;
+    padding: 15px !important;
+    border: 2px solid #ddd !important;
+    border-radius: 8px !important;
+    font-size: 16px !important;
+    background: #fff !important;
+}
+
+/* Password input fixes */
+input[type="password"], input[type="text"], input[type="email"] {
+    width: 100% !important;
+    padding: 15px !important;
+    border: 2px solid #ddd !important;
+    border-radius: 8px !important;
+    font-size: 16px !important;
+    background: #fff !important;
+    color: #333 !important;
+}
+
+/* Responsive fixes */
+@media (max-width: 768px) {
+    .form-section {
+        padding: 20px !important;
+        margin-bottom: 20px !important;
+    }
+    
+    .form-control {
+        font-size: 16px !important;
+        padding: 12px !important;
+        min-height: 45px !important;
+    }
+    
+    .section-title {
+        font-size: 1.1rem !important;
+    }
+}
+
+/* Ultra specific overrides for problematic elements */
+body .page-wraper .contact-bx .form-group {
+    margin-bottom: 25px !important;
+    clear: both !important;
+    overflow: visible !important;
+}
+
+body .page-wraper .contact-bx .form-group label {
+    display: block !important;
+    width: 100% !important;
+    margin-bottom: 10px !important;
+    float: none !important;
+}
+
+body .page-wraper .contact-bx .form-control {
+    width: 100% !important;
+    display: block !important;
+    clear: both !important;
+    margin-top: 0 !important;
+}
+
+/* Force layout reset */
+.placeani {
+    animation: none !important;
+    transform: none !important;
+}
+
+/* Clear any floating issues */
+.clearfix::before,
+.clearfix::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.clearfix::after {
+    clear: both;
+}

@@ -20,7 +20,7 @@ import java.util.logging.Logger;
  * @author Heizxje
  */
 public class DAOHistoryLog extends DBConnect {
-    private DBConnect dbConnect;
+
     public DAOHistoryLog() {
         super();
     }
@@ -323,31 +323,6 @@ public class DAOHistoryLog extends DBConnect {
         return logs;
     }
 
-        public List<HistoryLog> getUserAndTutorLogs() throws SQLException {
-        List<HistoryLog> logs = new ArrayList<>();
-        String sql = "SELECT TOP 1000 hl.*, u.FullName, u.Email, u.RoleID "
-                + "FROM HistoryLog hl "
-                + "LEFT JOIN Users u ON hl.UserID = u.UserID "
-                + "WHERE u.RoleID IN (2, 3) "
-                + "ORDER BY hl.LogDate DESC";
-        try (Connection conn = dbConnect.getConnection();
-             ResultSet rs = conn.createStatement().executeQuery(sql)) {
-            while (rs.next()) {
-                HistoryLog log = new HistoryLog();
-                log.setLogId(rs.getInt("LogID"));
-                log.setUserId(rs.getInt("UserID"));
-                log.setActionType(rs.getString("ActionType"));
-                log.setTargetId(rs.getObject("TargetID") != null ? rs.getString("TargetID") : null);
-                log.setDetails(rs.getString("Details"));
-                log.setLogDate(rs.getTimestamp("LogDate"));
-                log.setFullName(rs.getString("FullName"));
-                log.setEmail(rs.getString("Email"));
-                log.setRoleId(rs.getInt("RoleID"));
-                logs.add(log);
-            }
-        }
-        return logs;
-    }
     /**
      * Xóa log cũ (older than specified days)
      */

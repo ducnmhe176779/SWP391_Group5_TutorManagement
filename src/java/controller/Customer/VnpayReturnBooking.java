@@ -94,12 +94,9 @@ public class VnpayReturnBooking extends HttpServlet {
                         
                         if (schedule != null) {
                             Slot slot = new Slot();
-                            slot.setTutorID(Integer.parseInt(tutorId));
-                            slot.setSubjectID(Integer.parseInt(subjectId));
-                            slot.setStatus("Available");
-                            // Convert Date to Timestamp
-                            slot.setStartTime(new java.sql.Timestamp(schedule.getStartTime().getTime()));
-                            slot.setEndTime(new java.sql.Timestamp(schedule.getEndTime().getTime()));
+                            // Map Schedule -> Slot by ScheduleID per DB schema
+                            slot.setScheduleID(schedule.getScheduleID());
+                            slot.setStatus("Booked");
                             slots.add(slot);
 
                             Booking booking = new Booking();
@@ -118,6 +115,17 @@ public class VnpayReturnBooking extends HttpServlet {
                         int bookingID = bookings.get(0).getBookingID();
                         payment.setBookingID(bookingID);
                         dao.updatePaymentBookingId(payment);
+                        
+                        // CẬP NHẬT TRẠNG THÁI SCHEDULE - QUAN TRỌNG!
+                        System.out.println("=== UPDATING SCHEDULE STATUS ===");
+                        DAOSchedule daoSchedule = new DAOSchedule();
+                        for (String scheduleId : scheduleIds) {
+                            System.out.println("Updating schedule ID: " + scheduleId + " to booked=true");
+                            boolean updated = daoSchedule.updateScheduleStatus(Integer.parseInt(scheduleId), true);
+                            System.out.println("Schedule " + scheduleId + " update result: " + updated);
+                        }
+                        System.out.println("=== SCHEDULE UPDATE COMPLETED ===");
+                        
                         System.out.println("Booking created successfully, BookingID: " + bookingID);
                     }
                 }

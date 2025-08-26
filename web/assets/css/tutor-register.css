@@ -1,0 +1,361 @@
+/* Tutor Registration Enhanced Styles */
+.tutor-register-container {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px 0;
+}
+
+.register-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    overflow: hidden;
+    margin: 20px auto;
+    max-width: 1200px;
+}
+
+.tutor-header {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
+    color: white;
+    padding: 30px;
+    text-align: center;
+    margin-bottom: 0 !important;
+}
+
+.tutor-header h2 {
+    color: white !important;
+    margin: 0;
+    font-weight: 700;
+    font-size: 2.2rem;
+}
+
+.tutor-header p {
+    margin: 10px 0 0 0;
+    opacity: 0.9;
+    font-size: 1.1rem;
+    color: white !important;
+}
+
+.form-section {
+    background: #fff !important;
+    margin-bottom: 30px;
+    padding: 25px;
+    border-left: 4px solid #e74c3c;
+    position: relative;
+    border-radius: 0 !important;
+}
+
+.section-title {
+    color: #e74c3c !important;
+    font-size: 1.4rem;
+    margin-bottom: 25px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f8f9fa;
+}
+
+.section-title i {
+    font-size: 1.5rem;
+    color: #e74c3c;
+}
+
+.form-group {
+    margin-bottom: 25px !important;
+    position: relative;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 10px;
+    display: block;
+    font-size: 14px;
+}
+
+.form-control {
+    border: 2px solid #e9ecef !important;
+    border-radius: 8px !important;
+    padding: 14px 16px !important;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    width: 100%;
+    line-height: 1.5;
+}
+
+.form-control:focus {
+    border-color: #e74c3c !important;
+    box-shadow: 0 0 0 0.2rem rgba(231, 76, 60, 0.25) !important;
+    outline: none;
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* Subject Selection Enhanced Styles */
+.subjects-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
+    gap: 15px !important;
+    max-height: 450px !important;
+    overflow-y: auto !important;
+    border: 2px solid #e9ecef !important;
+    padding: 20px !important;
+    border-radius: 10px !important;
+    background: #f8f9fa !important;
+    margin-top: 15px;
+}
+
+.subject-option {
+    display: flex !important;
+    align-items: flex-start !important;
+    padding: 18px !important;
+    background: white !important;
+    border-radius: 8px !important;
+    border: 2px solid #e9ecef !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    min-height: 90px;
+    position: relative;
+}
+
+.subject-option:hover {
+    border-color: #e74c3c !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+}
+
+.subject-option input[type="checkbox"] {
+    margin-right: 15px !important;
+    transform: scale(1.4) !important;
+    margin-top: 3px;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.subject-option label {
+    margin: 0 !important;
+    cursor: pointer !important;
+    flex: 1;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.subject-option label strong {
+    color: #495057 !important;
+    font-size: 16px;
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.subject-option label small {
+    color: #6c757d !important;
+    font-size: 13px;
+    line-height: 1.4;
+    display: block;
+}
+
+/* Selected state */
+.subject-option.selected {
+    background: #e8f5e8 !important;
+    border-color: #28a745 !important;
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+}
+
+.selected-count {
+    margin-top: 15px;
+    padding: 12px 18px;
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #155724;
+}
+
+/* File Upload Styles */
+.file-preview {
+    margin-top: 10px;
+    padding: 10px 15px;
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #155724;
+}
+
+/* Button Styles */
+.btn-register {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
+    border: none !important;
+    border-radius: 25px !important;
+    padding: 15px 40px !important;
+    color: white !important;
+    font-weight: 600;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.btn-register:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(231, 76, 60, 0.4);
+    color: white !important;
+    background: linear-gradient(135deg, #c0392b 0%, #a93226 100%) !important;
+}
+
+.btn-secondary {
+    background: #6c757d !important;
+    border: none !important;
+    border-radius: 25px !important;
+    padding: 15px 40px !important;
+    color: white !important;
+    font-weight: 600;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.btn-secondary:hover {
+    background: #545b62 !important;
+    transform: translateY(-2px);
+    color: white !important;
+}
+
+/* Input Group Styles */
+.input-group label i {
+    margin-right: 10px;
+    color: #e74c3c;
+    font-size: 16px;
+}
+
+/* Alert Styles */
+.alert {
+    border-radius: 10px !important;
+    border: none !important;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+}
+
+/* Animation */
+.placeani {
+    animation: slideInUp 0.6s ease-out;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Note Text */
+.note-text {
+    background: #fff3cd !important;
+    border: 1px solid #ffeaa7 !important;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+    color: #856404;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.form-text.text-muted {
+    color: #6c757d !important;
+    font-size: 13px;
+    margin-top: 8px;
+    line-height: 1.4;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .register-card {
+        margin: 10px;
+        max-width: none;
+    }
+    
+    .form-section {
+        padding: 20px 15px;
+    }
+    
+    .subjects-grid {
+        grid-template-columns: 1fr !important;
+        max-height: 300px !important;
+        padding: 15px !important;
+    }
+    
+    .section-title {
+        font-size: 1.2rem;
+    }
+    
+    .subject-option {
+        min-height: 70px;
+        padding: 15px !important;
+    }
+    
+    .tutor-header {
+        padding: 20px;
+    }
+    
+    .tutor-header h2 {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .subjects-grid {
+        padding: 10px !important;
+        gap: 10px !important;
+    }
+    
+    .subject-option {
+        padding: 12px !important;
+        min-height: 60px;
+    }
+    
+    .subject-option label strong {
+        font-size: 14px;
+    }
+    
+    .subject-option label small {
+        font-size: 12px;
+    }
+}
+
+/* Fix overlapping issues */
+.container-fluid {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+}
+
+.row {
+    margin-left: -15px !important;
+    margin-right: -15px !important;
+}
+
+.col-lg-6, .col-lg-12 {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+}
+
+/* Prevent text overflow */
+* {
+    box-sizing: border-box;
+}
+
+.form-control, .subject-option, .form-section {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}

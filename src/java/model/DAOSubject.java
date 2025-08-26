@@ -320,6 +320,23 @@ public List<Subject> getAllTutorSubjects() throws SQLException {
         return subjects;
     }
     
+    /**
+     * Lấy SubjectID từ SubjectName (khớp chính xác, ưu tiên Status='Active'). Trả về -1 nếu không tìm thấy.
+     */
+    public int getSubjectIdByName(String subjectName) {
+        String sql = "SELECT TOP 1 SubjectID FROM Subject WHERE SubjectName = ? ORDER BY CASE WHEN Status = 'Active' THEN 0 ELSE 1 END, SubjectID";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, subjectName);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("SubjectID");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+    
     public ResultSet getData(String sql) {
         ResultSet rs = null;
         try {
@@ -389,6 +406,85 @@ public List<Subject> getAllTutorSubjects() throws SQLException {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        return subjects;
+    }
+
+    /**
+     * Lấy danh sách môn học của gia sư dựa trên bảng TutorSubject (join chính xác theo TutorID)
+     */
+    public List<Subject> getTutorSubjectsByTutorId(int tutorId) {
+        List<Subject> subjects = new ArrayList<>();
+        String sql = """
+            SELECT s.SubjectID, s.SubjectName, s.Description, s.Status
+            FROM TutorSubject ts
+            JOIN Subject s ON s.SubjectID = ts.SubjectID
+            WHERE ts.TutorID = ?
+        """;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, tutorId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                subjects.add(new Subject(
+                    rs.getInt("SubjectID"),
+                    rs.getString("SubjectName"),
+                    rs.getString("Description"),
+                    rs.getString("Status")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return subjects;
+    }
+
+    /**
+     * Lấy danh sách môn học mà gia sư được phép dạy khi hồ sơ (CV) đã được duyệt.
+     * Ràng buộc:
+     *  - Chỉ lấy các môn trong bảng TutorSubject ứng với TutorID hiện tại
+     *  - Yêu cầu CV của tutor ở trạng thái 'Approved'
+     */
+    public List<Subject> getApprovedSubjectsForTutor(int tutorId) {
+        List<Subject> subjects = new ArrayList<>();
+        String sql = """
+            SELECT s.SubjectID, s.SubjectName, s.Description, s.Status
+            FROM TutorSubject ts
+            JOIN Subject s ON s.SubjectID = ts.SubjectID
+            JOIN Tutor t ON t.TutorID = ts.TutorID
+            JOIN CV c ON c.CVID = t.CVID
+            WHERE ts.TutorID = ?
+              AND c.Status = 'Approved'
+        """;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, tutorId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                subjects.add(new Subject(
+                    rs.getInt("SubjectID"),
+                    rs.getString("SubjectName"),
+                    rs.getString("Description"),
+                    rs.getString("Status")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return subjects;
+    }
+
+    /**
+     * Lấy danh sách môn học cho gia sư với chiến lược fallback:
+     * 1) TutorSubject theo TutorID
+     * 2) CV.SubjectId theo UserID
+     * 3) Toàn bộ Subject (để không làm vỡ UI của tutor mới)
+     */
+    public List<Subject> getSubjectsForTutorFlexible(int tutorId, int userId) {
+        List<Subject> subjects = getTutorSubjectsByTutorId(tutorId);
+        if (subjects == null || subjects.isEmpty()) {
+            subjects = getTutorSubjects(userId);
+        }
+        if (subjects == null || subjects.isEmpty()) {
+            subjects = getAllSubjects();
         }
         return subjects;
     }

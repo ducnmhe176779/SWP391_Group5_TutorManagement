@@ -48,7 +48,7 @@ public class DAOCv extends DBConnect {
     }
 
     public Cv getCVbyId(int cvId) {
-        String sql = "SELECT CVID, UserID, Education, Experience, Certificates, Status, SubjectId, Desciption FROM CV WHERE CVID = ?";
+        String sql = "SELECT CVID, UserID, Education, Experience, Certificates, Status, SubjectId, Desciption, Skill, Price FROM CV WHERE CVID = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, cvId);
             ResultSet rs = ps.executeQuery();
@@ -61,7 +61,9 @@ public class DAOCv extends DBConnect {
                         rs.getString("Certificates"),
                         rs.getString("Status"),
                         rs.getInt("SubjectId"),
-                        rs.getString("Desciption")
+                        rs.getString("Desciption"),
+                        rs.getString("Skill"),
+                        rs.getFloat("Price")
                 );
             }
         } catch (SQLException ex) {
@@ -69,8 +71,37 @@ public class DAOCv extends DBConnect {
         }
         return null;
     }
+
+    /**
+     * Lấy CV đã Approved mới nhất của một user
+     */
+    public Cv getLatestApprovedCVByUserId(int userId) {
+        String sql = "SELECT TOP 1 CVID, UserID, Education, Experience, Certificates, Status, SubjectId, Desciption, Skill, Price "
+                   + "FROM CV WHERE UserID = ? AND Status = 'Approved' ORDER BY CVID DESC";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new Cv(
+                        rs.getInt("CVID"),
+                        rs.getInt("UserID"),
+                        rs.getString("Education"),
+                        rs.getString("Experience"),
+                        rs.getString("Certificates"),
+                        rs.getString("Status"),
+                        rs.getInt("SubjectId"),
+                        rs.getString("Desciption"),
+                        rs.getString("Skill"),
+                        rs.getFloat("Price")
+                );
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DAOCv.class.getName()).log(Level.SEVERE, "Error getLatestApprovedCVByUserId", ex);
+        }
+        return null;
+    }
         public Cv getCVbyUserId(int cvId) {
-        String sql = "SELECT CVID, UserID, Education, Experience, Certificates, Status, SubjectId, Desciption FROM CV WHERE UserID = ?";
+        String sql = "SELECT CVID, UserID, Education, Experience, Certificates, Status, SubjectId, Desciption, Skill, Price FROM CV WHERE UserID = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, cvId);
             ResultSet rs = ps.executeQuery();
@@ -83,7 +114,9 @@ public class DAOCv extends DBConnect {
                         rs.getString("Certificates"),
                         rs.getString("Status"),
                         rs.getInt("SubjectId"),
-                        rs.getString("Desciption")
+                        rs.getString("Desciption"),
+                        rs.getString("Skill"),
+                        rs.getFloat("Price")
                 );
             }
         } catch (SQLException ex) {
@@ -183,16 +216,18 @@ public class DAOCv extends DBConnect {
             return null;
         }
     }
-    public int UpdateCV(int userID, String education, String experience, String certificates, String description)
+    public int UpdateCV(int userID, String education, String experience, String certificates, String description, String skill, float price)
     {
         int n=0;
-        String sql = "UPDATE [dbo].[CV] SET [Education] = ?, [Experience] = ?, [Certificates] = ?, [Desciption] = ? WHERE [UserID] = ?";
+        String sql = "UPDATE [dbo].[CV] SET [Education] = ?, [Experience] = ?, [Certificates] = ?, [Desciption] = ?, [Skill] = ?, [Price] = ? WHERE [UserID] = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, education);
             pstmt.setString(2, experience);
             pstmt.setString(3, certificates);
             pstmt.setString(4, description);
-            pstmt.setInt(5, userID);
+            pstmt.setString(5, skill);
+            pstmt.setFloat(6, price);
+            pstmt.setInt(7, userID);
             int rowsUpdated = pstmt.executeUpdate();
         } catch (SQLException ex) {
             Logger.getLogger(DAOCv.class.getName()).log(Level.SEVERE, null, ex);
@@ -212,5 +247,75 @@ public class DAOCv extends DBConnect {
             Logger.getLogger(DAOTutorRating.class.getName()).log(Level.SEVERE, null, ex);
         }
         return n;
+    }
+    
+    /**
+     * Lấy tất cả CV có trạng thái 'Pending' từ bảng CV
+     * @return List<Cv> danh sách CV đang chờ xử lý
+     */
+    public List<Cv> getPendingCVs() {
+        List<Cv> pendingCVs = new ArrayList<>();
+        String sql = "SELECT CVID, UserID, Education, Experience, Certificates, Status, SubjectId, Desciption, Skill, Price FROM CV WHERE Status = 'Pending'";
+        
+        try (PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            
+            while (rs.next()) {
+                Cv cv = new Cv(
+                    rs.getInt("CVID"),
+                    rs.getInt("UserID"),
+                    rs.getString("Education"),
+                    rs.getString("Experience"),
+                    rs.getString("Certificates"),
+                    rs.getString("Status"),
+                    rs.getInt("SubjectId"),
+                    rs.getString("Desciption"),
+                    rs.getString("Skill"),
+                    rs.getFloat("Price")
+                );
+                pendingCVs.add(cv);
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(DAOCv.class.getName()).log(Level.SEVERE, "Error getting pending CVs", ex);
+        }
+        
+        return pendingCVs;
+    }
+    
+    /**
+     * Lấy CV theo trạng thái cụ thể từ bảng CV
+     * @param status trạng thái cần lấy (Pending, Approved, Rejected, etc.)
+     * @return List<Cv> danh sách CV theo trạng thái
+     */
+    public List<Cv> getCVsByStatus(String status) {
+        List<Cv> cvsByStatus = new ArrayList<>();
+        String sql = "SELECT CVID, UserID, Education, Experience, Certificates, Status, SubjectId, Desciption, Skill, Price FROM CV WHERE Status = ?";
+        
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ResultSet rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                Cv cv = new Cv(
+                    rs.getInt("CVID"),
+                    rs.getInt("UserID"),
+                    rs.getString("Education"),
+                    rs.getString("Experience"),
+                    rs.getString("Certificates"),
+                    rs.getString("Status"),
+                    rs.getInt("SubjectId"),
+                    rs.getString("Desciption"),
+                    rs.getString("Skill"),
+                    rs.getFloat("Price")
+                );
+                cvsByStatus.add(cv);
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(DAOCv.class.getName()).log(Level.SEVERE, "Error getting CVs by status: " + status, ex);
+        }
+        
+        return cvsByStatus;
     }
 }

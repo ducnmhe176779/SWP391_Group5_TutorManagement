@@ -62,7 +62,7 @@
                                     </li>
                                     <% if (user == null) { %>
                                     <li><a href="login.jsp"><fmt:message key="login"/></a></li>
-                                    <li><a href="register.jsp"><fmt:message key="register"/></a></li>
+                                    <li><a href="register-choice.jsp"><fmt:message key="register"/></a></li>
                                         <% } else {%>
                                     <li>
                                         <div class="ttr-header-submenu">
@@ -79,7 +79,7 @@
                                                 </li>
                                                 <li><a href="profile"><fmt:message key="my_profile"/></a></li>
                                                 <li><a href="StudentPaymentHistory"><fmt:message key="history_payment"/></a></li>
-                                                <li><a href="cv"><fmt:message key="become_a_tutor"/></a></li>
+                                                
                                                 <li><a href="logout"><fmt:message key="logout"/></a></li>
                                             </ul>
                                         </div>

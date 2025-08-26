@@ -2,25 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/src/java/controller/Customer/VnpayReturnBooking.java</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/src/java/controller/Customer/PaymentBookingServlet.java</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/src/java/controller/Tutor/CreateScheduleServlet.java</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/web/blog-classic-sidebar.jsp</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/src/java/UserController/BookScheduleServlet.java</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/web/tutor/createschedule.jsp</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/src/java/AdminController/AdminDashboardServlet.java</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/src/java/model/DAOSubject.java</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/web/bookschedule.jsp</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/src/java/controller/Customer/PaymentDetail.java</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/src/java/model/DAOPayment.java</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/src/java/UserController/ProfileServlet.java</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/src/java/model/DAOSlot.java</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/src/java/entity/Slot.java</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/web/user/myschedule.jsp</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/src/java/model/DAOSchedule.java</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/src/java/controller/Customer/Config.java</file>
-            <file>file:/D:/SWP391/SWP391_Group5_TutorManagement/web/test-tutor-detail.jsp</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>

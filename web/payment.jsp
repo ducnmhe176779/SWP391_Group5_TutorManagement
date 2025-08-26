@@ -61,7 +61,7 @@
         <div class="details">
             <p><strong>Gia sư:</strong> ${sessionScope.tutorName}</p>
             <p><strong>Môn học:</strong> ${sessionScope.subjectName}</p>
-            <p><strong>Tổng giá:</strong> ${sessionScope.totalAmount} VNĐ</p>
+            <p><strong>Tổng giá:</strong> <fmt:formatNumber value="${sessionScope.totalAmount}" type="currency" currencySymbol="" maxFractionDigits="0"/> VNĐ</p>
         </div>
         <h4>Lịch học đã chọn:</h4>
         <table class="schedule-table">
@@ -86,7 +86,6 @@
             </tbody>
         </table>
         <form action="PaymentBooking" method="post">
-            <input type="hidden" name="totalBill" value="${sessionScope.totalAmount}">
             <button type="submit" class="btn">Thanh Toán</button>
         </form>
     </div>

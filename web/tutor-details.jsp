@@ -314,7 +314,7 @@
                                             <h4 class="price"><%=tutorPrice != null ? tutorPrice : 0%></h4>
                                         </div>	
                                         <div class="course-buy-now text-center">
-                                            <a href="BookSchedule?subjectId=<%=tutorSubjectID != null ? tutorSubjectID : 0%>&tutorId=<%=tutorID != null ? tutorID : 0%>" class="btn radius-xl text-uppercase"><fmt:message key="booking"/></a>
+                                            <a href="booking-calendar?view=calendar&tutorId=<%=tutorID != null ? tutorID : 0%>" class="btn radius-xl text-uppercase"><fmt:message key="booking"/></a>
                                         </div>
                                         <div class="cours-more-info">
                                             <div class="review">

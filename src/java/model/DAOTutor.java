@@ -14,15 +14,38 @@ public class DAOTutor extends DBConnect {
     public int addTutor(Tutor tutor) {
         int result = 0;
         DAOCv dao= new DAOCv();
-        String sql = "INSERT INTO [dbo].[Tutor]([CVID],[Rating],[Price])\n"
-                + "VALUES(?,?,?)";
+        String sql = "INSERT INTO [dbo].[Tutor]([CVID],[Rating],[Price]) OUTPUT INSERTED.TutorID VALUES(?,?,?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, tutor.getCVID());
             ps.setFloat(2, tutor.getRating());
             ps.setFloat(3, tutor.getPrice());
-            result = ps.executeUpdate();
+            System.out.println("DEBUG: Executing SQL: " + sql);
+            System.out.println("DEBUG: Parameters - CVID: " + tutor.getCVID() + ", Rating: " + tutor.getRating() + ", Price: " + tutor.getPrice());
+            
+            // Kiểm tra xem CVID có tồn tại trong bảng CV không
+            String checkSql = "SELECT COUNT(*) FROM CV WHERE CVID = ?";
+            try (PreparedStatement checkPs = conn.prepareStatement(checkSql)) {
+                checkPs.setInt(1, tutor.getCVID());
+                ResultSet rs = checkPs.executeQuery();
+                if (rs.next()) {
+                    int cvCount = rs.getInt(1);
+                    System.out.println("DEBUG: CV count for CVID " + tutor.getCVID() + ": " + cvCount);
+                }
+            }
+            
+            // Sử dụng executeQuery thay vì executeUpdate để lấy OUTPUT
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                result = rs.getInt("TutorID");
+                System.out.println("DEBUG: Generated TutorID from OUTPUT: " + result);
+            } else {
+                System.out.println("ERROR: No TutorID returned from OUTPUT clause");
+                result = -1;
+            }
         } catch (SQLException e) {
+            System.out.println("ERROR: SQL Exception in addTutor: " + e.getMessage());
             e.printStackTrace();
+            result = -1;
         }
         return result;
     }
@@ -39,6 +62,104 @@ public class DAOTutor extends DBConnect {
             e.printStackTrace();
         }
         return result;
+    }
+    
+    /**
+     * Cập nhật giá giờ học của tutor
+     */
+    public boolean updateTutorPrice(int tutorId, float newPrice) {
+        String sql = "UPDATE Tutor SET Price = ? WHERE TutorID = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setFloat(1, newPrice);
+            ps.setInt(2, tutorId);
+            int result = ps.executeUpdate();
+            return result > 0;
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi cập nhật giá tutor: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    /**
+     * Lấy TutorID từ UserID (cho tutor đang login)
+     */
+    public int getTutorIdByUserId(int userId) {
+        System.out.println("DEBUG: getTutorIdByUserId called for userId=" + userId);
+
+        // Log số lượng CV của user
+        try (PreparedStatement psCv = conn.prepareStatement("SELECT COUNT(*) FROM CV WHERE UserID = ?")) {
+            psCv.setInt(1, userId);
+            try (ResultSet rsCv = psCv.executeQuery()) {
+                if (rsCv.next()) {
+                    System.out.println("DEBUG: CV count for user " + userId + " = " + rsCv.getInt(1));
+                }
+            }
+        } catch (SQLException ignore) {}
+
+        // Lấy TutorID mới nhất (nếu có nhiều CV/Tutor)
+        String sql = """
+            SELECT TOP 1 t.TutorID
+            FROM Users u
+            JOIN CV c ON u.UserID = c.UserID
+            JOIN Tutor t ON c.CVID = t.CVID
+            WHERE u.UserID = ?
+            ORDER BY t.TutorID DESC
+        """;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int tutorId = rs.getInt("TutorID");
+                System.out.println("DEBUG: getTutorIdByUserId found TutorID=" + tutorId + " for userId=" + userId);
+                return tutorId;
+            } else {
+                System.out.println("DEBUG: getTutorIdByUserId no Tutor found for userId=" + userId);
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi lấy TutorID từ UserID: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return -1; // Không tìm thấy
+    }
+    
+    /**
+     * Lấy TutorID vừa tạo (sau khi INSERT)
+     */
+    public int getLastInsertedTutorId() {
+        String sql = "SELECT SCOPE_IDENTITY() as TutorID";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int tutorId = rs.getInt("TutorID");
+                System.out.println("DEBUG: SCOPE_IDENTITY() returned: " + tutorId);
+                return tutorId;
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi lấy TutorID vừa tạo: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return -1;
+    }
+    
+    /**
+     * Lấy TutorID từ CVID (cách khác)
+     */
+    public int getTutorIdByCVID(int cvId) {
+        String sql = "SELECT TutorID FROM Tutor WHERE CVID = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, cvId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int tutorId = rs.getInt("TutorID");
+                System.out.println("DEBUG: getTutorIdByCVID returned: " + tutorId);
+                return tutorId;
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi lấy TutorID từ CVID: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return -1;
     }
 
     public int deleteTutor(int tutorID) {
@@ -324,26 +445,7 @@ public class DAOTutor extends DBConnect {
         return false;
     }
 
-    public int getTutorIdByUserId(int userId) {
-        int tutorId = -1;
-        String sql = """
-        SELECT t.TutorID 
-        FROM Tutor t
-        JOIN CV c ON t.CVID = c.CVID
-        JOIN Users u ON c.UserID = u.UserID
-        WHERE u.UserID = ?
-    """;
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, userId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                tutorId = rs.getInt("TutorID");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return tutorId;
-    }
+
 
     // Method mới: Lấy danh sách tutors theo subject (trả về Object[] để dễ sử dụng trong JSP)
     public List<Object[]> getTutorsBySubject(int subjectID) {

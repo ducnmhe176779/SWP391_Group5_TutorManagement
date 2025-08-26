@@ -183,7 +183,11 @@
                                                         }
                                                     %>
                                                     <img src="<%=avatar%>" alt="" onerror="this.src='uploads/default_avatar.jpg'">
-                                                    <a href="Tutordetail?tutorID=<%=rs.getInt(1)%>" class="btn"><fmt:message key="read_more"/></a>
+                                                    <div class="btn-group-vertical" style="width: 100%;">
+                                                        <a href="Tutordetail?tutorID=<%=rs.getInt(1)%>" class="btn btn-primary">
+                                                            <i class="fa fa-info-circle"></i> <fmt:message key="read_more"/>
+                                                        </a>
+                                                    </div>
                                                 </div>
                                                 <div class="info-bx text-center">
                                                     <h5><a href="#"><%=rs.getString(2)%></a></h5>

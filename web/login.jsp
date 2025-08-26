@@ -63,7 +63,7 @@
                     <div class="account-container">
                         <div class="heading-bx left">
                             <h2 class="title-head"><fmt:message key="login_to_your"/> <span><fmt:message key="account"/></span></h2>
-                            <p><fmt:message key="dont_have_account"/> <a href="register.jsp"><fmt:message key="create_one_here"/></a></p>
+                            <p><fmt:message key="dont_have_account"/> <a href="register-choice.jsp"><fmt:message key="create_one_here"/></a></p>
                         </div>  
                         <form action="login" class="contact-bx">
                             <input type="hidden" name="service" value="loginUser">

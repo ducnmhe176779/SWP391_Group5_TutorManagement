@@ -43,12 +43,21 @@ public class PaymentBookingServlet extends HttpServlet {
             throws ServletException, IOException {
         String bankCode = req.getParameter("bankCode");
         String totalBill = req.getParameter("totalBill");
+        
+        // Nếu không có trong parameter, lấy từ session
+        HttpSession session = req.getSession();
+        if (totalBill == null) {
+            Object totalAmountObj = session.getAttribute("totalAmount");
+            if (totalAmountObj != null) {
+                totalBill = String.valueOf(totalAmountObj);
+            }
+        }
+        
         if (totalBill == null) {
             resp.sendRedirect("/home");
             return;
         }
         double amountDouble = Double.parseDouble(totalBill);
-        HttpSession session = req.getSession();
         User user = (User) session.getAttribute("user");
         if (user == null || user.getRoleID() != 2) {
             resp.sendRedirect(req.getContextPath() + "/error-403.jsp");

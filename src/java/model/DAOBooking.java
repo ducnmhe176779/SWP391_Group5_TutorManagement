@@ -44,7 +44,8 @@ public class DAOBooking extends DBConnect {
 
     public int addSlotsAndBookings(List<Slot> slots, List<Booking> bookings) {
         int result = 0;
-        String slotSql = "INSERT INTO [dbo].[Slot] (TutorID, StartTime, EndTime, SubjectID, Status) VALUES (?, ?, ?, ?, ?)";
+        // Slot table only has ScheduleID and Status per G5_4.sql
+        String slotSql = "INSERT INTO [dbo].[Slot] (ScheduleID, Status) VALUES (?, ?)";
         String bookingSql = "INSERT INTO [dbo].[Booking] (studentID, tutorID, slotID, bookingDate, status, subjectID) VALUES (?, ?, ?, ?, ?, ?)";
         String updateScheduleSql = "UPDATE [dbo].[Schedule] SET IsBooked = 1 WHERE ScheduleID = ?";
 
@@ -54,11 +55,9 @@ public class DAOBooking extends DBConnect {
 
             try (PreparedStatement slotPs = conn.prepareStatement(slotSql, Statement.RETURN_GENERATED_KEYS)) {
                 for (Slot slot : slots) {
-                    slotPs.setInt(1, slot.getTutorID());
-                    slotPs.setTimestamp(2, slot.getStartTime());
-                    slotPs.setTimestamp(3, slot.getEndTime());
-                    slotPs.setInt(4, slot.getSubjectID());
-                    slotPs.setString(5, slot.getStatus());
+                    // Insert ScheduleID and Status only
+                    slotPs.setInt(1, slot.getScheduleID());
+                    slotPs.setString(2, slot.getStatus() != null ? slot.getStatus() : "Booked");
                     slotPs.executeUpdate();
                     try (ResultSet rs = slotPs.getGeneratedKeys()) {
                         if (rs.next()) {
@@ -70,18 +69,18 @@ public class DAOBooking extends DBConnect {
 
             try (PreparedStatement updateSchedulePs = conn.prepareStatement(updateScheduleSql)) {
                 for (Slot slot : slots) {
-                    // Cần tìm ScheduleID tương ứng với Slot
-                    // Tạm thời bỏ qua phần này vì không có ScheduleID trong Slot
-                    // updateSchedulePs.setInt(1, slot.getScheduleID());
-                    // updateSchedulePs.addBatch();
+                    updateSchedulePs.setInt(1, slot.getScheduleID());
+                    updateSchedulePs.addBatch();
                 }
-                // updateSchedulePs.executeBatch();
+                updateSchedulePs.executeBatch();
             }
 
             try (PreparedStatement bookingPs = conn.prepareStatement(bookingSql, Statement.RETURN_GENERATED_KEYS)) {
                 for (int i = 0; i < bookings.size(); i++) {
                     Booking booking = bookings.get(i);
-                    bookingPs.setInt(1, booking.getStudentID());
+                    // Map Users.UserID -> Student.StudentID
+                    int studentId = resolveStudentId(booking.getStudentID());
+                    bookingPs.setInt(1, studentId);
                     bookingPs.setInt(2, booking.getTutorID());
                     bookingPs.setInt(3, slotIds.get(i));
                     bookingPs.setDate(4, booking.getBookingDate());
@@ -114,6 +113,73 @@ public class DAOBooking extends DBConnect {
             }
         }
         return result;
+    }
+
+    private int resolveStudentId(int userId) throws SQLException {
+        // 1) Tìm Student qua mapping Email giữa Users và CustomerUsers
+        String findStudentByEmail = "SELECT TOP 1 s.StudentID FROM Student s JOIN CustomerUsers cu ON s.CustomerUserID = cu.CustomerUserID JOIN Users u ON u.Email = cu.Email WHERE u.UserID = ? ORDER BY s.StudentID DESC";
+        try (PreparedStatement ps = conn.prepareStatement(findStudentByEmail)) {
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        }
+
+        // 2) Lấy info từ Users
+        String getUserSql = "SELECT Email, FullName, Phone, Avatar, UserName FROM Users WHERE UserID = ?";
+        String email = null, fullName = null, phone = null, avatar = null, userName = null;
+        try (PreparedStatement ps = conn.prepareStatement(getUserSql)) {
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    email = rs.getString("Email");
+                    fullName = rs.getString("FullName");
+                    phone = rs.getString("Phone");
+                    avatar = rs.getString("Avatar");
+                    userName = rs.getString("UserName");
+                }
+            }
+        }
+        if (email == null) throw new SQLException("Không tìm thấy Users cho UserID=" + userId);
+
+        // 3) Tìm/ tạo CustomerUsers theo Email
+        Integer customerUserId = null;
+        try (PreparedStatement ps = conn.prepareStatement("SELECT CustomerUserID FROM CustomerUsers WHERE Email = ?")) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) customerUserId = rs.getInt(1);
+            }
+        }
+        if (customerUserId == null) {
+            String insertCustomer = "INSERT INTO CustomerUsers (Email, FullName, Phone, CreatedAt, IsActive, Avatar, UserName, Password) VALUES (?, ?, ?, GETDATE(), 1, ?, ?, '!')";
+            try (PreparedStatement ps = conn.prepareStatement(insertCustomer, Statement.RETURN_GENERATED_KEYS)) {
+                ps.setString(1, email);
+                ps.setString(2, fullName != null ? fullName : ("User " + userId));
+                ps.setString(3, phone);
+                ps.setString(4, (avatar != null && !avatar.isEmpty()) ? avatar : "uploads/default_avatar.jpg");
+                ps.setString(5, (userName != null && !userName.isEmpty()) ? userName : ("user_" + userId));
+                ps.executeUpdate();
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) customerUserId = rs.getInt(1);
+                }
+            }
+        }
+
+        // 4) Tạo hoặc lấy Student
+        try (PreparedStatement ps = conn.prepareStatement("SELECT TOP 1 StudentID FROM Student WHERE CustomerUserID = ? ORDER BY StudentID DESC")) {
+            ps.setInt(1, customerUserId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        }
+        try (PreparedStatement ps = conn.prepareStatement("INSERT INTO Student (CustomerUserID, JoinedAt) VALUES (?, GETDATE())", Statement.RETURN_GENERATED_KEYS)) {
+            ps.setInt(1, customerUserId);
+            ps.executeUpdate();
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        }
+        throw new SQLException("Không tạo được Student cho CustomerUserID=" + customerUserId);
     }
 
     public int changeBookingStatusToCompleted(int bookingID) {
@@ -206,32 +272,21 @@ public class DAOBooking extends DBConnect {
         return totalBookings;
     }
 
-    // Thêm method để kiểm tra học sinh đã đặt lịch chưa
-    public boolean hasStudentBookedSchedule(int studentId, int scheduleId) {
-        // Kiểm tra xem học sinh đã đặt lịch này chưa
-        // Vì chúng ta đang tạo Slot từ Schedule, nên cần kiểm tra theo cách khác
+    // Kiểm tra lịch đã có ai đặt dựa vào ScheduleID (không phụ thuộc cột không tồn tại)
+    public boolean hasStudentBookedSchedule(int studentIdIgnored, int scheduleId) {
         String sql = """
             SELECT COUNT(*) FROM Booking b
             INNER JOIN Slot s ON b.SlotID = s.SlotID
-            WHERE b.StudentID = ? AND s.TutorID = (
-                SELECT TutorID FROM Schedule WHERE ScheduleID = ?
-            ) AND s.StartTime = (
-                SELECT StartTime FROM Schedule WHERE ScheduleID = ?
-            ) AND s.EndTime = (
-                SELECT EndTime FROM Schedule WHERE ScheduleID = ?
-            )
+            WHERE s.ScheduleID = ? AND (b.Status IS NULL OR b.Status <> 'Cancelled')
         """;
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, studentId);
-            ps.setInt(2, scheduleId);
-            ps.setInt(3, scheduleId);
-            ps.setInt(4, scheduleId);
+            ps.setInt(1, scheduleId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return rs.getInt(1) > 0;
             }
         } catch (SQLException e) {
-            System.out.println("Lỗi khi kiểm tra booking: " + e.getMessage());
+            System.out.println("Lỗi khi kiểm tra booking theo ScheduleID: " + e.getMessage());
             e.printStackTrace();
         }
         return false;

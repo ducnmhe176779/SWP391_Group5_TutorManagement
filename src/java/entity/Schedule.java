@@ -14,26 +14,17 @@ public class Schedule {
     private Tutor tutor; 
     private Subject subject;
     private Slot slot;
-    private int slotNumber;
 
     public Schedule() {
     }
 
-    public Schedule(int scheduleID, int tutorID, int slotNumber, boolean isBooked, int subjectId) {
+    public Schedule(int scheduleID, int tutorID, Date startTime, Date endTime, boolean isBooked, int subjectId) {
         this.scheduleID = scheduleID;
         this.tutorID = tutorID;
-        this.slotNumber = slotNumber;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.isBooked = isBooked;
         this.subjectId = subjectId;
-        
-    }
-
-    public int getSlotNumber() {
-        return slotNumber;
-    }
-
-    public void setSlotNumber(int slotNumber) {
-        this.slotNumber = slotNumber;
     }
 
     public int getScheduleID() {
