@@ -21,6 +21,7 @@
         <meta property="og:title" content="G5 SmartTutor : Smart tutor, effective learning." />
         <meta property="og:description" content="G5 SmartTutor : Smart tutor, effective learning." />
         <meta name="format-detection" content="telephone=no">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <!-- FAVICONS ICON -->
         <link rel="icon" href="${pageContext.request.contextPath}/error-404.jsp" type="image/x-icon" />
