@@ -1,103 +1,81 @@
 <%-- 
-    Document   : viewschedule
-    Created on : Mar 22, 2025
+    Document   : ViewBooking
+    Created on : Mar 26, 2025
     Author     : Heizxje
 --%>
 <%@page import="entity.User"%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@page import="entity.Booking"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="${sessionScope.locale != null ? sessionScope.locale : 'en'}">
     <head>
-        <!-- META -->
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="keywords" content="" />
         <meta name="author" content="" />
         <meta name="robots" content="" />
-        <meta name="description" content="G5 SmartTutor : Smart tutor, effective learning." />
-        <meta property="og:title" content="G5 SmartTutor : Smart tutor, effective learning." />
-        <meta property="og:description" content="G5 SmartTutor : Smart tutor, effective learning." />
+        <meta name="description" content="G4 SmartTutor : Smart tutor, effective learning." />
+        <meta property="og:title" content="G4 SmartTutor : Smart tutor, effective learning." />
+        <meta property="og:description" content="G4 SmartTutor : Smart tutor, effective learning." />
+        <meta property="og:image" content="" />
         <meta name="format-detection" content="telephone=no">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-        <!-- FAVICONS ICON -->
         <link rel="icon" href="${pageContext.request.contextPath}/error-404.jsp" type="image/x-icon" />
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets/images/favicon.png" />
-
-        <!-- PAGE TITLE -->
-        <title>G5 SmartTutor</title>
-
-        <!-- MOBILE SPECIFIC -->
+        <title>G4 SmartTutor</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <!-- CSS -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/assets.css">
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/vendors/calendar/fullcalendar.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/typography.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/shortcodes/shortcodes.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/style.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/color/color-1.css">
 
-        <!-- Custom Styles -->
         <style>
-            .table-responsive table {
-                width: 100%;
-                border-collapse: collapse;
-                background-color: #fff;
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            }
-            .table-responsive th, .table-responsive td {
-                padding: 12px 20px;
-                text-align: left;
-                border: 1px solid #ddd;
-            }
-            .table-responsive th {
-                background-color: #2196F3;
-                color: white;
-            }
-            .table-responsive tr:nth-child(even) {
-                background-color: #f2f2f2;
-            }
-            .table-responsive tr:hover {
-                background-color: #ddd;
-            }
-            .pagination {
+            .booking-table th, .booking-table td {
+                vertical-align: middle;
                 text-align: center;
-                margin-top: 20px;
             }
-            .pagination a {
-                padding: 10px 20px;
-                margin: 0 5px;
-                text-decoration: none;
-                background-color: #2196F3;
-                color: white;
-                border-radius: 5px;
-                transition: background-color 0.3s;
-            }
-            .pagination a:hover {
-                background-color: #1976D2;
-            }
-            .pagination a.active {
-                background-color: #1976D2;
+            .status-confirmed {
+                color: #28a745;
                 font-weight: bold;
             }
-            .pagination a.disabled {
-                background-color: #ddd;
-                cursor: not-allowed;
+            .status-completed {
+                color: #007bff;
+                font-weight: bold;
             }
-            .action-links button {
-                background-color: #2196F3;
+            .status-cancelled {
+                color: #dc3545;
+                font-weight: bold;
+            }
+            .refund-btn {
+                background-color: #dc3545;
                 color: white;
                 border: none;
                 padding: 5px 10px;
                 cursor: pointer;
+                border-radius: 4px;
             }
-            .action-links button:hover {
-                background-color: #1976D2;
+            .refund-btn:hover {
+                background-color: #c82333;
+            }
+            .alert {
+                padding: 15px;
+                margin-bottom: 20px;
+                border: 1px solid transparent;
+                border-radius: 4px;
+            }
+            .alert-success {
+                color: #3c763d;
+                background-color: #dff0d8;
+                border-color: #d6e9c6;
+            }
+            .alert-danger {
+                color: #a94442;
+                background-color: #f2dede;
+                border-color: #ebccd1;
             }
         </style>
     </head>
@@ -108,6 +86,8 @@
                 response.sendRedirect(request.getContextPath() + "/login.jsp");
                 return;
             }
+            String message = (String) session.getAttribute("message");
+            String error = (String) request.getAttribute("error");
         %>
         <fmt:setLocale value="${sessionScope.locale != null ? sessionScope.locale : 'en'}"/>
         <fmt:setBundle basename="messages"/>
@@ -189,11 +169,11 @@
                             </a>
                             <ul>
                                 <li><a href="${pageContext.request.contextPath}/admin/TutorList" class="ttr-material-button"><span class="ttr-label"><fmt:message key="tutor_list"/></span></a></li>
-                                <li><a href="${pageContext.request.contextPath}/admin/AdminListRated" class="ttr-material-button"><span class="ttr-label"><fmt:message key="tutor_reviews"/></span></a></li>
-                                <li><a href="${pageContext.request.contextPath}/admin/RequestCV" class="ttr-material-button"><span class="ttr-label"><fmt:message key="status_cv"/></span></a></li>
-                                <li><a href="${pageContext.request.contextPath}/admin/ViewBooking" class="ttr-material-button"><span class="ttr-label"><fmt:message key="booking_manage"/></span></a></li>
-                                <li><a href="${pageContext.request.contextPath}/admin/AdminViewSchedule" class="ttr-material-button"><span class="ttr-label"><fmt:message key="view_schedule"/></span></a></li>
-                                <li><a href="${pageContext.request.contextPath}/admin/AdminSubjectController" class="ttr-material-button"><span class="ttr-label"><fmt:message key="subject_management"/></span></a></li>
+                                <li><a href="AdminListRated" class="ttr-material-button"><span class="ttr-label"><fmt:message key="tutor_reviews"/></span></a></li>
+                                <li><a href="RequestCV" class="ttr-material-button"><span class="ttr-label"><fmt:message key="status_cv"/></span></a></li>
+                                <li><a href="ViewBooking" class="ttr-material-button"><span class="ttr-label"><fmt:message key="booking_manage"/></span></a></li>
+                                <li><a href="AdminViewSchedule" class="ttr-material-button"><span class="ttr-label"><fmt:message key="view_schedule"/></span></a></li>
+                                <li><a href="AdminSubjectController" class="ttr-material-button"><span class="ttr-label"><fmt:message key="subject_management"/></span></a></li>
                             </ul>
                         </li>
                         <li>
@@ -215,7 +195,7 @@
                             </a>
                             <ul>
                                 <li><a href="${pageContext.request.contextPath}/admin/UserList" class="ttr-material-button"><span class="ttr-label"><fmt:message key="user_list"/></span></a></li>
-                                <li><a href="${pageContext.request.contextPath}/admin/ReportManager" class="ttr-material-button"><span class="ttr-label"><fmt:message key="report"/></span></a></li>
+                                <li><a href="ReportManager" class="ttr-material-button"><span class="ttr-label"><fmt:message key="report"/></span></a></li>
                             </ul>
                         </li>
                         <li>
@@ -225,9 +205,9 @@
                                 <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
                             </a>
                             <ul>
-                                <li><a href="${pageContext.request.contextPath}/admin/approveWithdrawal" class="ttr-material-button"><span class="ttr-label"><fmt:message key="request_withdrawal"/></span></a></li>
-                                <li><a href="${pageContext.request.contextPath}/admin/PaymentHistory" class="ttr-material-button"><span class="ttr-label"><fmt:message key="view_history_payment"/></span></a></li>
-                                <li><a href="${pageContext.request.contextPath}/admin/systemRevenue" class="ttr-material-button"><span class="ttr-label"><fmt:message key="system_revenue"/></span></a></li>
+                                <li><a href="approveWithdrawal" class="ttr-material-button"><span class="ttr-label"><fmt:message key="request_withdrawal"/></span></a></li>
+                                <li><a href="PaymentHistory" class="ttr-material-button"><span class="ttr-label"><fmt:message key="view_history_payment"/></span></a></li>
+                                <li><a href="systemRevenue" class="ttr-material-button"><span class="ttr-label"><fmt:message key="system_revenue"/></span></a></li>
                             </ul>
                         </li>
                         <li>
@@ -246,74 +226,80 @@
         <main class="ttr-wrapper">
             <div class="container-fluid">
                 <div class="db-breadcrumb">
-                    <h4 class="breadcrumb-title"><fmt:message key="view_schedule"/></h4>
+                    <h4 class="breadcrumb-title"><fmt:message key="booking_management"/></h4>
                     <ul class="db-breadcrumb-list">
                         <li><a href="${pageContext.request.contextPath}/admin/index"><i class="fa fa-home"></i><fmt:message key="home"/></a></li>
-                        <li><fmt:message key="view_schedule"/></li>
+                        <li><fmt:message key="booking_management"/></li>
                     </ul>
                 </div>
+                <% if (message != null) {%>
+                <div class="alert alert-success">
+                    <%= message%>
+                </div>
+                <% session.removeAttribute("message"); %>
+                <% } %>
+                <% if (error != null) {%>
+                <div class="alert alert-danger">
+                    <%= error%>
+                </div>
+                <% request.removeAttribute("error"); %>
+                <% }%>
                 <div class="row">
                     <div class="col-lg-12 m-b30">
                         <div class="widget-box">
                             <div class="wc-title">
-                                <h4><fmt:message key="available_schedules"/></h4>
+                                <h4><fmt:message key="booking_list"/></h4>
                             </div>
-                            <div class="table-responsive">
-                                <table>
+                            <div class="widget-inner">
+                                <table class="table table-striped booking-table">
                                     <thead>
                                         <tr>
-                                            <th><fmt:message key="schedule_id"/></th>
-                                            <th><fmt:message key="tutor_id"/></th>
-                                            <th><fmt:message key="start_time"/></th>
-                                            <th><fmt:message key="end_time"/></th>
+                                            <th><fmt:message key="booking_id"/></th>
+                                            <th><fmt:message key="student_name"/></th>
+                                            <th><fmt:message key="tutor_name"/></th>
+                                            <th><fmt:message key="slot_id"/></th>
+                                            <th><fmt:message key="booking_date"/></th>
+                                            <th><fmt:message key="status"/></th>
                                             <th><fmt:message key="subject_id"/></th>
-                                            <th><fmt:message key="is_booked"/></th>
                                             <th><fmt:message key="action"/></th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <c:forEach var="schedule" items="${schedules}">
+                                        <c:forEach var="booking" items="${bookingList}">
                                             <tr>
-                                                <td>${schedule.scheduleID}</td>
-                                                <td>${schedule.tutorID}</td>
-                                                <td><fmt:formatDate value="${schedule.startTime}" pattern="dd/MM/yyyy HH:mm"/></td>
-                                                <td><fmt:formatDate value="${schedule.endTime}" pattern="dd/MM/yyyy HH:mm"/></td>
-                                                <td>${schedule.subjectID}</td>
-                                                <td>${schedule.booked ? fmt.message(key='yes') : fmt.message(key='no')}</td>
-                                                <td class="action-links">
-                                                    <form action="${pageContext.request.contextPath}/admin/ViewSchedule" method="POST" onsubmit="return confirmApprove()">
-                                                        <input type="hidden" name="scheduleID" value="${schedule.scheduleID}">
-                                                        <button type="submit"><fmt:message key="approve"/></button>
-                                                    </form>
+                                                <td>${booking.bookingID}</td>
+                                                <td>${booking.studentName}</td>
+                                                <td>${booking.tutorName}</td>
+                                                <td>${booking.slotID}</td>
+                                                <td>${booking.bookingDate}</td>
+                                                <td class="${booking.status == 'Confirmed' ? 'status-confirmed' : booking.status == 'Completed' ? 'status-completed' : 'status-cancelled'}">
+                                                    <fmt:message key="${booking.status.toLowerCase()}"/>
+                                                </td>
+                                                <td>${booking.subjectID}</td>
+                                                <td>
+                                                    <c:if test="${booking.status == 'Completed'}">
+                                                        <form action="${pageContext.request.contextPath}/admin/ViewBooking" method="post" style="display:inline;">
+                                                            <input type="hidden" name="action" value="refund">
+                                                            <input type="hidden" name="bookingID" value="${booking.bookingID}">
+                                                            <button type="submit" class="refund-btn" onclick="return confirm('<fmt:message key="confirm_cancel"/> ${booking.bookingID}?')">
+                                                                <fmt:message key="cancel"/>
+                                                            </button>
+                                                        </form>
+                                                    </c:if>
                                                 </td>
                                             </tr>
                                         </c:forEach>
-                                        <c:if test="${empty schedules}">
-                                            <tr>
-                                                <td colspan="7" class="text-center"><fmt:message key="no_schedules_found"/></td>
-                                            </tr>
-                                        </c:if>
+                                        <c:if test="${empty bookingList}">
+                                            <tr><td colspan="8"><fmt:message key="no_bookings_found"/></td></tr>
+                                            </c:if>
                                     </tbody>
                                 </table>
-                            </div>
-                            <!-- Pagination -->
-                            <div class="pagination">
-                                <c:if test="${currentPage > 1}">
-                                    <a href="${pageContext.request.contextPath}/admin/ViewSchedule?page=${currentPage - 1}"><fmt:message key="previous"/></a>
-                                </c:if>
-                                <c:forEach var="i" begin="1" end="${totalPages}">
-                                    <a href="${pageContext.request.contextPath}/admin/ViewSchedule?page=${i}" class="${i == currentPage ? 'active' : ''}">${i}</a>
-                                </c:forEach>
-                                <c:if test="${currentPage < totalPages}">
-                                    <a href="${pageContext.request.contextPath}/admin/ViewSchedule?page=${currentPage + 1}"><fmt:message key="next"/></a>
-                                </c:if>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </main>
-
         <div class="ttr-overlay"></div>
 
         <!-- External JavaScripts -->
@@ -333,13 +319,6 @@
         <script src="${pageContext.request.contextPath}/assets/js/functions.js"></script>
         <script src="${pageContext.request.contextPath}/assets/vendors/chart/chart.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets/js/admin.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/vendors/calendar/moment.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/vendors/calendar/fullcalendar.js"></script>
         <script src="${pageContext.request.contextPath}/assets/vendors/switcher/switcher.js"></script>
-        <script type="text/javascript">
-                                                        function confirmApprove() {
-                                                            return confirm("<fmt:message key='confirm_approve_schedule'/>");
-                                                        }
-        </script>
     </body>
 </html>

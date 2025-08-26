@@ -1,39 +1,29 @@
 <%-- 
-    Document   : viewschedule
-    Created on : Mar 22, 2025
+    Document   : tutorRatingList
+    Created on : Mar 22, 2025, 6:39:52 PM
     Author     : Heizxje
 --%>
-<%@page import="entity.User"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-
+<%@ page import="entity.User" %>
 <!DOCTYPE html>
 <html lang="${sessionScope.locale != null ? sessionScope.locale : 'en'}">
     <head>
-        <!-- META -->
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="keywords" content="" />
         <meta name="author" content="" />
         <meta name="robots" content="" />
-        <meta name="description" content="G5 SmartTutor : Smart tutor, effective learning." />
-        <meta property="og:title" content="G5 SmartTutor : Smart tutor, effective learning." />
-        <meta property="og:description" content="G5 SmartTutor : Smart tutor, effective learning." />
+        <meta name="description" content="G4 SmartTutor : Smart tutor, effective learning." />
+        <meta property="og:title" content="G4 SmartTutor : Smart tutor, effective learning." />
+        <meta property="og:description" content="G4 SmartTutor : Smart tutor, effective learning." />
+        <meta property="og:image" content="" />
         <meta name="format-detection" content="telephone=no">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-        <!-- FAVICONS ICON -->
         <link rel="icon" href="${pageContext.request.contextPath}/error-404.jsp" type="image/x-icon" />
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets/images/favicon.png" />
-
-        <!-- PAGE TITLE -->
-        <title>G5 SmartTutor</title>
-
-        <!-- MOBILE SPECIFIC -->
+        <title>G4 SmartTutor</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-
-        <!-- CSS -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/assets.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/vendors/calendar/fullcalendar.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/typography.css">
@@ -41,63 +31,48 @@
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/style.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/color/color-1.css">
-
-        <!-- Custom Styles -->
         <style>
-            .table-responsive table {
-                width: 100%;
-                border-collapse: collapse;
-                background-color: #fff;
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            .sort-options {
+                margin-bottom: 20px;
             }
-            .table-responsive th, .table-responsive td {
-                padding: 12px 20px;
-                text-align: left;
-                border: 1px solid #ddd;
+            .sort-dropdown {
+                position: relative;
+                display: inline-block;
             }
-            .table-responsive th {
-                background-color: #2196F3;
-                color: white;
-            }
-            .table-responsive tr:nth-child(even) {
-                background-color: #f2f2f2;
-            }
-            .table-responsive tr:hover {
-                background-color: #ddd;
-            }
-            .pagination {
-                text-align: center;
-                margin-top: 20px;
-            }
-            .pagination a {
-                padding: 10px 20px;
-                margin: 0 5px;
-                text-decoration: none;
-                background-color: #2196F3;
-                color: white;
-                border-radius: 5px;
-                transition: background-color 0.3s;
-            }
-            .pagination a:hover {
-                background-color: #1976D2;
-            }
-            .pagination a.active {
-                background-color: #1976D2;
-                font-weight: bold;
-            }
-            .pagination a.disabled {
-                background-color: #ddd;
-                cursor: not-allowed;
-            }
-            .action-links button {
-                background-color: #2196F3;
-                color: white;
-                border: none;
-                padding: 5px 10px;
+            .sort-button {
+                background-color: white;
+                border: 1px solid #ccc;
+                padding: 8px 16px;
+                border-radius: 4px;
                 cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: 200px;
             }
-            .action-links button:hover {
-                background-color: #1976D2;
+            .dropdown-content {
+                display: none;
+                position: absolute;
+                background-color: white;
+                min-width: 200px;
+                box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+                z-index: 1;
+                border-radius: 4px;
+                margin-top: 2px;
+            }
+            .option {
+                padding: 12px 16px;
+                text-decoration: none;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                color: black;
+            }
+            .option:hover {
+                background-color: #f1f1f1;
+            }
+            .check-icon {
+                color: #4CAF50;
             }
         </style>
     </head>
@@ -246,74 +221,144 @@
         <main class="ttr-wrapper">
             <div class="container-fluid">
                 <div class="db-breadcrumb">
-                    <h4 class="breadcrumb-title"><fmt:message key="view_schedule"/></h4>
+                    <h4 class="breadcrumb-title"><fmt:message key="tutor_reviews"/></h4>
                     <ul class="db-breadcrumb-list">
                         <li><a href="${pageContext.request.contextPath}/admin/index"><i class="fa fa-home"></i><fmt:message key="home"/></a></li>
-                        <li><fmt:message key="view_schedule"/></li>
+                        <li><fmt:message key="tutor_reviews"/></li>
                     </ul>
                 </div>
-                <div class="row">
-                    <div class="col-lg-12 m-b30">
-                        <div class="widget-box">
-                            <div class="wc-title">
-                                <h4><fmt:message key="available_schedules"/></h4>
-                            </div>
-                            <div class="table-responsive">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th><fmt:message key="schedule_id"/></th>
-                                            <th><fmt:message key="tutor_id"/></th>
-                                            <th><fmt:message key="start_time"/></th>
-                                            <th><fmt:message key="end_time"/></th>
-                                            <th><fmt:message key="subject_id"/></th>
-                                            <th><fmt:message key="is_booked"/></th>
-                                            <th><fmt:message key="action"/></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <c:forEach var="schedule" items="${schedules}">
-                                            <tr>
-                                                <td>${schedule.scheduleID}</td>
-                                                <td>${schedule.tutorID}</td>
-                                                <td><fmt:formatDate value="${schedule.startTime}" pattern="dd/MM/yyyy HH:mm"/></td>
-                                                <td><fmt:formatDate value="${schedule.endTime}" pattern="dd/MM/yyyy HH:mm"/></td>
-                                                <td>${schedule.subjectID}</td>
-                                                <td>${schedule.booked ? fmt.message(key='yes') : fmt.message(key='no')}</td>
-                                                <td class="action-links">
-                                                    <form action="${pageContext.request.contextPath}/admin/ViewSchedule" method="POST" onsubmit="return confirmApprove()">
-                                                        <input type="hidden" name="scheduleID" value="${schedule.scheduleID}">
-                                                        <button type="submit"><fmt:message key="approve"/></button>
-                                                    </form>
-                                                </td>
-                                            </tr>
-                                        </c:forEach>
-                                        <c:if test="${empty schedules}">
-                                            <tr>
-                                                <td colspan="7" class="text-center"><fmt:message key="no_schedules_found"/></td>
-                                            </tr>
-                                        </c:if>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!-- Pagination -->
-                            <div class="pagination">
-                                <c:if test="${currentPage > 1}">
-                                    <a href="${pageContext.request.contextPath}/admin/ViewSchedule?page=${currentPage - 1}"><fmt:message key="previous"/></a>
-                                </c:if>
-                                <c:forEach var="i" begin="1" end="${totalPages}">
-                                    <a href="${pageContext.request.contextPath}/admin/ViewSchedule?page=${i}" class="${i == currentPage ? 'active' : ''}">${i}</a>
-                                </c:forEach>
-                                <c:if test="${currentPage < totalPages}">
-                                    <a href="${pageContext.request.contextPath}/admin/ViewSchedule?page=${currentPage + 1}"><fmt:message key="next"/></a>
-                                </c:if>
-                            </div>
-                        </div>
+
+                <!-- Form tìm kiếm gia sư -->
+                <div class="sort-options">
+                    <label><fmt:message key="get_tutor_average_rate"/>:</label>
+                    <form action="${pageContext.request.contextPath}/admin/AdminListRated" method="get" style="display: inline;">
+                        <input type="hidden" name="service" value="searchTutors">
+                        <input type="text" name="keyword" value="${keyword}" placeholder="<fmt:message key='enter_id_or_name'/>" style="padding: 5px;">
+                        <button type="submit" style="background-color: #800080; color: white; border: none; padding: 5px 10px; cursor: pointer;"><fmt:message key="search"/></button>
+                    </form>
+                </div>
+
+                <!-- Form tìm kiếm danh sách đánh giá -->
+                <div class="sort-options">
+                    <label><fmt:message key="search_ratings"/>:</label>
+                    <form action="${pageContext.request.contextPath}/admin/AdminListRated" method="get" style="display: inline;">
+                        <input type="hidden" name="service" value="searchRatingList">
+                        <input type="text" name="ratingId" value="${ratingId}" placeholder="<fmt:message key='rating_id'/>" style="padding: 5px; width: 100px;">
+                        <input type="text" name="tutorId" value="${tutorId}" placeholder="<fmt:message key='tutor_id'/>" style="padding: 5px; width: 100px;">
+                        <input type="date" name="ratingDate" value="${ratingDate}" style="padding: 5px; width: 150px;">
+                        <button type="submit" style="background-color: #800080; color: white; border: none; padding: 5px 10px; cursor: pointer;"><fmt:message key="search"/></button>
+                    </form>
+                </div>
+
+                <!-- Tùy chọn sắp xếp -->
+                <div class="sort-dropdown">
+                    <button class="sort-button" onclick="toggleDropdown()">
+                        <span id="currentSortLabel"><fmt:message key="sort_by_average_rate"/></span>
+                        <svg width="12" height="12" viewBox="0 0 24 24" style="margin-left: 10px;">
+                        <path d="M7 10l5 5 5-5z" fill="currentColor"></path>
+                        </svg>
+                    </button>
+                    <div id="sortOptions" class="dropdown-content">
+                        <a href="${pageContext.request.contextPath}/admin/AdminListRated?service=listTutorsByRating&order=DESC" 
+                           class="option" 
+                           data-sort="DESC"
+                           data-label="highest_rated_first">
+                            <fmt:message key="highest_rated_first"/>
+                            <svg width="16" height="16" viewBox="0 0 24 24" style="display: none;" class="check-icon">
+                            <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z" fill="currentColor"></path>
+                            </svg>
+                        </a>
+                        <a href="${pageContext.request.contextPath}/admin/AdminListRated?service=listTutorsByRating&order=ASC" 
+                           class="option" 
+                           data-sort="ASC"
+                           data-label="lowest_rated_first">
+                            <fmt:message key="lowest_rated_first"/>
+                            <svg width="16" height="16" viewBox="0 0 24 24" style="display: none;" class="check-icon">
+                            <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z" fill="currentColor"></path>
+                            </svg>
+                        </a>
                     </div>
                 </div>
+
+                <!-- Bảng danh sách đánh giá -->
+                <div class="widget-box m-b30">
+                    <div class="wc-title">
+                        <h4><fmt:message key="rating_list"/></h4>
+                    </div>
+                    <div class="widget-inner">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th><fmt:message key="id"/></th>
+                                    <th><fmt:message key="booking_id"/></th>
+                                    <th><fmt:message key="student"/></th>
+                                    <th><fmt:message key="tutor_id"/></th>
+                                    <th><fmt:message key="rating"/></th>
+                                    <th><fmt:message key="comment"/></th>
+                                    <th><fmt:message key="rating_date"/></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach var="rating" items="${ratingList}">
+                                    <tr>
+                                        <td>${rating.ratingId}</td>
+                                        <td>${rating.bookingId}</td>
+                                        <td>${rating.username}</td>
+                                        <td>${rating.tutorId}</td>
+                                        <td>${rating.rating}</td>
+                                        <td>${rating.comment}</td>
+                                        <td>${rating.ratingDate}</td>
+                                    </tr>
+                                </c:forEach>
+                                <c:if test="${empty ratingList}">
+                                    <tr><td colspan="7"><fmt:message key="no_ratings_found"/></td></tr>
+                                    </c:if>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Bảng danh sách gia sư theo điểm trung bình -->
+                <c:if test="${not empty tutorList}">
+                    <div class="widget-box m-b30">
+                        <div class="wc-title">
+                            <h4><fmt:message key="tutors_by_average_rating"/></h4>
+                        </div>
+                        <div class="widget-inner">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th><fmt:message key="tutor_id"/></th>
+                                        <th><fmt:message key="tutor_name"/></th>
+                                        <th><fmt:message key="average_rating"/></th>
+                                        <th><fmt:message key="number_of_reviews"/></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:forEach var="tutor" items="${tutorList}">
+                                        <tr>
+                                            <td>${tutor[0]}</td>
+                                            <td>${tutor[1]}</td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${tutor[2] == 0}">
+                                                        <fmt:message key="no_rated_yet"/>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <fmt:formatNumber value="${tutor[2]}" minFractionDigits="1" maxFractionDigits="1"/>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                            <td>${tutor[3]}</td>
+                                        </tr>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </c:if>
             </div>
         </main>
-
         <div class="ttr-overlay"></div>
 
         <!-- External JavaScripts -->
@@ -336,10 +381,36 @@
         <script src="${pageContext.request.contextPath}/assets/vendors/calendar/moment.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets/vendors/calendar/fullcalendar.js"></script>
         <script src="${pageContext.request.contextPath}/assets/vendors/switcher/switcher.js"></script>
-        <script type="text/javascript">
-                                                        function confirmApprove() {
-                                                            return confirm("<fmt:message key='confirm_approve_schedule'/>");
-                                                        }
+        <script>
+                        function toggleDropdown() {
+                            document.getElementById("sortOptions").style.display = document.getElementById("sortOptions").style.display === "none" ? "block" : "none";
+                        }
+
+                        window.onclick = function (event) {
+                            if (!event.target.matches('.sort-button') && !event.target.matches('.sort-button *')) {
+                                var dropdown = document.getElementById("sortOptions");
+                                if (dropdown.style.display === "block") {
+                                    dropdown.style.display = "none";
+                                }
+                            }
+                        }
+
+                        document.addEventListener("DOMContentLoaded", function () {
+                            const urlParams = new URLSearchParams(window.location.search);
+                            const currentOrder = urlParams.get('order');
+                            const options = document.querySelectorAll('.option');
+                            options.forEach(option => {
+                                if (option.dataset.sort === currentOrder) {
+                                    option.querySelector('.check-icon').style.display = 'block';
+                                    document.getElementById('currentSortLabel').textContent = '<fmt:message key="sort_by"/>: ' + option.textContent.trim();
+                                }
+                            });
+                            if (!currentOrder) {
+                                const firstOption = document.querySelector('.option[data-sort="DESC"]');
+                                firstOption.querySelector('.check-icon').style.display = 'block';
+                                document.getElementById('currentSortLabel').textContent = '<fmt:message key="sort_by"/>: ' + firstOption.textContent.trim();
+                            }
+                        });
         </script>
     </body>
 </html>

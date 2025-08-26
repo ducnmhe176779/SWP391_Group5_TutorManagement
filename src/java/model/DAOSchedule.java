@@ -90,56 +90,176 @@ public class DAOSchedule extends DBConnect {
     // Hungnv: Book Schedule
     public List<Schedule> getSchedulesByTutorAndSubject(int tutorId, int subjectId) {
         List<Schedule> schedules = new ArrayList<>();
-        
-        // Debug: In ra tất cả schedules trước khi filter
-        System.out.println("DEBUG: Tìm schedules cho TutorID=" + tutorId + ", SubjectID=" + subjectId);
-        
         String query = """
-        SELECT s.*, sub.SubjectName, sub.SubjectID
+        SELECT *
         FROM Schedule s
-        INNER JOIN Subject sub ON s.SubjectID = sub.SubjectID
-        WHERE s.TutorID = ? and s.SubjectID = ? and s.IsBooked = 0  
-        AND s.StartTime > GETDATE() and s.Status = 'Available'
-        ORDER BY s.StartTime ASC
+        WHERE TutorID = ? and SubjectID = ? and IsBooked = 0  AND StartTime > GETDATE() and Status != 'pending'
     """;
         try (PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, tutorId);
             ps.setInt(2, subjectId);
             ResultSet rs = ps.executeQuery();
-            
-            // Debug: In ra số lượng schedules tìm được
-            int count = 0;
             while (rs.next()) {
-                count++;
-                System.out.println("DEBUG: Tìm thấy ScheduleID=" + rs.getInt("ScheduleID") + 
-                    ", StartTime=" + rs.getTimestamp("StartTime") + 
-                    ", IsBooked=" + rs.getBoolean("IsBooked") + 
-                    ", Status=" + rs.getString("Status"));
                 Schedule schedule = new Schedule();
                 schedule.setScheduleID(rs.getInt("ScheduleID"));
                 schedule.setTutorID(rs.getInt("TutorID"));
                 schedule.setStartTime(rs.getTimestamp("StartTime"));
                 schedule.setEndTime(rs.getTimestamp("EndTime"));
-                schedule.setIsBooked(rs.getBoolean("IsBooked"));
                 schedule.setSubjectId(rs.getInt("SubjectID"));
-                schedule.setStatus(rs.getString("Status"));
-                
-                Subject subject = new Subject();
-                subject.setSubjectID(rs.getInt("SubjectID"));
-                subject.setSubjectName(rs.getString("SubjectName"));
-                schedule.setSubject(subject);
-                
                 schedules.add(schedule);
             }
-            System.out.println("DEBUG: Tổng cộng tìm thấy " + count + " schedules phù hợp");
         } catch (SQLException e) {
             System.out.println("Lỗi khi lấy danh sách lịch của tutor: " + e.getMessage());
             e.printStackTrace();
         }
         return schedules;
     }
+
+  public List<Schedule> getSchedulesByTutorId(int tutorId) {
+    List<Schedule> schedules = new ArrayList<>();
+    String query = """
+        SELECT s.ScheduleID, s.TutorID, s.SlotNumber, s.IsBooked, s.SubjectID, s.Status, sub.SubjectName
+        FROM Schedule s
+        INNER JOIN Subject sub ON s.SubjectID = sub.SubjectID
+        WHERE s.TutorID = ?
+        ORDER BY s.SlotNumber ASC
+    """;
+
+    try (PreparedStatement ps = conn.prepareStatement(query)) {
+        ps.setInt(1, tutorId);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            Schedule schedule = new Schedule();
+            schedule.setScheduleID(rs.getInt("ScheduleID"));
+            schedule.setTutorID(rs.getInt("TutorID"));
+            schedule.setSlotNumber(rs.getInt("SlotNumber"));   // ✅ slotNumber thay cho StartTime/EndTime
+            schedule.setIsBooked(rs.getBoolean("IsBooked"));
+            schedule.setSubjectId(rs.getInt("SubjectID"));
+            schedule.setStatus(rs.getString("Status"));
+
+            Subject subject = new Subject();
+            subject.setSubjectName(rs.getString("SubjectName"));
+            schedule.setSubject(subject);
+
+            schedules.add(schedule);
+        }
+    } catch (SQLException e) {
+        System.out.println("Lỗi khi lấy danh sách lịch trình của tutor: " + e.getMessage());
+        e.printStackTrace();
+    }
+    return schedules;
+}
+
+
+  public boolean insertSchedule(Schedule schedule) {
+    String query = """
+        INSERT INTO Schedule (TutorID, SlotNumber, IsBooked, SubjectID, Status)
+        VALUES (?, ?, ?, ?, ?)
+    """;
+    try (PreparedStatement ps = conn.prepareStatement(query)) {
+        ps.setInt(1, schedule.getTutorID());
+        ps.setInt(2, schedule.getSlotNumber());   // Slot
+        ps.setBoolean(3, schedule.getIsBooked());
+        ps.setInt(4, schedule.getSubjectId());
+        ps.setString(5, schedule.getStatus());
+
+        return ps.executeUpdate() > 0;
+    } catch (SQLException e) {
+        System.out.println("Lỗi khi thêm lịch dạy: " + e.getMessage());
+        e.printStackTrace();
+        return false;
+    }
+}
+
+
+   public Schedule getScheduleById(int scheduleId) {
+    Schedule schedule = null;
+    String query = """
+        SELECT s.ScheduleID, s.TutorID, s.SlotNumber, s.IsBooked, s.SubjectID, s.Status, sub.SubjectName
+        FROM Schedule s
+        INNER JOIN Subject sub ON s.SubjectID = sub.SubjectID
+        WHERE s.ScheduleID = ?
+    """;
+
+    try (PreparedStatement ps = conn.prepareStatement(query)) {
+        ps.setInt(1, scheduleId);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            schedule = new Schedule();
+            schedule.setScheduleID(rs.getInt("ScheduleID"));
+            schedule.setTutorID(rs.getInt("TutorID"));
+            schedule.setSlotNumber(rs.getInt("SlotNumber"));   // ✅
+            schedule.setIsBooked(rs.getBoolean("IsBooked"));
+            schedule.setSubjectId(rs.getInt("SubjectID"));
+            schedule.setStatus(rs.getString("Status"));
+
+            Subject subject = new Subject();
+            subject.setSubjectName(rs.getString("SubjectName"));
+            schedule.setSubject(subject);
+        }
+    } catch (SQLException e) {
+        System.out.println("Lỗi khi lấy lịch học theo scheduleId: " + e.getMessage());
+        e.printStackTrace();
+    }
+    return schedule;
+}
+
+//    public boolean isScheduleExist(int tutorId, int subjectId, Date startTime) throws SQLException {
+//    String sql = "SELECT COUNT(*) FROM Schedule WHERE tutorId = ? AND subjectId = ? AND startTime = ?";
+//    try (Connection conn = getConnection();
+//         PreparedStatement ps = conn.prepareStatement(sql)) {
+//        ps.setInt(1, tutorId);
+//        ps.setInt(2, subjectId);
+//        ps.setTimestamp(3, new Timestamp(startTime.getTime()));
+//        
+//        try (ResultSet rs = ps.executeQuery()) {
+//            if (rs.next()) {
+//                return rs.getInt(1) > 0;
+//            }
+//        }
+//    }
+//    return false;
+//}
+public boolean isScheduleConflict(int tutorId, Date startTime, Date endTime) throws SQLException {
+    String sql = "SELECT COUNT(*) FROM Schedule WHERE tutorId = ? " +
+                 "AND ((startTime BETWEEN ? AND ?) OR (endTime BETWEEN ? AND ?) " +
+                 "OR (? BETWEEN startTime AND endTime) OR (? BETWEEN startTime AND endTime))";
     
-    // Debug method: Lấy tất cả schedules của tutor (không filter)
+    try (Connection conn = getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setInt(1, tutorId);
+        ps.setTimestamp(2, new java.sql.Timestamp(startTime.getTime()));
+        ps.setTimestamp(3, new java.sql.Timestamp(endTime.getTime()));
+        ps.setTimestamp(4, new java.sql.Timestamp(startTime.getTime()));
+        ps.setTimestamp(5, new java.sql.Timestamp(endTime.getTime()));
+        ps.setTimestamp(6, new java.sql.Timestamp(startTime.getTime()));
+        ps.setTimestamp(7, new java.sql.Timestamp(endTime.getTime()));
+
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return rs.getInt(1) > 0; // Nếu COUNT > 0, có lịch trùng
+        }
+    }
+    return false;
+}
+
+
+    public boolean isScheduleExist(int tutorId, int subjectId, java.util.Date startTime) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+     public boolean updateScheduleStatus(int scheduleId, boolean isBooked) {
+        String sql = "UPDATE Schedule SET IsBooked = ? WHERE ScheduleID = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setBoolean(1, isBooked);
+            ps.setInt(2, scheduleId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi cập nhật trạng thái lịch: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+       // Debug method: Lấy tất cả schedules của tutor (không filter)
     public List<Schedule> getAllSchedulesByTutorAndSubjectDebug(int tutorId, int subjectId) {
         List<Schedule> schedules = new ArrayList<>();
         String query = """
@@ -189,6 +309,7 @@ public class DAOSchedule extends DBConnect {
         return schedules;
     }
 
+<<<<<<< HEAD
     public List<Schedule> getSchedulesByTutorId(int tutorId) {
         List<Schedule> schedules = new ArrayList<>();
         String query = """
@@ -497,4 +618,6 @@ public boolean isScheduleConflict(int tutorId, Date startTime, Date endTime) thr
 
 
 
+=======
+>>>>>>> 25bcd760110fa789b7faa0ce3d5dc724d69f1e92
 }
