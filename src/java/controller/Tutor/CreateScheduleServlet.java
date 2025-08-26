@@ -235,7 +235,7 @@ public class CreateScheduleServlet extends HttpServlet {
             int currentTutorId = daoTutor.getTutorIdByUserId(user.getUserID());
             
             if (currentTutorId == -1) {
-                request.setAttribute("error", "Không tìm thấy thông tin tutor.");
+                request.setAttribute("error", "Không tìm thấy thông tin tutor  .");
                 loadTutorData(request, response, user);
                 return;
             }
