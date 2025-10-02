@@ -7,8 +7,8 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="SWP391_Group5_TutorManagement" default="default" basedir=".">
-    <description>Builds, tests, and runs the project SWP391_Group5_TutorManagement.</description>
+<project name="swt" default="default" basedir=".">
+    <description>Builds, tests, and runs the project swt.</description>
     <import file="nbproject/build-impl.xml"/>
     <!--
 
